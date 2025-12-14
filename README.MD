@@ -1,3 +1,7 @@
+# Установка
+
+[Скачайте последнюю версию тут](https://github.com/OneTwoZzzPlus/reviews-extension/releases/)
+
 # Сборка расширения
 
 Установка
@@ -5,11 +9,17 @@
 npm init -y
 npm install --save-dev esbuild
 npm install --save-dev cross-env
+npm install -D archiver
 ```
 
 Сборка
 ```shell
 node run build:prod
+```
+
+# Релиз (*for contributor only*)
+```shell
+node run release
 ```
 
 # TODO

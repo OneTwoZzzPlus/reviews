@@ -30,6 +30,7 @@ function sortComments(comments, model = 0) {
 
 function createDropdown(commentsData, commentsBox) {
     const wrapper = document.createElement("select");
+    wrapper.name = "sort";
     wrapper.classList.add("comments-dropdown");
     wrapper.addEventListener("change", (event) => {
         const model = parseInt(event.target.value);

@@ -1,10 +1,12 @@
+export const noteText = "Происхождение отзывов не имеет отношения к ИТМО."
+
 export const loadingText = "Загружаем...";
+
 export const fewCharactersText = "Введите хотя бы 3 символа =]";
 export const unknownTypeText = `<span class="error">Не понятно, что это такое :|</span>`;
 
 export const brokeReviewsText = "Отзывы пришли сломанные =(";
 export const brokeSearchText = "Результаты пришли сломанные =(";
-
 
 /** Ошибки при загрузке отзывов **/
 export function statusReviewsText(status) {

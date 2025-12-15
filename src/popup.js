@@ -1,14 +1,7 @@
 'use strict';
 
-import {
-    createSearch,
-    createTeacher,
-    createSubject,
-    loadingText,
-    brokeSearchText,
-    statusSearchText,
-    brokeReviewsText, statusReviewsText, fewCharactersText, unknownTypeText
-} from "./ui.js";
+import * as strings from "./ui/strings.js";
+import {createSearch, createTeacher, createSubject} from "./ui/ui.js";
 import {fetchSearch, fetchTeacher, fetchSubject} from "./api.js";
 
 document.addEventListener('DOMContentLoaded', main);
@@ -36,11 +29,11 @@ async function search() {
         statusBox.innerHTML = "";
         return;
     } else if (name.length < 3) {
-        statusBox.innerHTML = fewCharactersText;
+        statusBox.innerHTML = strings.fewCharactersText;
         return;
     }
 
-    statusBox.innerHTML = loadingText;
+    statusBox.innerHTML = strings.loadingText;
 
     abortController?.abort();
     abortController = new AbortController();
@@ -52,10 +45,10 @@ async function search() {
             container.innerHTML = "";
             container.appendChild(search);
         } else {
-            statusBox.innerHTML = brokeSearchText;
+            statusBox.innerHTML = strings.brokeSearchText;
         }
     }).catch(status => {
-        statusBox.innerHTML = statusSearchText(status);
+        statusBox.innerHTML = strings.statusSearchText(status);
     })
 }
 
@@ -69,9 +62,9 @@ async function load(id, type) {
                     container.innerHTML = "";
                     container.appendChild(teacher);
                 }
-                else statusBox.innerHTML = brokeReviewsText;
+                else statusBox.innerHTML = strings.brokeReviewsText;
             }).catch(status => {
-                statusBox.innerHTML = statusReviewsText(status);
+                statusBox.innerHTML = strings.statusReviewsText(status);
             })
             break;
         case 'subject':
@@ -81,14 +74,14 @@ async function load(id, type) {
                     container.innerHTML = "";
                     container.appendChild(subject);
                 }
-                else statusBox.innerHTML = brokeReviewsText;
+                else statusBox.innerHTML = strings.brokeReviewsText;
             }).catch(status => {
-                statusBox.innerHTML = statusReviewsText(status);
+                statusBox.innerHTML = strings.statusReviewsText(status);
             })
             break;
         default:
             console.error(`Неизвестный type ${type}`);
-            statusBox.innerHTML = unknownTypeText;
+            statusBox.innerHTML = strings.unknownTypeText;
     }
 }
 

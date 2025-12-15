@@ -1,10 +1,11 @@
 'use strict';
+
+import * as strings from "./ui/strings.js";
 import {fetchTeacher} from "./api";
-import {brokeReviewsText, createReviewContentBox, statusReviewsText} from "./ui.js";
+import {createInjector} from "./ui/ui.js";
 
 const INJECTED_ELEMENT_SELECTOR = 'reviews';
 const STATUS_BOX_SELECTOR = 'reviews-status-box';
-const CONTAINER_SELECTOR = 'reviews-container';
 
 /** Подражание инфицируемому интерфейсу **/
 const REVIEW_TITLE_HTML = `<div class="border-top mt-3"></div>
@@ -29,20 +30,20 @@ async function resolveReviewBlock(data) {
     const status_box = document.querySelector("#" + STATUS_BOX_SELECTOR);
     const injected = document.querySelector("#" + INJECTED_ELEMENT_SELECTOR);
 
-    const content = createReviewContentBox(data);
+    const content = createInjector(data);
     if (content !== null) {
         injected.append(content);
         status_box.innerHTML = "";
     } else {
         console.log(data);
-        status_box.innerHTML = brokeReviewsText;
+        status_box.innerHTML = strings.brokeReviewsText;
     }
 }
 
 /** Заполняет status в случае неудачного запроса **/
 async function rejectReviewBlock(status) {
     const status_box = document.querySelector("#" + STATUS_BOX_SELECTOR);
-    status_box.innerHTML = statusReviewsText(status);
+    status_box.innerHTML = strings.statusReviewsText(status);
 }
 
 

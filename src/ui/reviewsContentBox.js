@@ -57,7 +57,7 @@ function createComments(commentsData, model = 0) {
 }
 
 /** @param {TeacherResponse} data **/
-export default function createReviewContentBox(data) {
+export default function createReviewsContentBox(data) {
     if (!data ||
         !Array.isArray(data.summaries) ||
         !Array.isArray(data.comments) ||

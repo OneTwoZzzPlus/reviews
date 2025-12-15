@@ -5,13 +5,14 @@ import archiver from "archiver";
 
 const manifestPath = "src/manifest.json";
 const distDir = "dist";
+const releasesDir = "releases";
 const notesFile = "release-notes.md";
 
 // Read version from manifest.json
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 const version = manifest.version;
 const tag = `v${version}`;
-const archiveName = `./${distDir}/dist-${version}.zip`;
+const archiveName = `./${releasesDir}/dist-${version}.zip`;
 const archivePath = path.resolve(archiveName);
 
 console.log(`[RELEASE] Version: ${version}`);

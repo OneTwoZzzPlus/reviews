@@ -3,7 +3,8 @@ import {fetchTeacher} from "./api";
 import {brokeReviewsText, createReviewContentBox, statusReviewsText} from "./ui.js";
 
 const INJECTED_ELEMENT_SELECTOR = 'reviews';
-const STATUS_BOX_SELECTOR = 'reviewsStatusBox';
+const STATUS_BOX_SELECTOR = 'reviews-status-box';
+const CONTAINER_SELECTOR = 'reviews-container';
 
 /** Подражание инфицируемому интерфейсу **/
 const REVIEW_TITLE_HTML = `<div class="border-top mt-3"></div>
@@ -31,7 +32,7 @@ async function resolveReviewBlock(data) {
     const content = createReviewContentBox(data);
     if (content !== null) {
         injected.append(content);
-        status_box.remove();
+        status_box.innerHTML = "";
     } else {
         console.log(data);
         status_box.innerHTML = brokeReviewsText;

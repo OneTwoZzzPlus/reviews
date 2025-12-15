@@ -34,7 +34,7 @@ export function createReviewContentBox(data) {
     ) return null;
 
     const wrapper = document.createElement('div');
-    wrapper.id = "reviewsContentBox";
+    wrapper.class = "reviews-content-box";
 
     const summariesHTML = data.summaries.map(item => `
         <div class="summary">
@@ -47,8 +47,8 @@ export function createReviewContentBox(data) {
         <div class="comment">
             <div class="comment-head">
                 Отзыв ${item.date}
-                ${item?.subject ? ' по предмету ' + `"${item.subject.title}"` : ' '}
-                ${item?.source ? ' источник ' + `"<a href=" ${item.source.link ?? ''}">${item.source.title}</a>"` : ''}
+                ${item?.subject ? ` по предмету "${item.subject.title}"` : ' '}
+                ${item?.source ? ` источник "<a href=" ${item.source.link ?? ''}">${item.source.title}</a>"` : ''}
             </div>
             <div>${item.text}</div>
         </div>
@@ -146,3 +146,5 @@ export function statusSearchText(status) {
 }
 
 export const loadingText = "Загружаем...";
+export const fewCharactersText = "Введите хотя бы 3 символа =]";
+export const unknownTypeText = `<span class="error">Не понятно, что это такое :|</span>`;

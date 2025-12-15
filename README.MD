@@ -9,7 +9,7 @@
 npm init -y
 npm install --save-dev esbuild
 npm install --save-dev cross-env
-npm install -D archiver
+npm install --save-dev archiver
 ```
 
 Сборка

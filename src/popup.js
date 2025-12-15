@@ -7,7 +7,7 @@ import {
     loadingText,
     brokeSearchText,
     statusSearchText,
-    brokeReviewsText, statusReviewsText
+    brokeReviewsText, statusReviewsText, fewCharactersText, unknownTypeText
 } from "./ui.js";
 import {fetchSearch, fetchTeacher, fetchSubject} from "./api.js";
 
@@ -18,9 +18,9 @@ let timeoutId;
 let abortController;
 
 function main() {
-    statusBox = document.querySelector('#reviewsStatus');
-    container = document.querySelector('#reviewsContainer');
-    input = document.querySelector('#reviewsInput');
+    statusBox = document.querySelector('#reviews-status-box');
+    container = document.querySelector('#reviews-container');
+    input = document.querySelector('#reviews-input');
 
     input.addEventListener('input', () => {
         // debouncer
@@ -36,7 +36,7 @@ async function search() {
         statusBox.innerHTML = "";
         return;
     } else if (name.length < 3) {
-        statusBox.innerHTML = "Введите хотя бы 3 символа =/";
+        statusBox.innerHTML = fewCharactersText;
         return;
     }
 
@@ -71,7 +71,7 @@ async function load(id, type) {
                 }
                 else statusBox.innerHTML = brokeReviewsText;
             }).catch(status => {
-                status.innerHTML = statusReviewsText(status);
+                statusBox.innerHTML = statusReviewsText(status);
             })
             break;
         case 'subject':
@@ -83,12 +83,12 @@ async function load(id, type) {
                 }
                 else statusBox.innerHTML = brokeReviewsText;
             }).catch(status => {
-                status.innerHTML = statusReviewsText(status);
+                statusBox.innerHTML = statusReviewsText(status);
             })
             break;
         default:
             console.error(`Неизвестный type ${type}`);
-            statusBox.innerHTML = `<span class="error">Не понятно, что это такое :|</span>`;
+            statusBox.innerHTML = unknownTypeText;
     }
 }
 

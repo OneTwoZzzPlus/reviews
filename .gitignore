@@ -12,6 +12,7 @@ npm-debug.log*
 .env.*.local
 
 # Build output
+releases/
 dist/
 build/
 out/

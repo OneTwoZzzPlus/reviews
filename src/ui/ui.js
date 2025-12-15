@@ -1,3 +1,5 @@
+import createReviewContentBox from "./reviewsContentBox.js";
+
 /** JSON responses
  * @typedef {{
  *   id: number,
@@ -7,7 +9,7 @@
  *     date: string,
  *     text: string,
  *     source?: { title: string, link: string },
- *     subject?: { title: string }
+ *     subject?: { title: string },
  *   }>
  * }} TeacherResponse
  *
@@ -24,37 +26,21 @@
  *   }>
  * }} SearchResponse
  */
+const note = document.createElement("p");
+note.classList.add("note");
+note.innerHTML = "Отзывы не имеют отношения к администрации ИТМО."
 
-/** @param {TeacherResponse} data **/
-export function createReviewContentBox(data) {
-    if (!data ||
-        !Array.isArray(data.summaries) ||
-        !Array.isArray(data.comments) ||
-        (data.summaries.length === 0 && data.comments.length === 0)
-    ) return null;
+
+
+/** @param {TeacherResponse} data */
+export function createInjector(data) {
+    const reviewBox = createReviewContentBox(data);
+    if (reviewBox === null) return null;
 
     const wrapper = document.createElement('div');
-    wrapper.class = "reviews-content-box";
+    wrapper.appendChild(reviewBox);
+    wrapper.appendChild(note);
 
-    const summariesHTML = data.summaries.map(item => `
-        <div class="summary">
-            <span>${item.title ?? ''}</span>
-            <span>${item.value ?? ''}</span>
-        </div>
-    `).join('')
-
-    const commentsHTML = data.comments.map(item => `
-        <div class="comment">
-            <div class="comment-head">
-                Отзыв ${item.date}
-                ${item?.subject ? ` по предмету "${item.subject.title}"` : ' '}
-                ${item?.source ? ` источник "<a href=" ${item.source.link ?? ''}">${item.source.title}</a>"` : ''}
-            </div>
-            <div>${item.text}</div>
-        </div>
-    `).join('');
-
-    wrapper.innerHTML = summariesHTML + commentsHTML;
     return wrapper;
 }
 
@@ -64,11 +50,9 @@ export function createTeacher(data) {
     if (reviewBox === null) return null;
 
     const wrapper = document.createElement('div');
-    wrapper.innerHTML = `
-        <h2>${data.name}</h2>
-        ${reviewBox.innerHTML}
-        <div class="note">Отзывы не имеют отношения к администрации ИТМО.</div>
-    `;
+    wrapper.innerHTML = `<h2>${data.name}</h2>`;
+    wrapper.appendChild(reviewBox);
+    wrapper.appendChild(note);
 
     return wrapper;
 }
@@ -81,20 +65,14 @@ export function createSubject(data) {
     if (reviewBoxes.some(box => box === null)) return null;
 
     const wrapper = document.createElement('div');
-
-    const teachersHTML = data.teachers.map((teacher, i) => `
-        <div>
-            <h3>${teacher.name}</h3>
-            ${reviewBoxes[i].innerHTML}
-        </div>
-    `).join('');
-
-    wrapper.innerHTML = `
-        <h2>${data.title}</h2>
-        ${teachersHTML}
-        <div class="note">Отзывы не имеют отношения к администрации ИТМО.</div>
-    `;
-
+    wrapper.innerHTML = `<h2>${data.title}</h2>`;
+    data.teachers.forEach((teacher, i) => {
+        const box = document.createElement("div");
+        box.innerHTML = `<h3>${teacher.name}</h3>`;
+        box.appendChild(reviewBoxes[i]);
+        wrapper.appendChild(box);
+    })
+    wrapper.appendChild(note);
     return wrapper;
 }
 
@@ -122,25 +100,39 @@ export function createSearch(data, callback) {
 
 /** Ошибки при загрузке отзывов **/
 export const brokeReviewsText = "Отзывы пришли сломанные =(";
+
 export function statusReviewsText(status) {
     let answer;
     switch (status) {
-        case 0: answer = `<span class="error">Сервер с отзывами недоступен =(</span>`; break;
-        case 404: answer = "Отзывы отсутствуют"; break;
-        default: answer = `Сервер прислал "${status}" вместо отзывов =(`
+        case 0:
+            answer = `<span class="error">Сервер с отзывами недоступен =(</span>`;
+            break;
+        case 404:
+            answer = "Отзывы отсутствуют";
+            break;
+        default:
+            answer = `Сервер прислал "${status}" вместо отзывов =(`
     }
     return answer;
 }
 
 /** Ошибки при загрузке поиска **/
 export const brokeSearchText = "Результаты пришли сломанные =(";
+
 export function statusSearchText(status) {
     let answer;
     switch (status) {
-        case 0: answer = `<span class="error">Сервер с отзывами недоступен =(</span>`; break;
-        case 400: answer = "Сервер говорит, что ему мало буков для поиска"; break;
-        case 404: answer = "Ничего не найдено"; break;
-        default: answer = `Сервер прислал "${status}" вместо отзывов =(`
+        case 0:
+            answer = `<span class="error">Сервер с отзывами недоступен =(</span>`;
+            break;
+        case 400:
+            answer = "Сервер говорит, что ему мало буков для поиска";
+            break;
+        case 404:
+            answer = "Ничего не найдено";
+            break;
+        default:
+            answer = `Сервер прислал "${status}" вместо отзывов =(`
     }
     return answer;
 }

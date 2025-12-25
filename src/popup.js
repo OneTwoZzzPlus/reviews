@@ -3,6 +3,7 @@
 import * as strings from "./ui/strings.js";
 import {createSearch, createTeacher, createSubject} from "./ui/ui.js";
 import {fetchSearch, fetchTeacher, fetchSubject} from "./api.js";
+import {parseJwt} from "./utils.js";
 
 document.addEventListener('DOMContentLoaded', main);
 
@@ -13,12 +14,14 @@ document.body.addEventListener('click', function (e) {
     }
 });
 
-let statusBox, container, input;
+let statusBox, container, input, isuBox;
+let jwtToken = null;
 let timeoutId;
 let abortController;
 
 function main() {
     statusBox = document.querySelector('#reviews-status-box');
+    isuBox = document.querySelector('#reviews-isu-box');
     container = document.querySelector('#reviews-container');
     input = document.querySelector('#reviews-input');
 
@@ -27,6 +30,8 @@ function main() {
         clearTimeout(timeoutId);
         timeoutId = setTimeout(search, 300);
     });
+
+    identify().then(() => {})
 }
 
 /** Обрабатываем ввод в строку поиска **/
@@ -94,3 +99,13 @@ async function load(id, type) {
     }
 }
 
+/** Проверяем авторизованность **/
+async function identify(data) {
+    chrome.storage.local.get((data) => {
+        jwtToken = data.jwtToken
+        const payload = parseJwt(jwtToken);
+        if (payload?.isu) {
+            isuBox.innerHTML = strings.authText(payload?.isu, payload?.name);
+        }
+    })
+}

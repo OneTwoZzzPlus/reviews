@@ -42,3 +42,7 @@ export function statusSearchText(status) {
     }
     return answer;
 }
+
+export function authText(isu, name) {
+    return name ? `${name} (${isu})` : `${isu}`;
+}

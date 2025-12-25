@@ -3,6 +3,7 @@
 import * as strings from "./ui/strings.js";
 import {fetchTeacher} from "./api";
 import {createInjector} from "./ui/ui.js";
+import {parseJwt} from "./utils.js";
 
 const INJECTED_ELEMENT_SELECTOR = 'reviews';
 const STATUS_BOX_SELECTOR = 'reviews-status-box';
@@ -46,11 +47,28 @@ async function rejectReviewBlock(status) {
     status_box.innerHTML = strings.statusReviewsText(status);
 }
 
+/** Сохраняет jwt в storage.local **/
+async function identify() {
+    const match = document.cookie.match(
+        new RegExp('(^| )' + 'auth._id_token.itmoId' + '=([^;]+)')
+    );
+    if (!match) return;
+    const token = match[2];
+    const payload = parseJwt(token)
+    if (!payload?.isu) {
+        console.log('[INJECTOR] isu not found');
+        return;
+    }
+    chrome.storage.local.set({jwtToken: token});
+    console.log('[INJECTOR] isu saved successfully');
+}
 
 /** Реагирует на изменения в DOM **/
-function observeChangeDOM(create) {
+function observeChangeDOM() {
     console.log("[INJECTOR] injector started");
     const observer = new MutationObserver(() => {
+        // Идентификация пользователя
+        identify().then(() => {})
         // Проверяем корректность URL
         const match = location.pathname.match(/^\/persons\/(\d+)/);
         if (!match) {
@@ -72,10 +90,10 @@ function observeChangeDOM(create) {
             return;
         }
         // Вставляем элемент
-        injectable.appendChild(create(match[1]));
+        injectable.appendChild(createReviewBlock(match[1]));
         console.log("[INJECTOR] element injected");
     });
     observer.observe(document.body, { childList: true, subtree: true });
 }
 
-observeChangeDOM(createReviewBlock)
+observeChangeDOM()

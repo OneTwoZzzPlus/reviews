@@ -31,9 +31,6 @@ export function statusSearchText(status) {
         case 0:
             answer = `<span class="error">Сервер с отзывами недоступен =(</span>`;
             break;
-        case 400:
-            answer = "Сервер говорит, что ему мало буков для поиска";
-            break;
         case 404:
             answer = "Ничего не найдено";
             break;

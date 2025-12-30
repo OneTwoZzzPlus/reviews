@@ -68,7 +68,7 @@ export function createSearch(data, callback) {
         const item = document.createElement('div');
         item.className = 'search-item';
         item.innerHTML = `
-            ${s.name}
+            ${s.title}
             <span class="search-id">${s.id}</span>
         `;
         item.addEventListener('click', async () => callback(s.id, s.type));

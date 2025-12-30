@@ -20,17 +20,17 @@ async function fetchJSON(path, options, controller=null) {
     })
 }
 
-export async function fetchSearch(filter, controller) {
-    console.log(`[API] send /search for "${filter}"`);
-    return await fetchJSON('/search', {"filter": filter}, controller)
+export async function fetchSearch(query, controller) {
+    console.log(`[API] send /search for "${query}"`);
+    return await fetchJSON('/search', {"query": query}, controller)
 }
 
 export async function fetchTeacher(id) {
     console.log(`[API] send /teacher for "${id}"`);
-    return await fetchJSON('/teacher', {"id": id})
+    return await fetchJSON(`/teacher/${id}`, {})
 }
 
 export async function fetchSubject(id) {
     console.log(`[API] send /subject for "${id}"`);
-    return await fetchJSON('/subject', {"id": id})
+    return await fetchJSON(`/subject/${id}`, {})
 }

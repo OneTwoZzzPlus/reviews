@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build:dev": "cross-env API_HOST_VALUE=\"http://localhost:8000\" node build.js",
-    "build:prod": "cross-env API_HOST_VALUE=\"http://31.59.120.159:7000\" node build.js",
+    "build:prod": "cross-env API_HOST_VALUE=\"https://reviews.work.gd/\" node build.js",
     "release": "node release.js"
   },
   "keywords": [],

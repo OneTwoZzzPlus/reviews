@@ -1,89 +1,22 @@
-function parseCommentDate(dateStr) {
-    if (!dateStr) return -Infinity;
-    // "HH:MM DD.MM.YYYY"
-    const match = dateStr.match(
-        /(\d{2}):(\d{2})\s+(\d{2})\.(\d{2})\.(\d{4})/
-    );
-    if (!match) return -Infinity;
-    const [, hh, mm, dd, MM, yyyy] = match;
-    return new Date(
-        Number(yyyy),
-        Number(MM) - 1,
-        Number(dd),
-        Number(hh),
-        Number(mm)
-    ).getTime();
-}
+import {createComments} from "./reviewsComments.js";
+import {createRating} from "./reviewsRating.js";
 
-function sortComments(comments, model = 0) {
-    return [...comments].sort((a, b) => {
-        const timeA = parseCommentDate(a.date);
-        const timeB = parseCommentDate(b.date);
-        if (Number.isNaN(timeA) || Number.isNaN(timeB)) return 0;
-        switch (model) {
-            case 0: return timeB - timeA;
-            case 1: return timeA - timeB;
-            default: return 0
-        }
-    });
-}
 
-function createRating() {
-    const wrapper = document.createElement("div");
-    wrapper.classList.add("rating-wrap")
-    wrapper.innerHTML = `<div class="rating-row">
-        <span class="rating-label">Ваша оценка:</span>
-        <div class="rating">
-            <input type="radio" id="rate-5" name="rating" value="5">
-            <label for="rate-5">★</label>
-            <input type="radio" id="rate-4" name="rating" value="4">
-            <label for="rate-4">★</label>
-            <input type="radio" id="rate-3" name="rating" value="3">
-            <label for="rate-3">★</label>
-            <input type="radio" id="rate-2" name="rating" value="2">
-            <label for="rate-2">★</label>
-            <input type="radio" id="rate-1" name="rating" value="1">
-            <label for="rate-1">★</label>
-        </div>
-    </div>`
-    return wrapper;
-}
-
-function createDropdown(commentsData, commentsBox) {
-    const wrapper = document.createElement("select");
-    wrapper.name = "sort";
-    wrapper.classList.add("comments-dropdown");
-    wrapper.addEventListener("change", (event) => {
-        const model = parseInt(event.target.value);
-        console.log(`[UI] sorting model ${model}`);
-        commentsBox.innerHTML = createComments(commentsData, model);
-    })
-    wrapper.innerHTML = `
-        <option value="0">Сначала новые</option>
-        <option value="1">Сначала старые</option>`
-    return wrapper
-}
-
-function createComments(commentsData, model = 0) {
-    const sortedComments = sortComments(commentsData, model);
-    return sortedComments.map(item => `
-        <div class="comment">
-            <div class="comment-head">
-                Отзыв ${item.date}
-                ${item?.subject ? ` по предмету "${item.subject.title}"` : ' '}
-                ${item?.source ? ` источник "<a href=" ${item.source.link ?? ''}">${item.source.title}</a>"` : ''}
-            </div>
-            <div>${item.text}</div>
-            <div class="karma">
-              <button class="karma-btn">+</button>
-              <span class="karma-value">0</span>
-              <button class="karma-btn">−</button>
-            </div>
+function createSummaries(summariesData) {
+    const summariesHTML = summariesData.map(item => `
+        <div class="summary">
+            <span class="summary-title">${item.title ?? ''}</span>: 
+            <span class="summary-value">${item.value ?? ''}</span>
         </div>
     `).join('');
+
+    const summaries = document.createElement('div');
+    summaries.classList.add('summaries');
+    summaries.innerHTML = summariesHTML;
+    return summaries;
 }
 
-/** @param {TeacherResponse} data **/
+/** @param {Teacher} data **/
 export default function createReviewsContentBox(data) {
     if (!data ||
         !Array.isArray(data.summaries) ||
@@ -91,29 +24,16 @@ export default function createReviewsContentBox(data) {
         (data.summaries.length === 0 && data.comments.length === 0)
     ) return null;
 
-    const summariesHTML = data.summaries.map(item => `
-        <div class="summary">
-            <span  class="summary-title">${item.title ?? ''}</span>: 
-            <span  class="summary-value">${item.value ?? ''}</span>
-        </div>
-    `).join('');
-
-    const summaries = document.createElement('div');
-    summaries.classList.add('summaries');
-    summaries.innerHTML = summariesHTML;
-
-    const comments = document.createElement('div');
-    comments.classList.add('comments');
-    comments.innerHTML = createComments(data.comments);
-
-    const dropdown = createDropdown(data.comments, comments);
-
     const wrapper = document.createElement('div');
     wrapper.classList.add("reviews-content-box");
-    wrapper.appendChild(createRating());
-    if (data.summaries.length !== 0) wrapper.appendChild(summaries);
-    if (data.comments.length !== 1) wrapper.appendChild(dropdown);
-    wrapper.appendChild(comments);
+
+    wrapper.appendChild(createRating(data.id, data.rating, data?.user_rating));
+    if (data.summaries.length !== 0) {
+        wrapper.appendChild(createSummaries(data.summaries));
+    }
+    if (data.comments.length !== 0) {
+        wrapper.appendChild(createComments(data.comments));
+    }
 
     return wrapper;
 }

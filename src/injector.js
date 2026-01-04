@@ -1,9 +1,9 @@
 'use strict';
 
 import * as strings from "./ui/strings.js";
-import {fetchTeacher} from "./api";
+import {setJwtToken, fetchTeacher} from "./api/api.js";
 import {createInjector} from "./ui/ui.js";
-import {parseJwt} from "./utils.js";
+import {parseJwt} from "./utils/utils.js";
 
 const INJECTED_ELEMENT_SELECTOR = 'reviews';
 const STATUS_BOX_SELECTOR = 'reviews-status-box';
@@ -69,6 +69,8 @@ function identify() {
             console.error(err);
         }
     });
+
+    setJwtToken(token)
 
     console.log('[INJECTOR] isu saved successfully');
 }

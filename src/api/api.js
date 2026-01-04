@@ -1,0 +1,85 @@
+export let jwtToken = null;
+
+export function setJwtToken(token) {
+    jwtToken = token;
+}
+
+/**
+ * @param {string} path
+ * @param {Object} options
+ * @param {'GET' | 'POST' | 'PUT' | 'DELETE'} method
+ * @param {AbortController} [controller]
+ */
+async function fetchJSON(method, path, options = {}, controller = null) {
+    const url = new URL(path, API_HOST);
+
+    const fetchOptions = {
+        method: method.toUpperCase(),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        signal: controller?.signal
+    };
+
+    if (jwtToken) {
+        fetchOptions.headers['token'] = jwtToken;
+    }
+
+    if (fetchOptions.method === 'GET') {
+        Object.entries(options).forEach(([key, value]) => {
+            url.searchParams.set(key, value.toString());
+        });
+    } else {
+        fetchOptions.body = JSON.stringify(options);
+    }
+
+    return new Promise((resolve, reject) => {
+        fetch(url, fetchOptions).then(async (res) => {
+            if (res.ok) {
+                console.log(`[API] fetch resolved`);
+                const text = await res.text();
+                resolve(text ? JSON.parse(text) : {});
+            } else {
+                const errorDetail = await res.json().catch(() => ({}));
+                if (res.status === 401 || res.status === 404) {
+                    console.info('[API] error details:', errorDetail);
+                } else {
+                    console.error('[API] error details:', errorDetail);
+                }
+                reject(res.status);
+            }
+        }).catch((err) => {
+            if (err.name !== 'AbortError') {
+                console.error('[API] network error:', err);
+                reject(0);
+            } else {
+                console.log(`[API] fetch aborted`);
+            }
+        });
+    });
+}
+
+export async function fetchSearch(query, controller) {
+    console.log(`[API] send /search for "${query}"`);
+    return await fetchJSON('GET', '/search', {"query": query}, controller)
+}
+
+export async function fetchTeacher(id) {
+    console.log(`[API] send /teacher for "${id}"`);
+    return await fetchJSON('GET', `/teacher/${id}`, {})
+}
+
+export async function fetchSubject(id) {
+    console.log(`[API] send /subject for "${id}"`);
+    return await fetchJSON('GET', `/subject/${id}`, {})
+}
+
+export async function fetchTeacherRate(id, user_rating) {
+    console.log(`[API] send /teacher/${id}/rate`);
+    return await fetchJSON('POST', `/teacher/${id}/rate`, {"user_rating": user_rating})
+}
+
+export async function fetchCommentVote(id, user_karma) {
+    console.log(`[API] send /comment/${id}/vote`);
+    return await fetchJSON('POST', `/comment/${id}/vote`, {"user_karma": user_karma})
+}

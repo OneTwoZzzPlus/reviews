@@ -199,9 +199,10 @@
    Rating row
 ================================ */
 
-.rating-row {
+.rating-box {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: start;
     gap: 8px;
     margin: 0 0 12px;
     padding: 8px 10px;
@@ -213,9 +214,18 @@
     background: var(--color-bg);
 }
 
-.rating-label {
+.rating-row {
+    display: inline;
+}
+
+.rating-title {
     white-space: nowrap;
     color: var(--color-muted);
+}
+
+.rating-value {
+    white-space: nowrap;
+    color: var(--color-text);
 }
 
 /* ===============================

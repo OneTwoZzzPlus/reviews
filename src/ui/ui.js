@@ -7,7 +7,7 @@ note.classList.add("note");
 note.innerHTML = strings.noteText;
 
 /** Блок отзывов для вставки на сайт
- * @param {TeacherResponse} data
+ * @param {Teacher} data
  * */
 export function createInjector(data) {
     const reviewBox = createReviewsContentBox(data);
@@ -21,7 +21,7 @@ export function createInjector(data) {
 }
 
 /** Блок отзывов по учителю для popup
- * @param {TeacherResponse} data
+ * @param {Teacher} data
  * */
 export function createTeacher(data) {
     const reviewBox = createReviewsContentBox(data);
@@ -36,7 +36,7 @@ export function createTeacher(data) {
 }
 
 /** Блок отзывов по предмету для popup
- * @param {SubjectResponse} data
+ * @param {Subject} data
  * */
 export function createSubject(data) {
     if (!data || !Array.isArray(data.teachers)) return null;

@@ -10,34 +10,22 @@ export const brokeSearchText = "Результаты пришли сломанн
 
 /** Ошибки при загрузке отзывов **/
 export function statusReviewsText(status) {
-    let answer;
     switch (status) {
-        case 0:
-            answer = `<span class="error">Сервер с отзывами недоступен =(</span>`;
-            break;
-        case 404:
-            answer = "Отзывы отсутствуют";
-            break;
-        default:
-            answer = `Сервер прислал "${status}" вместо отзывов =(`
+        case 0: return `<span class="error">Сервер с отзывами недоступен =(</span>`;
+        case 401: return "Сначала войдите, это быстро =)"
+        case 404: return "Отзывы отсутствуют \\(O_o)/";
+        default: return `Сервер прислал "${status}" вместо отзывов =(`
     }
-    return answer;
 }
 
 /** Ошибки при загрузке поиска **/
 export function statusSearchText(status) {
-    let answer;
     switch (status) {
-        case 0:
-            answer = `<span class="error">Сервер с отзывами недоступен =(</span>`;
-            break;
-        case 404:
-            answer = "Ничего не найдено";
-            break;
-        default:
-            answer = `Сервер прислал "${status}" вместо отзывов =(`
+        case 0: return `<span class="error">Сервер с отзывами недоступен =(</span>`;
+        case 401: return "Сначала войдите, это быстро =)"
+        case 404: return "Ничего не найдено \\(O_o)/";
+        default: return `Сервер прислал "${status}" вместо результатов поиска =(`
     }
-    return answer;
 }
 
 export function authText(isu, name) {

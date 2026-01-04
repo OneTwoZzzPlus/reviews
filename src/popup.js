@@ -2,8 +2,8 @@
 
 import * as strings from "./ui/strings.js";
 import {createSearch, createTeacher, createSubject} from "./ui/ui.js";
-import {fetchSearch, fetchTeacher, fetchSubject} from "./api.js";
-import {parseJwt} from "./utils.js";
+import {setJwtToken, jwtToken, fetchSearch, fetchTeacher, fetchSubject} from "./api/api.js";
+import {parseJwt} from "./utils/utils.js";
 
 document.addEventListener('DOMContentLoaded', main);
 
@@ -15,7 +15,6 @@ document.body.addEventListener('click', function (e) {
 });
 
 let statusBox, container, input, isuBox;
-let jwtToken = null;
 let timeoutId;
 let abortController;
 
@@ -102,7 +101,7 @@ async function load(id, type) {
 /** Проверяем авторизованность **/
 async function identify(data) {
     chrome.storage.local.get((data) => {
-        jwtToken = data.jwtToken
+        setJwtToken(data.jwtToken)
         const payload = parseJwt(jwtToken);
         if (payload?.isu) {
             isuBox.innerHTML = strings.authText(payload?.isu, payload?.name);

@@ -44,6 +44,12 @@ export function createSubject(data) {
     const reviewBoxes = data.teachers.map(teacher => createReviewsContentBox(teacher));
     if (reviewBoxes.some(box => box === null)) return null;
 
+    data.teachers.sort((a, b) => {
+        const rating = b.rating - a.rating
+        if (rating === 0) return b.id - a.id;
+        return rating
+    });
+
     const wrapper = document.createElement('div');
     wrapper.innerHTML = `<h2>${data.title}</h2>`;
     data.teachers.forEach((teacher, i) => {

@@ -1,10 +1,12 @@
 import {parseCommentDate} from "../utils/utils.js";
-import {fetchCommentVote, fetchTeacherRate} from "../api/api.js";
+import {fetchCommentVote} from "../api/api.js";
+
 
 /** Создаём блок отзывов
  * @param {Array<Comment>} commentsData - Данные списка отзывов
+ * @returns {HTMLDivElement}
  */
-export function createComments(commentsData) {
+export default function createComments(commentsData) {
     const wrapper = document.createElement('div');
     wrapper.classList.add('comments-wrap');
 
@@ -39,7 +41,7 @@ function createCommentsList(commentsData, model = 0) {
 }
 
 /** Создание отзыва
- * @param {Comment} comment
+ * @param {Comment} comment - Данные отзыва
  */
 function createComment(comment) {
     const wrapper = document.createElement("div");
@@ -56,7 +58,7 @@ function createComment(comment) {
     return wrapper
 }
 
-/** Создание панельки кармы ▲▼△▽*/
+/** Создание панельки кармы ▲▼△▽ */
 function createKarma(id, karma, user_karma) {
     const wrapper = document.createElement("div");
     wrapper.classList.add("karma");
@@ -67,13 +69,13 @@ function createKarma(id, karma, user_karma) {
     const downBtn = document.createElement("button");
     downBtn.classList.add("karma-btn");
 
-    upBtn.addEventListener("click", async (event) => {
+    upBtn.addEventListener("click", async (_event) => {
         const data = await fetchCommentVote(id, user_karma === 1 ? 0 : 1);
         user_karma = data.user_karma;
         karma = data.karma;
         updateKarma(karmaSpan, upBtn, downBtn, karma, user_karma);
     })
-    downBtn.addEventListener("click", async (event) => {
+    downBtn.addEventListener("click", async (_event) => {
         const data = await fetchCommentVote(id, user_karma === -1 ? 0 : -1 );
         user_karma = data.user_karma;
         karma = data.karma;
@@ -140,5 +142,3 @@ function sortComments(comments, model = 0) {
         }
     });
 }
-
-

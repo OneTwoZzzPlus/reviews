@@ -55,6 +55,7 @@ function identify() {
     if (!match) return;
 
     const token = match[2];
+    /** @type {JWTPayload} */
     const payload = parseJwt(token);
     if (!payload?.isu) {
         console.log('[INJECTOR] isu not found');

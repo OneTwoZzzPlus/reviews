@@ -1,12 +1,14 @@
-export const noteText = "Происхождение отзывов не имеет отношения к ИТМО."
+export const noteText = "Отзывы агрегированы из открытых источников"
 
 export const loadingText = "Загружаем...";
 
-export const fewCharactersText = "Введите хотя бы 3 символа =]";
-export const unknownTypeText = `<span class="error">Не понятно, что это такое :|</span>`;
+const tip = "<br/>(обновите расширение)"
 
-export const brokeReviewsText = "Отзывы пришли сломанные =(";
-export const brokeSearchText = "Результаты пришли сломанные =(";
+export const fewCharactersText = "Введите хотя бы 3 символа =]";
+export const unknownTypeText = `<span class="error">Не понятно, что это такое :|</span>` + tip;
+
+export const brokeReviewsText = "Отзывы пришли сломанные =(" + tip;
+export const brokeSearchText = "Результаты пришли сломанные =(" + tip;
 
 /** Ошибки при загрузке отзывов **/
 export function statusReviewsText(status) {
@@ -28,6 +30,7 @@ export function statusSearchText(status) {
     }
 }
 
-export function authText(isu, name) {
+/** Надпись о наличии токена */
+export function authStatusText(isu, name) {
     return name ? `${name} (${isu})` : `${isu}`;
 }

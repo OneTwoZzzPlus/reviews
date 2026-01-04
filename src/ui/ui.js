@@ -1,7 +1,7 @@
 import * as strings from "./strings";
 import createReviewsContentBox from "./reviewsContentBox.js";
 
-// noteText
+/** Уведомление снизу страницы */
 const note = document.createElement("p");
 note.classList.add("note");
 note.innerHTML = strings.noteText;

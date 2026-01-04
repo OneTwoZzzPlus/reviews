@@ -1,10 +1,13 @@
-export let jwtToken = null;
+/** Подменяется на этапе компиляции */
+/* global API_HOST */
 
+/** Задаётся в стартовом файле из хранилища chrome */
+export let jwtToken = null;
 export function setJwtToken(token) {
     jwtToken = token;
 }
 
-/**
+/** Универсальная обёртка для запросов к API
  * @param {string} path
  * @param {Object} options
  * @param {'GET' | 'POST' | 'PUT' | 'DELETE'} method

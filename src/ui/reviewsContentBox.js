@@ -1,22 +1,11 @@
-import {createComments} from "./reviewsComments.js";
-import {createRating} from "./reviewsRating.js";
+import createComments from "./reviewsComments.js";
+import createRating from "./reviewsRating.js";
+import createSummaries from "./reviewsSummaries.js";
 
 
-function createSummaries(summariesData) {
-    const summariesHTML = summariesData.map(item => `
-        <div class="summary">
-            <span class="summary-title">${item.title ?? ''}</span>: 
-            <span class="summary-value">${item.value ?? ''}</span>
-        </div>
-    `).join('');
-
-    const summaries = document.createElement('div');
-    summaries.classList.add('summaries');
-    summaries.innerHTML = summariesHTML;
-    return summaries;
-}
-
-/** @param {Teacher} data **/
+/** Создаём контент по преподавателю: рейтинг, отзывы и остальное
+ * @param {Teacher} data
+ */
 export default function createReviewsContentBox(data) {
     if (!data ||
         !Array.isArray(data.summaries) ||

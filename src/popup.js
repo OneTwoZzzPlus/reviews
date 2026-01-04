@@ -99,12 +99,12 @@ async function load(id, type) {
 }
 
 /** Проверяем авторизованность **/
-async function identify(data) {
+async function identify() {
     chrome.storage.local.get((data) => {
         setJwtToken(data.jwtToken)
         const payload = parseJwt(jwtToken);
         if (payload?.isu) {
-            isuBox.innerHTML = strings.authText(payload?.isu, payload?.name);
+            isuBox.innerHTML = strings.authStatusText(payload?.isu, payload?.name);
         }
     })
 }

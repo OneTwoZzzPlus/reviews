@@ -1,6 +1,8 @@
 import {fetchTeacherRate} from "../api/api.js";
 
-export function createRating(id, rating, user_rating) {
+
+/** Создаём блок рейтинга */
+export default function createRating(id, rating, user_rating) {
     const wrapper = document.createElement("div");
     wrapper.classList.add("rating-box")
 
@@ -18,6 +20,7 @@ export function createRating(id, rating, user_rating) {
     return wrapper;
 }
 
+/** Рисуем блок рейтинга */
 function renderRating(id, rating, user_rating) {
     if (user_rating === null || user_rating === undefined) user_rating = 0;
     const stars = [5, 4, 3, 2, 1].map(num => `

@@ -30,4 +30,8 @@
  *     type: string
  *   }>
  * }} SearchResponse
+ *
+ * @typedef {{
+ *     isu: string|number?
+ * }} JWTPayload
  */

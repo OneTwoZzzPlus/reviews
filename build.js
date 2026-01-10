@@ -40,19 +40,20 @@ try {
     });
     console.log('[build] popup.js built');
 
-    // 3 Copy manifest.json
-    fs.copyFileSync(path.join(SRC_DIR, 'manifest.json'), path.join(DIST_DIR, 'manifest.json'));
-    console.log('[build] manifest.json copied');
+    // 3 Copy files
+    const filesToCopy = [
+        'manifest.json',
+        'styles.css',
+        'popup.html',
+        'page.html'
+    ];
 
-    // 4 Copy styles.css
-    fs.copyFileSync(path.join(SRC_DIR, 'styles.css'), path.join(DIST_DIR, 'styles.css'));
-    console.log('[build] styles.css copied');
+    filesToCopy.forEach(file => {
+        fs.copyFileSync(path.join(SRC_DIR, file), path.join(DIST_DIR, file));
+        console.log(`[build] ${file} copied`);
+    });
 
-    // 5 Copy popup.html
-    fs.copyFileSync(path.join(SRC_DIR, 'popup.html'), path.join(DIST_DIR, 'popup.html'));
-    console.log('[build] popup.html copied');
-
-    // 6 Copy icons
+    // 4 Copy icons
     const iconsSrc = path.join(SRC_DIR, 'icons');
     const iconsDest = path.join(DIST_DIR, 'icons');
     fs.cpSync(iconsSrc, iconsDest, { recursive: true });

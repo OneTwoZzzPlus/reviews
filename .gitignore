@@ -14,8 +14,6 @@ npm-debug.log*
 # Build output
 releases/
 dist/
-build/
-out/
 
 # IDE or Editor Specific Files
 .vscode/

@@ -5,6 +5,8 @@
   "scripts": {
     "build:dev": "cross-env API_HOST_VALUE=\"http://localhost:8000\" node build.js",
     "build:prod": "cross-env API_HOST_VALUE=\"https://reviews.work.gd/\" node build.js",
+    "build-page:dev": "cross-env API_HOST_VALUE=\"http://localhost:8000\" node build-page.js",
+    "build-page:prod": "cross-env API_HOST_VALUE=\"https://reviews.work.gd/\" node build-page.js",
     "release": "node release.js"
   },
   "keywords": [],

@@ -1,105 +1,15 @@
 'use strict';
 
+import {createMainPage, isuBox} from "./main.js";
 import * as strings from "./ui/strings.js";
-import {createSearch, createTeacher, createSubject} from "./ui/ui.js";
-import {setJwtToken, jwtToken, fetchSearch, fetchTeacher, fetchSubject} from "./api/api.js";
+import {setJwtToken, jwtToken} from "./api/api.js";
 import {parseJwt} from "./utils/utils.js";
 
 document.addEventListener('DOMContentLoaded', main);
 
-/** Добавляем переходы по ссылкам в другую вкладку **/
-document.body.addEventListener('click', function (e) {
-    if (e.target.matches('a[href]')) {
-        chrome.tabs.create({url: e.target.href});
-    }
-});
+async function main() {
+    createMainPage()
 
-let statusBox, container, input, isuBox;
-let timeoutId;
-let abortController;
-
-function main() {
-    statusBox = document.querySelector('#reviews-status-box');
-    isuBox = document.querySelector('#reviews-isu-box');
-    container = document.querySelector('#reviews-container');
-    input = document.querySelector('#reviews-input');
-
-    input.addEventListener('input', () => {
-        // debouncer
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(search, 300);
-    });
-
-    identify().then(() => {})
-}
-
-/** Обрабатываем ввод в строку поиска **/
-async function search() {
-    const name = input.value.trim();
-    if (!name) {
-        statusBox.innerHTML = "";
-        return;
-    } else if (name.length < 3) {
-        statusBox.innerHTML = strings.fewCharactersText;
-        return;
-    }
-
-    statusBox.innerHTML = strings.loadingText;
-
-    abortController?.abort();
-    abortController = new AbortController();
-
-    fetchSearch(name, abortController).then(data => {
-        const search = createSearch(data, load);
-        if (search) {
-            statusBox.innerHTML = "";
-            container.innerHTML = "";
-            container.appendChild(search);
-        } else {
-            container.innerHTML = "";
-            statusBox.innerHTML = strings.brokeSearchText;
-        }
-    }).catch(status => {
-        container.innerHTML = "";
-        statusBox.innerHTML = strings.statusSearchText(status);
-    })
-}
-
-/** Загрузка отзывов по преподу/предмету **/
-async function load(id, type) {
-    switch (type) {
-        case 'teacher':
-            fetchTeacher(id).then(data => {
-                const teacher = createTeacher(data);
-                if (teacher !== null) {
-                    container.innerHTML = "";
-                    container.appendChild(teacher);
-                }
-                else statusBox.innerHTML = strings.brokeReviewsText;
-            }).catch(status => {
-                statusBox.innerHTML = strings.statusReviewsText(status);
-            })
-            break;
-        case 'subject':
-            fetchSubject(id).then(data => {
-                const subject = createSubject(data);
-                if (subject !== null) {
-                    container.innerHTML = "";
-                    container.appendChild(subject);
-                }
-                else statusBox.innerHTML = strings.brokeReviewsText;
-            }).catch(status => {
-                statusBox.innerHTML = strings.statusReviewsText(status);
-            })
-            break;
-        default:
-            console.error(`Неизвестный type ${type}`);
-            statusBox.innerHTML = strings.unknownTypeText;
-    }
-}
-
-/** Проверяем авторизованность **/
-async function identify() {
     chrome.storage.local.get((data) => {
         setJwtToken(data.jwtToken)
         const payload = parseJwt(jwtToken);
@@ -108,3 +18,10 @@ async function identify() {
         }
     })
 }
+
+/** Добавляем переходы по ссылкам в другую вкладку **/
+document.body.addEventListener('click', function (e) {
+    if (e.target.matches('a[href]')) {
+        chrome.tabs.create({url: e.target.href});
+    }
+});

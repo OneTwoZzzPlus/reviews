@@ -46,13 +46,16 @@
 }
 
 #reviews-menu {
-    color: var(--color-text);
-    font-size: 1.75rem;
-    margin: 0;
+    cursor: pointer;
+    background: var(--color-primary);
+    color: var(--color-bg);
+    font-weight: bold;
+    padding: var(--padding);
+    border-radius: var(--radius);
 }
 
 #reviews-menu:hover {
-    color: var(--color-primary);
+    background: var(--color-primary-hover);
 }
 
 #reviews-isu-box a {

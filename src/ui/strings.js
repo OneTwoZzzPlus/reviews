@@ -1,5 +1,5 @@
 export const noteText = `Если вы хотите поддержать проект, поставьте ★ на 
-<a href="https://github.com/OneTwoZzzPlus/reviews-extension/releases">репозиторий</a>. <br/>
+<a href="https://github.com/OneTwoZzzPlus/reviews-extension">репозиторий</a>. <br/>
 Отзывы агрегированы из открытых источников.`
 
 export const loadingText = "Загружаем...";

@@ -45,6 +45,16 @@
     margin: 0;
 }
 
+#reviews-menu {
+    color: var(--color-text);
+    font-size: 1.75rem;
+    margin: 0;
+}
+
+#reviews-menu:hover {
+    color: var(--color-primary);
+}
+
 #reviews-isu-box a {
     background: var(--color-primary);
     color: var(--color-bg);

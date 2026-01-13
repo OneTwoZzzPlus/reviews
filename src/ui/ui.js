@@ -2,7 +2,7 @@ import * as strings from "./strings";
 import createReviewsContentBox from "./reviewsContentBox.js";
 
 /** Уведомление снизу страницы */
-const note = document.createElement("p");
+export const note = document.createElement("p");
 note.classList.add("note");
 note.innerHTML = strings.noteText;
 
@@ -30,7 +30,6 @@ export function createTeacher(data) {
     const wrapper = document.createElement('div');
     wrapper.innerHTML = `<h2>${data.name}</h2>`
     wrapper.appendChild(reviewBox);
-    wrapper.appendChild(note);
 
     return wrapper;
 }
@@ -58,7 +57,6 @@ export function createSubject(data) {
         box.appendChild(reviewBoxes[i]);
         wrapper.appendChild(box);
     })
-    wrapper.appendChild(note);
     return wrapper;
 }
 

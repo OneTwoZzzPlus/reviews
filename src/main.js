@@ -1,5 +1,5 @@
 import * as strings from "./ui/strings.js";
-import {createSearch, createTeacher, createSubject} from "./ui/ui.js";
+import {createSearch, createTeacher, createSubject, note} from "./ui/ui.js";
 import {fetchSearch, fetchTeacher, fetchSubject} from "./api/api.js";
 
 export let isuBox, container, statusBox;
@@ -44,6 +44,7 @@ async function search() {
             statusBox.innerHTML = "";
             container.innerHTML = "";
             container.appendChild(search);
+            container.appendChild(note);
         } else {
             container.innerHTML = "";
             statusBox.innerHTML = strings.brokeSearchText;
@@ -63,6 +64,7 @@ async function load(id, type) {
                 if (teacher !== null) {
                     container.innerHTML = "";
                     container.appendChild(teacher);
+                    container.appendChild(note);
                 }
                 else statusBox.innerHTML = strings.brokeReviewsText;
             }).catch(status => {
@@ -75,6 +77,7 @@ async function load(id, type) {
                 if (subject !== null) {
                     container.innerHTML = "";
                     container.appendChild(subject);
+                    container.appendChild(note);
                 }
                 else statusBox.innerHTML = strings.brokeReviewsText;
             }).catch(status => {

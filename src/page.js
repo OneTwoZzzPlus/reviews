@@ -4,7 +4,7 @@ import {createMainPage, isuBox, container} from "./main.js";
 import * as strings from "./ui/strings.js";
 import {setJwtToken, jwtToken, fetchAuthPLogin} from "./api/api.js";
 import {parseJwt, setCookie, getCookie} from "./utils/utils.js";
-import {authpError} from "./ui/strings.js";
+import {note} from "./ui/ui.js";
 
 document.addEventListener('DOMContentLoaded', main);
 
@@ -16,6 +16,7 @@ async function main() {
 function openForm (_) {
     container.innerHTML = "";
     container.appendChild(createLoginForm());
+    container.appendChild(note);
 }
 
 function authenticate() {

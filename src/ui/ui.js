@@ -53,8 +53,8 @@ export function createSubject(data) {
     const wrapper = document.createElement('div');
     wrapper.innerHTML = `<h2>${data.title}</h2>`;
     data.teachers.forEach((teacher, i) => {
-        const box = document.createElement("div");
-        box.innerHTML = `<h3>${teacher.name}</h3>`;
+        const box = document.createElement("details");
+        box.innerHTML = `<summary class="reviews-title">${teacher.name}</summary>`;
         box.appendChild(reviewBoxes[i]);
         wrapper.appendChild(box);
     })
@@ -74,6 +74,7 @@ export function createSearch(data, callback) {
         const item = document.createElement('div');
         item.className = 'search-item';
         item.innerHTML = `
+            ${strings.symbols[s.type] || ''}
             ${s.title}
             <span class="search-id">${s.id}</span>
         `;

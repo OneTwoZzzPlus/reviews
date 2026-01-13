@@ -5,6 +5,13 @@ import * as strings from "./ui/strings.js";
 import {setJwtToken, jwtToken} from "./api/api.js";
 import {parseJwt} from "./utils/utils.js";
 
+/** Добавляем переходы по ссылкам в другую вкладку **/
+document.body.addEventListener('click', function (e) {
+    if (e.target.matches('a[href]')) {
+        chrome.tabs.create({url: e.target.href});
+    }
+});
+
 document.addEventListener('DOMContentLoaded', main);
 
 async function main() {
@@ -12,16 +19,10 @@ async function main() {
 
     chrome.storage.local.get((data) => {
         setJwtToken(data.jwtToken)
+        console.log(data.jwtToken);
         const payload = parseJwt(jwtToken);
         if (payload?.isu) {
             isuBox.innerHTML = strings.authStatusText(payload?.isu, payload?.name);
         }
     })
 }
-
-/** Добавляем переходы по ссылкам в другую вкладку **/
-document.body.addEventListener('click', function (e) {
-    if (e.target.matches('a[href]')) {
-        chrome.tabs.create({url: e.target.href});
-    }
-});

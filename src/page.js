@@ -4,6 +4,7 @@ import {createMainPage, isuBox, container} from "./main.js";
 import * as strings from "./ui/strings.js";
 import {setJwtToken, jwtToken, fetchAuthPLogin} from "./api/api.js";
 import {parseJwt, setCookie, getCookie} from "./utils/utils.js";
+import {authpError} from "./ui/strings.js";
 
 document.addEventListener('DOMContentLoaded', main);
 
@@ -35,7 +36,7 @@ function createLoginForm() {
     const form = document.createElement("form");
     form.classList.add("login-form");
     form.innerHTML = `
-        <p>Это авторизация по id.itmo, <b>не вводите</b> логин и пароль, если не доверяете сайту.</p>
+        <p>${strings.authpLabel}</p>
     
         <input type="email" name="email" placeholder="E-mail" required />
         <input type="password" name="password" placeholder="Пароль" required />
@@ -51,6 +52,8 @@ function createLoginForm() {
 
             container.innerHTML = "";
             authenticate()
+        }).catch(status => {
+            alert(strings.authpError + ` (статус ${status})`);
         });
     });
     return form;

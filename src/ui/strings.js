@@ -34,3 +34,12 @@ export function statusSearchText(status) {
 export function authStatusText(isu, name) {
     return name ? `${name} (${isu})` : `${isu}`;
 }
+
+/** Иконки */
+export const symbols = {"teacher": "💎", "subject": "📚"};
+
+export const authpLabel = `Это авторизация по <b>ID.ITMO</b> через прокси. </br>
+Если доверяете сайту, вводите логин и пароль. </br> 
+Однако вы также можете установить <a href="https://github.com/OneTwoZzzPlus/reviews-extension/releases">расширение</a>: оно само определит кто вы!`
+
+export const authpError = "Проверьте логин и пароль!"

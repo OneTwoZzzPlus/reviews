@@ -1,0 +1,280 @@
+/* ===============================
+   Variables
+================================ */
+:root {
+    --color-text: #444;
+    --color-muted: #888;
+    --color-border: #ccc;
+    --color-border-light: #eee;
+    --color-bg: #fff;
+    --color-bg-control: #e7e7e7;
+    --color-bg-hover: #dedede;
+    --color-focus: #888;
+    --color-primary: #1846c7;
+    --color-error: red;
+
+    --radius: 6px;
+    --font-size: 14px;
+    --transition: 0.2s;
+}
+
+/* ===============================
+   Common
+================================ */
+.error {
+    color: var(--color-error);
+}
+
+.note {
+    margin-top: 10px;
+    font-size: 0.85em;
+    color: gray;
+    text-align: center;
+}
+
+/* ===============================
+   Header
+================================ */
+#reviews-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 15px 0;
+    min-width: 400px;
+}
+
+#reviews-header {
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+#reviews-isu-box a {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    background: var(--color-primary);
+    color: #fff;
+    font-size: var(--font-size);
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+/* ===============================
+   Input & dropdown
+================================ */
+#reviews-input,
+.comments-dropdown {
+    width: 100%;
+    padding: 0.5rem 0.875rem;
+    font-size: var(--font-size);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-sizing: border-box;
+    appearance: none;
+    outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+#reviews-input {
+    background: var(--color-bg);
+}
+
+.comments-dropdown {
+    background: var(--color-bg-control);
+    cursor: pointer;
+}
+
+#reviews-input:focus,
+.comments-dropdown:focus {
+    border-color: var(--color-focus);
+    box-shadow: 0 0 0 2px rgba(100, 100, 100, 0.1);
+}
+
+/* ===============================
+   Search list
+================================ */
+.search-list {
+    width: 100%;
+    overflow-y: auto;
+    margin-top: 10px;
+    text-align: left;
+}
+
+.search-item {
+    padding: 5px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.search-item:hover {
+    background: #f5f5f5;
+}
+
+.search-id {
+    float: right;
+    font-size: 0.8em;
+    color: var(--color-muted);
+}
+
+/* ===============================
+   Summary block
+================================ */
+.summaries {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 8px 10px;
+    margin: 8px 0 12px;
+    background: var(--color-bg);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.summary {
+    display: inline;
+    font-size: var(--font-size);
+    color: var(--color-text);
+}
+
+/* title серым */
+.summary-title {
+    color: var(--color-muted);
+}
+
+/* value обычным */
+.summary-value {
+    color: var(--color-text);
+}
+
+
+/* ===============================
+   Comments
+================================ */
+.comment {
+    margin-top: 8px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: var(--radius);
+    text-align: left;
+}
+
+.comment-head {
+    font-size: 0.85em;
+    color: gray;
+}
+
+/* ===============================
+   Karma
+================================ */
+.karma {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.karma-btn {
+    padding: 4px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg-control);
+    cursor: pointer;
+}
+
+.karma-btn:hover {
+    background: var(--color-bg-hover);
+}
+
+.karma-value {
+    min-width: 20px;
+    text-align: center;
+}
+
+/* ===============================
+   Rating row
+================================ */
+
+.rating-box {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 8px;
+    margin: 0 0 12px;
+    padding: 8px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    font-size: 14px;
+    color: var(--color-text);
+    box-sizing: border-box;
+    background: var(--color-bg);
+}
+
+.rating-row {
+    display: inline;
+}
+
+.rating-title {
+    white-space: nowrap;
+    color: var(--color-muted);
+}
+
+.rating-value {
+    white-space: nowrap;
+    color: var(--color-text);
+}
+
+/* ===============================
+   Stars
+================================ */
+
+.rating {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    line-height: 1;
+}
+
+.rating input {
+    display: none;
+}
+
+.rating label {
+    display: inline-block;
+    font-size: 20px;
+    color: #ccc;
+    cursor: pointer;
+    padding: 0 1px;
+    user-select: none;
+    transition: color 0.15s;
+}
+
+.rating label:hover,
+.rating label:hover ~ label {
+    color: var(--color-primary);
+}
+
+.rating input:checked ~ label {
+    color: var(--color-primary);
+}
+
+/* ===============================
+   Login form
+================================ */
+
+.login-form {
+    display: flex; justify-content: center; align-items: center;
+    flex-direction: column; gap: 14px;
+}
+.login-form button {
+    width: 100%; padding: 14px; border-radius: 14px; border: none;
+    background: #2b2b2b; color: #fff; cursor: pointer; max-width: 420px;
+}
+.login-form button:hover {background: #000;}
+.login-form input[type="email"], .login-form input[type="password"] {
+    width: 100%; padding: 14px 16px; border-radius: 12px;
+    border: 1px solid #ddd; outline: none; max-width: 420px;
+}
+.login-form input[type="password"] {border: 2px solid #222;}

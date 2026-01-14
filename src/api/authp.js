@@ -62,6 +62,9 @@ export function loadTokensExtension() {
 export function resetTokensExtension() {
     isExtension = true;
     chrome.storage.local.remove(["refresh_token", "access_token"]);
+    refreshToken = null;
+    accessToken = null;
+    accessTokenExpiration = 0;
 }
 
 export function saveTokensPage(rToken, aToken) {
@@ -88,6 +91,9 @@ export function resetTokensPage() {
     isExtension = false;
     document.cookie = 'refresh_token=; Max-Age=-1;';
     document.cookie = 'access_token=; Max-Age=-1;';
+    refreshToken = null;
+    accessToken = null;
+    accessTokenExpiration = 0;
 }
 
 export function saveTokensAuto(rToken, aToken) {

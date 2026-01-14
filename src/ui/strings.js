@@ -4,7 +4,7 @@ export const noteText = `Если вы хотите поддержать про�
 
 export const loadingText = "Загружаем...";
 
-const tip = "<br/>(обновите расширение)"
+const tip = "<br/>(обновите расширение/сайт)"
 
 export const fewCharactersText = "Введите хотя бы 3 символа =]";
 export const unknownTypeText = `<span class="error">Не понятно, что это такое :|</span>` + tip;
@@ -44,4 +44,8 @@ export const authpLabel = `Это авторизация по <b>ID.ITMO</b> ч�
 Если доверяете сайту, вводите логин и пароль. <br/> 
 Однако вы также можете установить <a href="https://github.com/OneTwoZzzPlus/reviews-extension/releases">расширение</a>: оно само определит, кто вы!`
 
-export const authpError = "Проверьте логин и пароль!"
+export const authpCredentials = "Неверные логин или пароль!"
+export const authpError = "Проверьте логин и пароль! Процесс авторизации был нарушен"
+
+export const loadingBtnLogin = "Вход"
+export const loadingBtnLoginLoading = "Вход ⌛"

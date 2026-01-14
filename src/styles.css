@@ -52,6 +52,7 @@
     font-weight: bold;
     padding: var(--padding);
     border-radius: var(--radius);
+    margin: 0;
 }
 
 #reviews-menu:hover {

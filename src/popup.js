@@ -2,8 +2,7 @@
 
 import {createMainPage, isuBox} from "./main.js";
 import * as strings from "./ui/strings.js";
-import {setJwtToken, jwtToken} from "./api/api.js";
-import {parseJwt} from "./utils/utils.js";
+import {loadTokensExtension} from "./api/authp.js";
 
 /** Добавляем переходы по ссылкам в другую вкладку **/
 document.body.addEventListener('click', function (e) {
@@ -17,12 +16,9 @@ document.addEventListener('DOMContentLoaded', main);
 async function main() {
     createMainPage()
 
-    chrome.storage.local.get((data) => {
-        setJwtToken(data.jwtToken)
-        console.log(data.jwtToken);
-        const payload = parseJwt(jwtToken);
+    loadTokensExtension().then((payload) => {
         if (payload?.isu) {
             isuBox.innerHTML = strings.authStatusText(payload?.isu, payload?.name);
         }
-    })
+    }).catch(() => {})
 }

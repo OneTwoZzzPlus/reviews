@@ -2,10 +2,9 @@
 
 import {createMainPage, isuBox, container} from "./main.js";
 import * as strings from "./ui/strings.js";
-import {setJwtToken, jwtToken, fetchAuthPLogin} from "./api/api.js";
-import {parseJwt, setCookie, getCookie} from "./utils/utils.js";
 import {note} from "./ui/ui.js";
-import {loadingBtnLogin, loadingText} from "./ui/strings.js";
+import {fetchAuthPLogin} from "./api/api.js";
+import {validateTokenISU, saveTokensPage, loadTokensPage} from "./api/authp.js";
 
 document.addEventListener('DOMContentLoaded', main);
 
@@ -21,17 +20,15 @@ function openForm (_) {
 }
 
 function authenticate() {
-    const token = getCookie('access_token');
-    if (token) {
-        setJwtToken(token)
-        const payload = parseJwt(jwtToken);
+    loadTokensPage().then((payload) => {
         if (payload?.isu) {
             isuBox.innerHTML = strings.authStatusText(payload?.isu, payload?.name);
         }
         isuBox.removeEventListener('click', openForm);
-    } else {
+    }).catch(_ => {
+        isuBox.removeEventListener('click', openForm);
         isuBox.addEventListener('click', openForm);
-    }
+    })
 }
 
 function createLoginForm() {
@@ -52,8 +49,16 @@ function createLoginForm() {
         loginButton.disabled = true;
         loginButton.innerHTML = strings.loadingBtnLoginLoading;
         fetchAuthPLogin(form.email.value, form.password.value).then(resp => {
-            if (resp?.access_token) setCookie('access_token', resp?.access_token, {secure: true});
-            if (resp?.refresh_token) setCookie('refresh_token', resp?.refresh_token, {secure: true});
+            const rToken = resp?.refresh_token;
+            const aToken = resp?.access_token;
+            if (!rToken || !aToken) {
+                console.error("[AUTHP] Invalid response", resp);
+                loginButton.disabled = false;
+                loginButton.innerHTML = strings.loadingBtnLogin;
+                return;
+            }
+            if (!validateTokenISU(aToken)) return;
+            saveTokensPage(rToken, aToken);
 
             container.innerHTML = "";
             authenticate()

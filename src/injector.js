@@ -1,9 +1,9 @@
 'use strict';
 
 import * as strings from "./ui/strings.js";
-import {setJwtToken, fetchTeacher} from "./api/api.js";
 import {createInjector} from "./ui/ui.js";
-import {parseJwt} from "./utils/utils.js";
+import {fetchTeacher} from "./api/api.js";
+import {validateTokenISU, saveTokensExtension} from "./api/authp.js";
 
 const INJECTED_ELEMENT_SELECTOR = 'reviews';
 const STATUS_BOX_SELECTOR = 'reviews-status-box';
@@ -49,31 +49,20 @@ async function rejectReviewBlock(status) {
 
 /** Сохраняет jwt в storage.local **/
 function identify() {
-    const match = document.cookie.match(
-        new RegExp('(^| )' + 'auth._id_token.itmoId' + '=([^;]+)')
+    const matchRT = document.cookie.match(
+        new RegExp('(^| )' + 'auth\\._refresh_token\\.itmoId' + '=([^;]+)')
+    )
+    if (!matchRT) return;
+    const matchAT = document.cookie.match(
+        new RegExp('(^| )' + 'auth\\._id_token\\.itmoId' + '=([^;]+)')
     );
-    if (!match) return;
+    if (!matchAT) return;
 
-    const token = match[2];
-    /** @type {JWTPayload} */
-    const payload = parseJwt(token);
-    if (!payload?.isu) {
-        console.log('[INJECTOR] isu not found');
-        return;
-    }
+    const rToken = matchRT[2];
+    const aToken = matchAT[2];
+    if (!validateTokenISU(aToken)) return;
 
-    if (!chrome.runtime?.id) return;
-
-    chrome.storage.local.set({ jwtToken: token }, () => {
-        const err = chrome.runtime.lastError;
-        if (err && !err.message.includes('Extension context invalidated')) {
-            console.error(err);
-        }
-    });
-
-    setJwtToken(token)
-
-    console.log('[INJECTOR] isu saved successfully');
+    saveTokensExtension(rToken, aToken);
 }
 
 /** Реагирует на изменения в DOM **/

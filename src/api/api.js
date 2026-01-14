@@ -1,11 +1,8 @@
+import {refreshToken, accessToken, isAccessTokenExpired,
+    resetTokensAuto, saveTokensAuto, validateTokenISU} from "./authp.js";
+
 /** Подменяется на этапе компиляции */
 /* global API_HOST */
-
-/** Задаётся в стартовом файле из хранилища chrome */
-export let jwtToken = null;
-export function setJwtToken(token) {
-    jwtToken = token;
-}
 
 /** Универсальная обёртка для запросов к API
  * @param {string} path
@@ -24,8 +21,29 @@ async function fetchJSON(method, path, options = {}, controller = null) {
         signal: controller?.signal
     };
 
-    if (jwtToken) {
-        fetchOptions.headers['token'] = jwtToken;
+    if (refreshToken) {
+        try {
+            if (!accessToken || isAccessTokenExpired()) {
+                const urlRefresh = new URL("/authp/refresh", API_HOST);
+                const resp = await fetch(urlRefresh, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                })
+                if (resp.ok) {
+                    const res = await resp.json()
+                    const aToken = res?.access_token;
+                    if (aToken && validateTokenISU(aToken)) {
+                        saveTokensAuto(refreshToken, aToken);
+                    }
+                } else {
+                    console.error('[API] Refresh status code ' + resp.status);
+                    resetTokensAuto();
+                }
+            }
+            if (accessToken) fetchOptions.headers['token'] = accessToken;
+        } catch (err) {
+            console.error('[API] Unable to refresh the token', err);
+        }
     }
 
     if (fetchOptions.method === 'GET') {

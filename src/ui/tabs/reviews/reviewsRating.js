@@ -1,4 +1,4 @@
-import {fetchTeacherRate} from "../api/api.js";
+import {fetchTeacherRate} from "../../../api/api.js";
 
 
 /** Создаём блок рейтинга */

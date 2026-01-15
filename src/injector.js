@@ -1,7 +1,7 @@
 'use strict';
 
-import * as strings from "./ui/strings.js";
-import {createInjector} from "./ui/ui.js";
+import * as strings from "./strings.js";
+import createReviewsContentBox from "./ui/tabs/reviews/reviewsContentBox.js";
 import {fetchTeacher} from "./api/api.js";
 import {validateTokenISU, saveTokensExtension} from "./api/authp.js";
 
@@ -16,6 +16,19 @@ const REVIEW_TITLE_HTML = `<div class="border-top mt-3"></div>
 <div id="${STATUS_BOX_SELECTOR}">
     Загружаем...
 </div>`
+
+/** Блок отзывов для вставки на сайт
+ * @param {Teacher} data
+ * */
+export function createInjector(data) {
+    const reviewBox = createReviewsContentBox(data);
+    if (reviewBox === null) return null;
+
+    const wrapper = document.createElement('div');
+    wrapper.appendChild(reviewBox);
+
+    return wrapper;
+}
 
 /** Создаёт пустой блок reviews на сайте **/
 function createReviewBlock(id) {

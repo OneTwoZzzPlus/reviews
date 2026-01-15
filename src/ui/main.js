@@ -1,16 +1,23 @@
-import * as strings from "./ui/strings.js";
-import {createMenu, createSearch, createTeacher, createSubject} from "./ui/ui.js";
-import {fetchSearch, fetchTeacher, fetchSubject} from "./api/api.js";
+import * as strings from "../strings.js";
+import {createMenu} from "./tabs/tabMenu.js";
+import {createSearch} from "./tabs/tabSearch.js";
+import {createTeacher} from "./tabs/tabTeacher.js";
+import {createSubject} from "./tabs/tabSubject.js";
+import {createLoginForm} from "./tabs/tabLogin.js";
+import {fetchSearch, fetchTeacher, fetchSubject} from "../api/api.js";
 
-export let isuBox, container, statusBox;
-let content = 'empty';
+let isuBox, container, statusBox;
 let input, inputReset, menuBtn;
+let loginCallback = undefined;
+let content = 'empty';
+let isAuth = false;
 let timeoutId;
 let abortController;
 
 
-/** Создаём интерфейс */
-export function createMainPage(logoutCallback) {
+/** Контроллер страницы */
+export function createMainPage(logoutCallback, loginCallbackLocal=undefined) {
+    loginCallback = loginCallbackLocal;
     statusBox = document.querySelector('#reviews-status-box');
     isuBox = document.querySelector('#reviews-isu-box');
     container = document.querySelector('#reviews-container');
@@ -19,11 +26,12 @@ export function createMainPage(logoutCallback) {
     menuBtn = document.querySelector('#reviews-menu');
 
     inputReset.addEventListener('click', () => {
-        content = 'empty';
-        statusBox.innerHTML = '';
-        container.innerHTML = '';
+        input.value = '';
+        input.focus();
+        clearMainPage();
     });
     menuBtn.addEventListener('click', () => {
+        if (!isAuth) return;
         content = 'menu';
         statusBox.innerHTML = '';
         container.innerHTML = '';
@@ -35,6 +43,36 @@ export function createMainPage(logoutCallback) {
         clearTimeout(timeoutId);
         timeoutId = setTimeout(search, 300);
     });
+}
+
+/** Чистим страницу */
+export function clearMainPage() {
+    content = 'empty';
+    statusBox.innerHTML = '';
+    container.innerHTML = '';
+}
+
+/** Открыть login форму */
+export function openLoginForm() {
+    container.innerHTML = "";
+    container.appendChild(createLoginForm(loginCallback));
+}
+
+/** В статус авторизованного */
+export function resolveLogin(payload) {
+    isAuth = true;
+    isuBox.innerHTML = strings.authStatusText(payload?.isu, payload?.name);
+    if (loginCallback !== undefined) isuBox.removeEventListener('click', openLoginForm);
+}
+
+/** В статус не авторизованного */
+export function rejectLogin(isuBoxHTML) {
+    isAuth = false;
+    isuBox.innerHTML = isuBoxHTML;
+    if (loginCallback !== undefined) {
+        isuBox.removeEventListener('click', openLoginForm);
+        isuBox.addEventListener('click', openLoginForm);
+    }
 }
 
 /** Обрабатываем ввод в строку поиска **/

@@ -1,10 +1,14 @@
 import {parseJwt, setCookie, getCookie} from "../utils/utils.js";
 
-export let isExtension = false;
+let isExtension = false;
 export let refreshToken = null;
 export let accessToken = null;
 let accessTokenExpiration = 0;
 const TIMEOUT = 300;
+
+export function isAuth() {
+    return refreshToken !== null
+}
 
 function setTokens(rToken, aToken) {
     refreshToken = rToken;
@@ -69,8 +73,8 @@ export function resetTokensExtension() {
 
 export function saveTokensPage(rToken, aToken) {
     isExtension = false;
-    setCookie('refresh_token', rToken, {secure: true});
-    setCookie('access_token', aToken, {secure: true});
+    setCookie('refresh_token', rToken, {secure: false});
+    setCookie('access_token', aToken, {secure: false});
 }
 
 export function loadTokensPage() {
@@ -89,8 +93,8 @@ export function loadTokensPage() {
 
 export function resetTokensPage() {
     isExtension = false;
-    document.cookie = 'refresh_token=; Max-Age=-1;';
-    document.cookie = 'access_token=; Max-Age=-1;';
+    document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     refreshToken = null;
     accessToken = null;
     accessTokenExpiration = 0;

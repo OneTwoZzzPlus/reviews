@@ -1,5 +1,5 @@
-import {parseCommentDate} from "../utils/utils.js";
-import {fetchCommentVote} from "../api/api.js";
+import {parseCommentDate} from "../../../utils/utils.js";
+import {fetchCommentVote} from "../../../api/api.js";
 
 
 /** Создаём блок отзывов

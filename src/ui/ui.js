@@ -2,10 +2,22 @@ import * as strings from "./strings";
 import createReviewsContentBox from "./reviewsContentBox.js";
 
 /** Меню */
-export function createMenu() {
+export function createMenu(logoutCallback) {
     const wrapper = document.createElement("div");
     wrapper.classList.add("reviews-menu");
-    wrapper.innerHTML = "тут будет менюшка =)";
+
+    const addReviewButton = document.createElement("button");
+    addReviewButton.classList.add("reviews-menu-item");
+    addReviewButton.innerHTML = strings.menuAddReviewBtnLabel;
+
+    const logoutButton = document.createElement("button");
+    logoutButton.classList.add("reviews-menu-item");
+    logoutButton.innerHTML = strings.menuLogoutBtnLabel;
+    logoutButton.addEventListener("click", logoutCallback)
+
+    wrapper.appendChild(addReviewButton);
+    wrapper.appendChild(logoutButton);
+
     return wrapper;
 }
 

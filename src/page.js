@@ -1,14 +1,15 @@
 'use strict';
 
-import {createMainPage, isuBox, container} from "./main.js";
+import {createMainPage, isuBox, container, statusBox} from "./main.js";
 import * as strings from "./ui/strings.js";
 import {fetchAuthPLogin} from "./api/api.js";
-import {validateTokenISU, saveTokensPage, loadTokensPage} from "./api/authp.js";
+import {resetTokensPage} from "./api/authp.js";
+import {validateTokenISU, saveTokensPage, loadTokensPage, refreshToken} from "./api/authp.js";
 
 document.addEventListener('DOMContentLoaded', main);
 
 async function main() {
-    createMainPage()
+    createMainPage(logoutCallback)
     authenticate()
 }
 
@@ -19,14 +20,22 @@ function openForm (_) {
 
 function authenticate() {
     loadTokensPage().then((payload) => {
-        if (payload?.isu) {
-            isuBox.innerHTML = strings.authStatusText(payload?.isu, payload?.name);
-        }
+        isuBox.innerHTML = strings.authStatusText(payload?.isu, payload?.name);
         isuBox.removeEventListener('click', openForm);
     }).catch(_ => {
         isuBox.removeEventListener('click', openForm);
         isuBox.addEventListener('click', openForm);
     })
+}
+
+function logoutCallback() {
+    if (!refreshToken) return;
+    resetTokensPage();
+
+    statusBox.innerHTML = '';
+    container.innerHTML = '';
+    isuBox.innerHTML = `<a>Вход</a>`;
+    isuBox.addEventListener('click', openForm);
 }
 
 function createLoginForm() {
@@ -45,14 +54,14 @@ function createLoginForm() {
         e.preventDefault();
 
         loginButton.disabled = true;
-        loginButton.innerHTML = strings.loadingBtnLoginLoading;
+        loginButton.innerHTML = strings.loginLoadingBtnLabel;
         fetchAuthPLogin(form.email.value, form.password.value).then(resp => {
             const rToken = resp?.refresh_token;
             const aToken = resp?.access_token;
             if (!rToken || !aToken) {
                 console.error("[AUTHP] Invalid response", resp);
                 loginButton.disabled = false;
-                loginButton.innerHTML = strings.loadingBtnLogin;
+                loginButton.innerHTML = strings.loginBtnLabel;
                 return;
             }
             if (!validateTokenISU(aToken)) return;
@@ -64,7 +73,7 @@ function createLoginForm() {
             if (status === 401) {alert(strings.authpCredentials)}
             else alert(strings.authpError + ` (статус ${status})`);
             loginButton.disabled = false;
-            loginButton.innerHTML = strings.loadingBtnLogin;
+            loginButton.innerHTML = strings.loginBtnLabel;
         });
     });
     return form;

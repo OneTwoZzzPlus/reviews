@@ -10,7 +10,7 @@ let abortController;
 
 
 /** Создаём интерфейс */
-export function createMainPage() {
+export function createMainPage(logoutCallback) {
     statusBox = document.querySelector('#reviews-status-box');
     isuBox = document.querySelector('#reviews-isu-box');
     container = document.querySelector('#reviews-container');
@@ -27,7 +27,7 @@ export function createMainPage() {
         content = 'menu';
         statusBox.innerHTML = '';
         container.innerHTML = '';
-        container.appendChild(createMenu());
+        container.appendChild(createMenu(logoutCallback));
     })
     input.addEventListener('input', () => {
         content = 'reviews';

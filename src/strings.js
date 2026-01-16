@@ -36,7 +36,7 @@ export function authStatusText(isu, name) {
 /** Иконки */
 export const symbols = {"teacher": "👨‍🏫", "subject": "📚"};
 
-/** */
+/** AuthP */
 export const authpLabel = `Это авторизация по <b>ID.ITMO</b> через прокси. <br/>
 Введите логин и пароль от ISU, они не сохраняются и очищаются после каждого запроса авторизации!`;
 
@@ -46,5 +46,6 @@ export const authpError = "Проверьте логин и пароль! Про
 export const loginBtnLabel = "Вход";
 export const loginLoadingBtnLabel = "Вход ⌛";
 
+/** Меню */
 export const menuLogoutBtnLabel = `<span class="error">💔 Выйти из аккаунта</span>`;
 export const menuAddReviewBtnLabel = "📝 Написать отзыв";

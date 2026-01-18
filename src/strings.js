@@ -8,6 +8,8 @@ export const unknownTypeText = `<span class="error">Не понятно, что 
 export const brokeReviewsText = "Отзывы пришли сломанные =(" + tip;
 export const brokeSearchText = "Результаты пришли сломанные =(" + tip;
 
+export const emptyCommentsList = "Отзывы отсутствуют \\(O_o)/";
+
 /** Ошибки при загрузке отзывов **/
 export function statusReviewsText(status) {
     switch (status) {

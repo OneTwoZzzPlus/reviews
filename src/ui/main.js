@@ -120,19 +120,16 @@ async function search() {
 
 /** Загрузка отзывов по преподу/предмету **/
 async function load(id, type) {
-    console.log(1);
     if (content !== 'search') return;
-    console.log(2)
     content = 'reviews'
+    statusBox.innerHTML = strings.loadingText;
     switch (type) {
         case 'teacher':
             fetchTeacher(id).then(data => {
                 const teacher = createTeacher(data);
-                console.log(3)
                 if (content !== 'reviews') return;
-                console.log(4)
                 if (teacher !== null) {
-                    console.log(5)
+                    statusBox.innerHTML = "";
                     container.innerHTML = "";
                     container.appendChild(teacher);
                     return;
@@ -149,6 +146,7 @@ async function load(id, type) {
                 const subject = createSubject(data);
                 if (content !== 'reviews') return;
                 if (subject !== null) {
+                    statusBox.innerHTML = "";
                     container.innerHTML = "";
                     container.appendChild(subject);
                     return;

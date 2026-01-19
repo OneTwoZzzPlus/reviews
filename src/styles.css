@@ -72,14 +72,14 @@
 }
 
 /*===== Input =====*/
-#reviews-input-wrapper {
+.rev-input-wrapper {
     width: 100%;
     display: flex;
     align-items: center;
     position: relative;
 }
 
-#reviews-input {
+.rev-input {
     width: 100%;
     padding: var(--padding);
     border: var(--border);
@@ -87,11 +87,11 @@
     padding-right: 2rem;
 }
 
-#reviews-input:hover {
+.rev-input:hover {
     border-color: var(--color-hover);
 }
 
-#reviews-input-reset {
+.rev-input-reset {
     cursor: pointer;
     position: absolute;
     right: 0.5rem;
@@ -109,7 +109,7 @@
     line-height: 1;
 }
 
-#reviews-input-reset:hover {
+.rev-input-reset:hover {
     background-color: var(--color-hover);
 }
 
@@ -132,11 +132,17 @@
 .search-item {
     background: var(--color-bg);
     padding: 0.375rem;
-    border-bottom: var(--border);
+    border: var(--border);
+    border-bottom: none;
+}
+
+.search-item:first-child {
+    border-radius: var(--radius) var(--radius) 0 0;
 }
 
 .search-item:last-child {
-    border-bottom: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    border-bottom: var(--border);
 }
 
 .search-item:hover, .search-item:focus {

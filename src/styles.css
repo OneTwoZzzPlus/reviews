@@ -442,10 +442,13 @@
 .comment-input {
     width: 100%;
     min-height: 10rem;
-    padding: 0.5rem 1rem 1.5rem 1rem;
-    resize: vertical;
+    max-height: 70vh;
+    padding: 0.5rem 1rem 1.625rem 1rem;
+
+    resize: none;
 
     font-family: inherit;
+    line-height: 1.4;
 
     border: var(--border);
     border-radius: var(--radius);

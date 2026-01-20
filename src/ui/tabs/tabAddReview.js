@@ -2,8 +2,11 @@ import * as strings from "../../strings.js";
 import {fetchSearch} from "../../api/api.js";
 import {createSearch} from "./tabSearch.js";
 
+const MAX_INPUT = 64;
+const MAX_TEXTAREA = 10000;
+
 let isModerator = false;
-let state = {
+const emptyState = {
     teacher: {
         id: null,
         title: null,
@@ -12,8 +15,10 @@ let state = {
         id: null,
         title: null,
     },
-    subs: new Map()
-};
+    subs: new Map(),
+    comment: null,
+}
+let state = emptyState;
 
 /** Форма добавления отзыва */
 export function createAddReviewForm(newState=null, isUserModerator=false) {
@@ -26,11 +31,9 @@ export function createAddReviewForm(newState=null, isUserModerator=false) {
 
     bindEvents(wrapper, root)
 
-    if (newState !== null) state=newState;
+    if (newState !== null) state = newState;
 
-    refreshSingle(root.teacher, state.teacher);
-    refreshSingle(root.subject, state.subject);
-    refreshList(root.subs, state.subs)
+    refreshForm(root, state);
 
     return wrapper;
 }
@@ -75,8 +78,28 @@ function bindEvents(wrapper, root) {
             state.subs.delete(key)
             e.target.closest('.rev-list-item').remove();
         }
+        if (e.target === root.cancel) {
+            if (!isModerator) {
+                clearForm();
+            }
+        }
     });
     function inputEvent (e)  {
+        if (e.target === root.comment.input) {
+            state.comment = root.comment.input.value;
+
+            const length = root.comment.input.value.length;
+            root.comment.counter.textContent = length.toString()
+
+            const exceeded = length >= MAX_TEXTAREA;
+            root.comment.input.classList.toggle('limit-exceeded', exceeded);
+            root.comment.counter.parentElement.classList.toggle('limit-exceeded', exceeded);
+
+            const scrollY = window.scrollY;
+            root.comment.input.style.height = 'auto';
+            root.comment.input.style.height = root.comment.input.scrollHeight + 'px';
+            window.scrollTo(window.scrollX, scrollY + 1000);
+        }
         if (e.target === root.teacher.input) {
             inputState.teacher.value = root.teacher.input.value;
             clearTimeout(inputState.teacher.timeout);
@@ -227,6 +250,22 @@ function refreshList(rootEl, s) {
     rootEl.status.appendChild(revList);
 }
 
+function refreshComment(rootEl, s) {
+    rootEl.textContent = s;
+}
+
+function clearForm(root, state) {
+    state = emptyState;
+    refreshForm(root, state);
+}
+
+function refreshForm(root, state) {
+    refreshSingle(root.teacher, state.teacher);
+    refreshSingle(root.subject, state.subject);
+    refreshList(root.subs, state.subs);
+    refreshComment(root.comment, state.comment);
+}
+
 function getElements(root) {
     return {
         teacher: {
@@ -252,6 +291,7 @@ function getElements(root) {
             counter: root.querySelector("#addrev-comment-char-count"),
         },
         submit: root.querySelector("#addrev-commit"),
+        cancel: root.querySelector("#addrev-cancel"),
     };
 }
 
@@ -262,7 +302,7 @@ function renderAddReviewForm() {
             <label for="addrev-teacher-input">ФИО преподавателя</label>
             <input type="text" id="addrev-teacher-input" class="rev-input" 
                 placeholder="Иванов Иван Иванович" 
-                maxlength="64"/>
+                maxlength="${MAX_INPUT}"/>
             <button type="reset" id="addrev-teacher-input-reset" class="rev-input-reset">&times;</button>
         </div>
         <div id="addrev-teacher-container"></div>
@@ -273,7 +313,7 @@ function renderAddReviewForm() {
             <label for="addrev-subject-input">Название предмета</label>
             <input type="text" id="addrev-subject-input" class="rev-input" 
             placeholder="Математический анализ" 
-            maxlength="64"/>
+            maxlength="${MAX_INPUT}"/>
             <button type="reset" id="addrev-subject-input-reset" class="rev-input-reset">&times;</button>
         </div>
         <div id="addrev-subject-container"></div>
@@ -284,7 +324,7 @@ function renderAddReviewForm() {
             <label for="addrev-sub-input">Название предмета</label>
             <input type="text" id="addrev-sub-input" class="rev-input" 
                 placeholder="Алгебра" 
-                maxlength="64"/>
+                maxlength="${MAX_INPUT}"/>
             <button type="reset" id="addrev-sub-input-reset" class="rev-input-reset">&times;</button>
         </div>
         <div id="addrev-sub-container"></div>
@@ -294,7 +334,7 @@ function renderAddReviewForm() {
                 
         <p class="add-rev-label">
             * Что можете о нём сказать? <br/>
-            <i>Как относиться к студентам? Как преподаёт? Трудно ли закрыться?</i>
+            <i>Как относиться к студентам? Как преподаёт? Трудно ли закрыться? Укажите уровень, если это английский.</i>
         </p>
         <div class="comment-textarea-wrapper">
             <label for="addrev-comment-input">Комментарий</label>
@@ -302,16 +342,16 @@ function renderAddReviewForm() {
                     id="addrev-comment-input"
                     class="comment-input"
                     placeholder="Можно писать кратко (обычно пишут 3–5 предложений)..."
-                    maxlength="32768"
+                    maxlength="${MAX_TEXTAREA}"
             ></textarea>
             <div class="comment-char-counter">
-                <span id="addrev-comment-char-count">0</span>/32768
+                <span id="addrev-comment-char-count">0</span>/${MAX_TEXTAREA}
             </div>
         </div>
         <button id="addrev-commit" class="rev-button">
             ${isModerator ? "Добавить отзыв" : "Отправить анонимный отзыв"}
         </button>
-        <div class="note">
+        <div id="addrev-cancel" class="note">
             <a>${isModerator ? "Отклонить отзыв" : "Очистить"}</a>
         </div>
     `

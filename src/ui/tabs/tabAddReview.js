@@ -228,7 +228,6 @@ function loadList(rootEl, is, s, id, type, title) {
 }
 
 function refreshList(rootEl, s) {
-    console.log(s)
     if (s.size === 0) {
         rootEl.status.innerHTML = `<p class="add-rev-status">Ничего не выбрано</p>`;
         return;
@@ -255,7 +254,7 @@ function refreshList(rootEl, s) {
 }
 
 function refreshComment(rootEl, s) {
-    rootEl.textContent = s;
+    rootEl.input.value = s;
 }
 
 function clearForm(root, state) {

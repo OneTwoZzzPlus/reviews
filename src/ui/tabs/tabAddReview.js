@@ -83,6 +83,9 @@ function bindEvents(wrapper, root) {
                 clearForm();
             }
         }
+        if (e.target === root.submit) {
+            alert("Упс, добавление отзыва и его модерация пока не реализовано. А пока тестируем форму и не осуждаем =)")
+        }
     });
     function inputEvent (e)  {
         if (e.target === root.comment.input) {

@@ -81,9 +81,10 @@ async function fetchJSON(method, path, options = {}, controller = null) {
     });
 }
 
-export async function fetchSearch(query, controller) {
+export async function fetchSearch(query, controller, strainer=null) {
     console.log(`[API] send /search for "${query}"`);
-    return await fetchJSON('GET', '/search', {"query": query}, controller)
+    const options = strainer === null ? {"query": query} : {"query": query, "strainer": strainer}
+    return await fetchJSON('GET', '/search', options, controller)
 }
 
 export async function fetchTeacher(id) {

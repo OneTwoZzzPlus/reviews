@@ -111,3 +111,33 @@ export async function fetchAuthPLogin(username, password) {
     console.log(`[API] send /authp/login`);
     return await fetchJSON('POST', `/authp/login`, {"username": username, "password": password})
 }
+
+export async function fetchIsModerator() {
+    console.log(`[API] send GET /moderator`);
+    return await fetchJSON('GET', `/moderator`)
+}
+
+export async function fetchSendSuggestion(body) {
+    console.log(`[API] send POST /suggestion`);
+    return await fetchJSON('POST', `/suggestion`, body)
+}
+
+export async function fetchGetSuggestionList() {
+    console.log(`[API] send GET /suggestion`);
+    return await fetchJSON('GET', `/suggestion`)
+}
+
+export async function fetchGetSuggestion(id) {
+    console.log(`[API] send GET /suggestion/${id}`);
+    return await fetchJSON('POST', `/suggestion/${id}`)
+}
+
+export async function fetchCommitSuggestion(id, body) {
+    console.log(`[API] send POST /suggestion/${id}/commit`);
+    return await fetchJSON('POST', `/suggestion/${id}/commit`, body)
+}
+
+export async function fetchCancelSuggestion(id, status='rejected') {
+    console.log(`[API] send POST /suggestion/${id}/cancel status=${status}`);
+    return await fetchJSON('POST', `/suggestion/${id}/cancel`, {'status': status})
+}

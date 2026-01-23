@@ -5,7 +5,7 @@ import {createTeacher} from "./tabs/tabTeacher.js";
 import {createSubject} from "./tabs/tabSubject.js";
 import {createLoginForm} from "./tabs/tabLogin.js";
 import {createAddReviewForm} from "./tabs/tabAddReview.js";
-import {fetchSearch, fetchTeacher, fetchSubject} from "../api/api.js";
+import {fetchSearch, fetchTeacher, fetchSubject, fetchIsModerator} from "../api/api.js";
 
 let header;
 let isuBox, container, statusBox;
@@ -14,6 +14,7 @@ let loginCallback = undefined;
 let logoutCallback = undefined;
 let content = 'dashboard';
 let isAuth = false;
+let isUserModerator = false;
 let timeoutId;
 let abortController;
 
@@ -52,7 +53,7 @@ export function clearMainPage() {
     statusBox.innerHTML = '';
     container.innerHTML = '';
     container.appendChild(createMenu(
-        isAuth,
+        isAuth, isUserModerator,
         logoutCallback,
         openAddReviewCallback
     ));
@@ -72,11 +73,21 @@ export function resolveLogin(payload) {
     isuBox.innerHTML = strings.authStatusText(payload?.isu, payload?.name);
     if (loginCallback !== undefined) isuBox.removeEventListener('click', openLoginForm);
     clearMainPage()
+
+    /** @param {ModeratorResponse} data */
+    fetchIsModerator().then(data => {
+        if (data?.access) {
+            isUserModerator = true;
+            console.log('You are moderator: ', isUserModerator);
+            clearMainPage();
+        }
+    }).catch(() => {})
 }
 
 /** В статус не авторизованного */
 export function rejectLogin(isuBoxHTML) {
     isAuth = false;
+    isUserModerator = false;
     isuBox.innerHTML = isuBoxHTML;
     if (loginCallback !== undefined) {
         isuBox.removeEventListener('click', openLoginForm);
@@ -181,5 +192,5 @@ function openAddReviewCallback() {
     header.innerHTML = strings.addHeader;
     statusBox.innerHTML = '';
     container.innerHTML = '';
-    container.appendChild(createAddReviewForm());
+    container.appendChild(createAddReviewForm(clearMainPage));
 }

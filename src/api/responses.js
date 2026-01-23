@@ -34,4 +34,12 @@
  * @typedef {{
  *     isu: string|number?
  * }} JWTPayload
+ *
+ * @typedef {{
+ *     access: string
+ * }} ModeratorResponse
+ *
+ * @typedef {{
+ *     access: string
+ * }} SuggestionCancelResponse
  */

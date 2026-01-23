@@ -83,3 +83,12 @@ export function getCookie(key) {
         ? decodeURIComponent(match.split('=')[1])
         : null;
 }
+
+export function normalizeString(str) {
+    if (typeof str !== 'string') return '';
+
+    return str
+        .normalize('NFKC') // нормализация Unicode (объединяет диакритики)
+        .replace(/[\s\uFEFF\xA0]+/g, ' ') // все пробельные символы в 1 пробел
+        .trim(); // удаляем пробелы с концов
+}

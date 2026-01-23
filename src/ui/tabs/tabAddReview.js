@@ -1,12 +1,13 @@
 import * as strings from "../../strings.js";
-import {fetchSearch} from "../../api/api.js";
+import {normalizeString} from "../../utils/utils.js"
+import {renderAddReviewForm, getElements, MAX_TEXTAREA} from "./creation/addReviewForm.js";
+import {fetchCancelSuggestion, fetchSearch, fetchSendSuggestion} from "../../api/api.js";
 import {createSearch} from "./tabSearch.js";
 
-const MAX_INPUT = 64;
-const MAX_TEXTAREA = 10000;
-
-let isModerator = false;
+let isUserModerator = false;
+let clearFormCallback = undefined;
 const emptyState = {
+    id: null,
     teacher: {
         id: null,
         title: null,
@@ -16,22 +17,21 @@ const emptyState = {
         title: null,
     },
     subs: new Map(),
-    comment: null,
+    comment: "",
 }
 let state = structuredClone(emptyState);
 
 /** Форма добавления отзыва */
-export function createAddReviewForm(newState=null, isUserModerator=false) {
-    isModerator = isUserModerator;
+export function createAddReviewForm(clearFormCallbackLocal, modeModerator=false, suggestionId=null) {
+    isUserModerator = modeModerator;
+    clearFormCallback = clearFormCallbackLocal;
 
     const wrapper = document.createElement("div");
-    wrapper.innerHTML = renderAddReviewForm();
+    wrapper.innerHTML = renderAddReviewForm(isUserModerator);
 
     const root = getElements(wrapper);
 
     bindEvents(wrapper, root)
-
-    if (newState !== null) state = newState;
 
     refreshForm(root);
 
@@ -79,12 +79,19 @@ function bindEvents(wrapper, root) {
             refreshList(root.subs, state.subs);
         }
         if (e.target === root.cancel) {
-            if (!isModerator) {
+            if (isUserModerator) {
+                cancelSuggestion()
+            } else {
                 clearForm(root);
             }
         }
         if (e.target === root.submit) {
-            alert("Упс, добавление отзыва и его модерация пока не реализовано. А пока тестируем форму и не осуждаем =)")
+            if (isUserModerator) {
+                // TODO: commitSuggestion
+            } else {
+                sendSuggestion()
+            }
+
         }
     });
     function inputEvent (e)  {
@@ -148,13 +155,62 @@ function bindEvents(wrapper, root) {
     })
 }
 
+function sendSuggestion() {
+    if (state.teacher.title === null) {
+        alert("Пожалуйста, выберите преподавателя =]");
+        return;
+    }
+    if (state.subject.title === null) {
+        alert("Пожалуйста, выберите основной предмет =]");
+        return;
+    }
+    if (normalizeString(state.comment).length === 0) {
+        alert("Не слишком ли мало вы написали?)");
+        return;
+    }
+    const requestBody = {
+        teacher: state.teacher,
+        subject: state.subject,
+        subs: Array.from(state.subs.values()),
+        text: state.comment,
+    }
+    // console.info(JSON.stringify(requestBody));
+    fetchSendSuggestion(requestBody).then(_ => {
+        alert("Спасибо! Отзыв будет опубликован как только пройдёт модерацию =)")
+        state = structuredClone(emptyState);
+        clearFormCallback();
+    }).catch(status => {
+        alert(`Сервер ответил ${status}`)
+    })
+}
+
+function cancelSuggestion() {
+    if (state.id !== null) {
+        const confirmation = confirm("Отклонить отзыв?");
+        if (confirmation) {
+            /** @param {SuggestionCancelResponse} data */
+            fetchCancelSuggestion(state.id, 'rejected').then(data => {
+                if (data.status === 'rejected') {
+                    clearFormCallback();
+                } else {
+                    alert(`Отклонить отзыв не удалось, он в состоянии: ${data.status}`);
+                }
+            }).catch(status => {
+                alert(`Сервер ответил ${status}`);
+            })
+        }
+    } else {
+        alert('State.id пустой!')
+    }
+}
+
 function search(rootEl, is, s, load) {
     if (!is.value || is.value.length < 3) return;
 
     is.controller?.abort();
     is.controller = new AbortController();
 
-    fetchSearch(is.value, is.controller, is.type).then(data => {
+    fetchSearch(normalizeString(is.value), is.controller, is.type).then(data => {
         rootEl.container.innerHTML = "";
         data.results.push({
             id: -1,
@@ -187,8 +243,10 @@ function loadSingle(rootEl, is, s, id, type, title) {
     if (type !== is.type && type !== "add") return;
 
     if (type === "add") {
+        const newTitle = normalizeString(is.value)
+        if (newTitle.length === 0) return;
         s.id = null;
-        s.title = is.value;
+        s.title = newTitle;
     } else {
         s.id = id;
         s.title = title;
@@ -199,7 +257,7 @@ function loadSingle(rootEl, is, s, id, type, title) {
 
 function refreshSingle(rootEl, s) {
     if (s.title === null) {
-        rootEl.status.innerHTML = `Никого не выбрано`;
+        rootEl.status.innerHTML = `Ничего не выбрано`;
         return;
     }
     if (s.id === null) {
@@ -267,95 +325,4 @@ function refreshForm(root) {
     refreshSingle(root.subject, state.subject);
     refreshList(root.subs, state.subs);
     refreshComment(root.comment, state.comment);
-}
-
-function getElements(root) {
-    return {
-        teacher: {
-            input: root.querySelector("#addrev-teacher-input"),
-            reset: root.querySelector("#addrev-teacher-input-reset"),
-            container: root.querySelector("#addrev-teacher-container"),
-            status: root.querySelector("#addrev-teacher-status"),
-        },
-        subject: {
-            input: root.querySelector("#addrev-subject-input"),
-            reset: root.querySelector("#addrev-subject-input-reset"),
-            container: root.querySelector("#addrev-subject-container"),
-            status: root.querySelector("#addrev-subject-status"),
-        },
-        subs: {
-            input: root.querySelector("#addrev-sub-input"),
-            reset: root.querySelector("#addrev-sub-input-reset"),
-            container: root.querySelector("#addrev-sub-container"),
-            status: root.querySelector("#addrev-sub-status"),
-        },
-        comment: {
-            input: root.querySelector("#addrev-comment-input"),
-            counter: root.querySelector("#addrev-comment-char-count"),
-        },
-        submit: root.querySelector("#addrev-commit"),
-        cancel: root.querySelector("#addrev-cancel"),
-    };
-}
-
-function renderAddReviewForm() {
-    return `
-        <p class="add-rev-label">* Добавление нового отзыва, для преподавателя...</p>
-        <div id="addrev-teacher-input-wrapper" class="rev-input-wrapper">
-            <label for="addrev-teacher-input">ФИО преподавателя</label>
-            <input type="text" id="addrev-teacher-input" class="rev-input" 
-                placeholder="Иванов Иван Иванович" 
-                maxlength="${MAX_INPUT}"/>
-            <button type="reset" id="addrev-teacher-input-reset" class="rev-input-reset">&times;</button>
-        </div>
-        <div id="addrev-teacher-container"></div>
-        <p id="addrev-teacher-status" class="add-rev-status">Никого не выбрано</p>
-        
-        <p class="add-rev-label">* По какому предмету вы его знаете? <i>(Выберите основной)</i></p>
-        <div id="addrev-subject-input-wrapper" class="rev-input-wrapper">
-            <label for="addrev-subject-input">Название предмета</label>
-            <input type="text" id="addrev-subject-input" class="rev-input" 
-            placeholder="Математический анализ" 
-            maxlength="${MAX_INPUT}"/>
-            <button type="reset" id="addrev-subject-input-reset" class="rev-input-reset">&times;</button>
-        </div>
-        <div id="addrev-subject-container"></div>
-        <p id="addrev-subject-status" class="add-rev-status">Ничего не выбрано</p>
-        
-        <p class="add-rev-label">Какие еще предметы ведет? <i>(Отметьте, если знаете)</i></p>
-        <div id="addrev-sub-input-wrapper" class="rev-input-wrapper">
-            <label for="addrev-sub-input">Название предмета</label>
-            <input type="text" id="addrev-sub-input" class="rev-input" 
-                placeholder="Алгебра" 
-                maxlength="${MAX_INPUT}"/>
-            <button type="reset" id="addrev-sub-input-reset" class="rev-input-reset">&times;</button>
-        </div>
-        <div id="addrev-sub-container"></div>
-        <div id="addrev-sub-status">
-            <p class="add-rev-status">Ничего не выбрано</p>
-        </div>
-                
-        <p class="add-rev-label">
-            * Что можете о нём сказать? <br/>
-            <i>Как относиться к студентам? Как преподаёт? Трудно ли закрыться? Укажите уровень, если это английский.</i>
-        </p>
-        <div class="comment-textarea-wrapper">
-            <label for="addrev-comment-input">Комментарий</label>
-            <textarea
-                    id="addrev-comment-input"
-                    class="comment-input"
-                    placeholder="Можно писать кратко (обычно пишут 3–5 предложений)..."
-                    maxlength="${MAX_TEXTAREA}"
-            ></textarea>
-            <div class="comment-char-counter">
-                <span id="addrev-comment-char-count">0</span>/${MAX_TEXTAREA}
-            </div>
-        </div>
-        <button id="addrev-commit" class="rev-button">
-            ${isModerator ? "Добавить отзыв" : "Отправить анонимный отзыв"}
-        </button>
-        <button id="addrev-cancel" class="rev-button-s">
-            ${isModerator ? "Отклонить отзыв" : "Очистить"}
-        </button>
-    `
 }

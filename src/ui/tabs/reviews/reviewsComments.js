@@ -73,26 +73,23 @@ function createKarma(id, karma, user_karma, isAuth) {
     const downBtn = document.createElement("button");
     downBtn.classList.add("karma-btn");
 
-    upBtn.addEventListener("click", async (_event) => {
-        if (!isAuth) {
-            alert(strings.nonAuthText)
-            return;
-        }
-        const data = await fetchCommentVote(id, user_karma === 1 ? 0 : 1);
-        user_karma = data.user_karma;
-        karma = data.karma;
-        updateKarma(karmaSpan, upBtn, downBtn, karma, user_karma);
-    })
-    downBtn.addEventListener("click", async (_event) => {
-        if (!isAuth) {
-            alert(strings.nonAuthText)
-            return;
-        }
-        const data = await fetchCommentVote(id, user_karma === -1 ? 0 : -1 );
-        user_karma = data.user_karma;
-        karma = data.karma;
-        updateKarma(karmaSpan, upBtn, downBtn, karma, user_karma);
-    })
+    if (isAuth) {
+        upBtn.addEventListener("click", async (_event) => {
+            const data = await fetchCommentVote(id, user_karma === 1 ? 0 : 1);
+            user_karma = data.user_karma;
+            karma = data.karma;
+            updateKarma(karmaSpan, upBtn, downBtn, karma, user_karma);
+        })
+        downBtn.addEventListener("click", async (_event) => {
+            const data = await fetchCommentVote(id, user_karma === -1 ? 0 : -1);
+            user_karma = data.user_karma;
+            karma = data.karma;
+            updateKarma(karmaSpan, upBtn, downBtn, karma, user_karma);
+        })
+    } else {
+        upBtn.disabled = true;
+        downBtn.disabled = true;
+    }
 
     updateKarma(karmaSpan, upBtn, downBtn, karma, user_karma)
 

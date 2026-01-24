@@ -208,16 +208,19 @@ function openModeratorPanel() {
     if (!isUserModerator) return;
     content = 'moderator';
     header.innerHTML = strings.moderationHeader;
-    statusBox.innerHTML = 'Загрузка отзыва...';
+    statusBox.innerHTML = 'Загрузка предложки...';
     container.innerHTML = '';
 
+    /** @param {SuggestionListResponse} data */
     fetchGetSuggestionList().then(data => {
         if (content !== 'moderator') return;
         statusBox.innerHTML = '';
+        if (data.items.length === 0) {
+            statusBox.innerHTML = 'Предложка пуста =)';
+        }
         container.innerHTML = '';
         container.appendChild(createListReviewsForm(openModerationReview, data));
     }).catch(status => {
-        if (status === 404) statusBox.innerHTML = 'Предложка пуста =)';
         statusBox.innerHTML = `Сервер ответил ${status}`;
     })
 
@@ -227,7 +230,7 @@ function openModerationReview(id) {
     if (!isUserModerator) return;
     content = 'moderator-review';
     header.innerHTML = strings.moderationHeader;
-    statusBox.innerHTML = 'Загрузка предложки...';
+    statusBox.innerHTML = 'Загрузка отзыва...';
 
     fetchGetSuggestion(id).then(data => {
         statusBox.innerHTML = '';
@@ -236,6 +239,7 @@ function openModerationReview(id) {
             openModeratorPanel, data, true
         ));
     }).catch(status => {
+        openModeratorPanel()
         if (status === 404) statusBox.innerHTML = 'Нет такого отзыва в предложке =(';
         statusBox.innerHTML = `Сервер ответил ${status}`;
     })

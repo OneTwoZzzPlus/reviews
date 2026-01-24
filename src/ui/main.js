@@ -157,7 +157,7 @@ async function load(id, type) {
     switch (type) {
         case 'teacher':
             fetchTeacher(id).then(data => {
-                const teacher = createTeacher(data);
+                const teacher = createTeacher(data, isAuth);
                 if (content !== 'reviews') return;
                 if (teacher !== null) {
                     statusBox.innerHTML = "";
@@ -174,7 +174,7 @@ async function load(id, type) {
             break;
         case 'subject':
             fetchSubject(id).then(data => {
-                const subject = createSubject(data);
+                const subject = createSubject(data, isAuth);
                 if (content !== 'reviews') return;
                 if (subject !== null) {
                     statusBox.innerHTML = "";

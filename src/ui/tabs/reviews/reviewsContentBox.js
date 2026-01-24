@@ -6,8 +6,9 @@ import * as strings from "../../../strings.js";
 
 /** Создаём контент по преподавателю: рейтинг, отзывы и остальное
  * @param {Teacher} data
+ * @param {boolean} isAuth
  */
-export default function createReviewsContentBox(data) {
+export default function createReviewsContentBox(data, isAuth) {
     if (!data ||
         !Array.isArray(data.summaries) ||
         !Array.isArray(data.comments)
@@ -16,12 +17,12 @@ export default function createReviewsContentBox(data) {
     const wrapper = document.createElement('div');
     wrapper.classList.add("reviews-content-box");
 
-    wrapper.appendChild(createRating(data.id, data.rating, data?.user_rating));
+    wrapper.appendChild(createRating(data.id, data.rating, data?.user_rating, isAuth));
     if (data.summaries.length !== 0) {
         wrapper.appendChild(createSummaries(data.summaries));
     }
     if (data.comments.length !== 0) {
-        wrapper.appendChild(createComments(data.comments));
+        wrapper.appendChild(createComments(data.comments, isAuth));
     }
     if (data.summaries.length === 0 && data.comments.length === 0) {
         const comment = document.createElement('p')

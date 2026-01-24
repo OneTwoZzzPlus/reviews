@@ -5,6 +5,8 @@ import createReviewsContentBox from "./ui/tabs/reviews/reviewsContentBox.js";
 import {fetchTeacher} from "./api/api.js";
 import {validateTokenISU, saveTokensExtension} from "./api/authp.js";
 
+let isAuth = false;
+
 const INJECTED_ELEMENT_SELECTOR = 'reviews';
 const STATUS_BOX_SELECTOR = 'reviews-status-box';
 
@@ -21,7 +23,7 @@ const REVIEW_TITLE_HTML = `<div class="border-top mt-3"></div>
  * @param {Teacher} data
  * */
 export function createInjector(data) {
-    const reviewBox = createReviewsContentBox(data);
+    const reviewBox = createReviewsContentBox(data, isAuth);
     if (reviewBox === null) return null;
 
     const wrapper = document.createElement('div');
@@ -76,6 +78,7 @@ function identify() {
     if (!validateTokenISU(aToken)) return;
 
     saveTokensExtension(rToken, aToken);
+    isAuth = true;
 }
 
 /** Реагирует на изменения в DOM **/

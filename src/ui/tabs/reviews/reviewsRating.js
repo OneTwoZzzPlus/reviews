@@ -1,14 +1,19 @@
 import {fetchTeacherRate} from "../../../api/api.js";
+import * as strings from "../../../strings.js";
 
 
 /** Создаём блок рейтинга */
-export default function createRating(id, rating, user_rating) {
+export default function createRating(id, rating, user_rating, isAuth) {
     const wrapper = document.createElement("div");
     wrapper.classList.add("rating-box")
 
     wrapper.innerHTML = renderRating(id, rating, user_rating)
 
     wrapper.addEventListener('change', async (event) => {
+        if (!isAuth) {
+            alert(strings.nonAuthText)
+            return;
+        }
         if (event.target.name === `rating-${id}`) {
             const newRate = parseInt(event.target.value);
 

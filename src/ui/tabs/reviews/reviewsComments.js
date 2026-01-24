@@ -1,23 +1,25 @@
 import {parseCommentDate} from "../../../utils/utils.js";
 import {fetchCommentVote} from "../../../api/api.js";
+import * as strings from "../../../strings.js";
 
 
 /** Создаём блок отзывов
  * @param {Array<Comment>} commentsData - Данные списка отзывов
+ * @param {boolean} isAuth
  * @returns {HTMLDivElement}
  */
-export default function createComments(commentsData) {
+export default function createComments(commentsData, isAuth) {
     const wrapper = document.createElement('div');
     wrapper.classList.add('comments-wrap');
 
-    let commentsList = createCommentsList(commentsData);
+    let commentsList = createCommentsList(commentsData, isAuth);
 
     if (commentsData.length > 1) {
         const dropdown = createDropdown(commentsData);
         dropdown.addEventListener("change", (event) => {
             const model = parseInt(event.target.value);
             console.log(`[UI] sorting model ${model}`);
-            const newCL = createCommentsList(commentsData, model);
+            const newCL = createCommentsList(commentsData, isAuth, model);
             wrapper.replaceChild(newCL, commentsList);
             commentsList = newCL;
         });
@@ -30,20 +32,22 @@ export default function createComments(commentsData) {
 
 /** Создаём отсортированный список отзывов
  * @param {Array<Comment>} commentsData - Данные списка отзывов
+ * @param {boolean} isAuth
  * @param {number} model - Режим сортировки
  */
-function createCommentsList(commentsData, model = 0) {
+function createCommentsList(commentsData, isAuth, model = 0) {
     const wrapper = document.createElement('div');
     wrapper.classList.add('comments');
     const sortedCommentsData = sortComments(commentsData, model);
-    sortedCommentsData.map(cData => wrapper.append(createComment(cData)));
+    sortedCommentsData.map(cData => wrapper.append(createComment(cData, isAuth)));
     return wrapper;
 }
 
 /** Создание отзыва
  * @param {Comment} comment - Данные отзыва
+ * @param {boolean} isAuth
  */
-function createComment(comment) {
+function createComment(comment, isAuth) {
     const wrapper = document.createElement("div");
     wrapper.classList.add("comment");
     wrapper.innerHTML = `
@@ -54,12 +58,12 @@ function createComment(comment) {
         </div>
         <div>${comment.text}</div>
     `
-    wrapper.appendChild(createKarma(comment.id, comment.karma, comment.user_karma));
+    wrapper.appendChild(createKarma(comment.id, comment.karma, comment.user_karma, isAuth));
     return wrapper
 }
 
 /** Создание панельки кармы ▲▼△▽ */
-function createKarma(id, karma, user_karma) {
+function createKarma(id, karma, user_karma, isAuth) {
     const wrapper = document.createElement("div");
     wrapper.classList.add("karma");
     const karmaSpan = document.createElement("span");
@@ -70,12 +74,20 @@ function createKarma(id, karma, user_karma) {
     downBtn.classList.add("karma-btn");
 
     upBtn.addEventListener("click", async (_event) => {
+        if (!isAuth) {
+            alert(strings.nonAuthText)
+            return;
+        }
         const data = await fetchCommentVote(id, user_karma === 1 ? 0 : 1);
         user_karma = data.user_karma;
         karma = data.karma;
         updateKarma(karmaSpan, upBtn, downBtn, karma, user_karma);
     })
     downBtn.addEventListener("click", async (_event) => {
+        if (!isAuth) {
+            alert(strings.nonAuthText)
+            return;
+        }
         const data = await fetchCommentVote(id, user_karma === -1 ? 0 : -1 );
         user_karma = data.user_karma;
         karma = data.karma;

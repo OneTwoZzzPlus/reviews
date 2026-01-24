@@ -64,3 +64,6 @@ export const moderationHeader = "Модерация";
 
 /** Статусы предложки */
 export const suggestionStatus = {"delayed": "на рассмотрении", "accepted": "опубликован", "rejected": "отклонён"}
+
+/** Не авторизован */
+export const nonAuthText = "Для голосования авторизируйтесь"

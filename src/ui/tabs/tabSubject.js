@@ -2,8 +2,9 @@ import createReviewsContentBox from "./reviews/reviewsContentBox.js";
 
 /** Блок отзывов по предмету для popup
  * @param {Subject} data
+ * @param {boolean} isAuth
  * */
-export function createSubject(data) {
+export function createSubject(data, isAuth) {
     if (!data || !Array.isArray(data.teachers)) return null;
 
     data.teachers.sort((a, b) => {
@@ -12,7 +13,7 @@ export function createSubject(data) {
         return rating
     });
 
-    const reviewBoxes = data.teachers.map(teacher => createReviewsContentBox(teacher));
+    const reviewBoxes = data.teachers.map(teacher => createReviewsContentBox(teacher, isAuth));
     if (reviewBoxes.some(box => box === null)) return null;
 
     const wrapper = document.createElement('div');

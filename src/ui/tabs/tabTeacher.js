@@ -3,8 +3,8 @@ import createReviewsContentBox from "./reviews/reviewsContentBox.js";
 /** Блок отзывов по учителю для popup
  * @param {Teacher} data
  * */
-export function createTeacher(data) {
-    const reviewBox = createReviewsContentBox(data);
+export function createTeacher(data, isAuth) {
+    const reviewBox = createReviewsContentBox(data, isAuth);
     if (reviewBox === null) return null;
 
     const wrapper = document.createElement('div');

@@ -1,5 +1,4 @@
 import {fetchTeacherRate} from "../../../api/api.js";
-import * as strings from "../../../strings.js";
 
 
 /** Создаём блок рейтинга */
@@ -9,12 +8,18 @@ export default function createRating(id, rating, user_rating, isAuth) {
 
     wrapper.innerHTML = renderRating(id, rating, user_rating, isAuth);
 
+    let isFetched = false;
     wrapper.addEventListener('change', async (event) => {
         if (event.target.name === `rating-${id}`) {
+            if (isFetched) return;
             const newRate = parseInt(event.target.value);
-
-            const data = await fetchTeacherRate(id, newRate);
-            wrapper.innerHTML = renderRating(id, data.rating, data.user_rating, isAuth);
+            try {
+                isFetched = true;
+                const data = await fetchTeacherRate(id, newRate);
+                wrapper.innerHTML = renderRating(id, data.rating, data.user_rating, isAuth);
+            } finally {
+                isFetched = false;
+            }
         }
     });
 

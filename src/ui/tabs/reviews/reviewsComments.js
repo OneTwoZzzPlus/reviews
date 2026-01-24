@@ -1,6 +1,5 @@
 import {parseCommentDate} from "../../../utils/utils.js";
 import {fetchCommentVote} from "../../../api/api.js";
-import * as strings from "../../../strings.js";
 
 
 /** Создаём блок отзывов
@@ -74,17 +73,29 @@ function createKarma(id, karma, user_karma, isAuth) {
     downBtn.classList.add("karma-btn");
 
     if (isAuth) {
+        let isFetched = false;
         upBtn.addEventListener("click", async (_event) => {
-            const data = await fetchCommentVote(id, user_karma === 1 ? 0 : 1);
-            user_karma = data.user_karma;
-            karma = data.karma;
-            updateKarma(karmaSpan, upBtn, downBtn, karma, user_karma);
+            if (isFetched) return;
+            try {
+                isFetched = true;
+                const data = await fetchCommentVote(id, user_karma === 1 ? 0 : 1);
+                user_karma = data.user_karma;
+                karma = data.karma;
+                updateKarma(karmaSpan, upBtn, downBtn, karma, user_karma);
+            } finally {
+                isFetched = false;
+            }
         })
         downBtn.addEventListener("click", async (_event) => {
-            const data = await fetchCommentVote(id, user_karma === -1 ? 0 : -1);
-            user_karma = data.user_karma;
-            karma = data.karma;
-            updateKarma(karmaSpan, upBtn, downBtn, karma, user_karma);
+            if (isFetched) return;
+            try {
+                const data = await fetchCommentVote(id, user_karma === -1 ? 0 : -1);
+                user_karma = data.user_karma;
+                karma = data.karma;
+                updateKarma(karmaSpan, upBtn, downBtn, karma, user_karma);
+            } finally {
+                isFetched = false;
+            }
         })
     } else {
         upBtn.disabled = true;

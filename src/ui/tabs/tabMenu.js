@@ -1,11 +1,32 @@
 import * as strings from "../../strings.js";
+import {renderMainPage} from "./creation/addMainPage.js";
 
 /** Меню */
-export function createMenu(isAuth, isUserModerator,
-                           logoutCallback,
-                           loadReviewsCallback,
-                           openAddReviewCallback,
-                           openModeratorPanelCallback) {
+export function createMainPageFilling(isAuth, isUserModerator,
+                                      logoutCallback,
+                                      loadReviewsCallback,
+                                      openAddReviewCallback,
+                                      openModeratorPanelCallback) {
+    const wrapper = document.createElement("div");
+
+    wrapper.appendChild(createMenu(
+        isAuth, isUserModerator,
+        logoutCallback,
+        loadReviewsCallback,
+        openAddReviewCallback,
+        openModeratorPanelCallback
+    ));
+    wrapper.appendChild(createContent(
+        loadReviewsCallback
+    ));
+
+    return wrapper;
+}
+
+function createMenu(isAuth, isUserModerator,
+                    logoutCallback,
+                    openAddReviewCallback,
+                    openModeratorPanelCallback) {
     const wrapper = document.createElement("div");
     wrapper.classList.add("reviews-menu");
 
@@ -34,4 +55,17 @@ export function createMenu(isAuth, isUserModerator,
     }
 
     return wrapper;
+}
+
+function createContent(loadReviewsCallback) {
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = renderMainPage();
+
+    wrapper.addEventListener("click", (e) => {
+        if (e.target.classList.contains('tile')) {
+            const key = e.target.getAttribute('data-id');
+            loadReviewsCallback(key, 'subject')
+        }
+    })
+    return wrapper
 }

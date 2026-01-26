@@ -45,12 +45,19 @@
             padding: var(--padding);
         }
     </style>
+    <style>
+        :root {
+
+        }
+
+
+    </style>
 </head>
 <body>
     <div class="page-wrapper">
         <div id="reviews-header-row">
             <p id="reviews-menu">☰</p>
-            <p id="reviews-header">Новый отзыв</p>
+            <p id="reviews-header">Поиск отзывов</p>
             <p id="reviews-isu-box"><a>Вход</a></p>
         </div>
         <div id="reviews-wrapper">
@@ -61,108 +68,91 @@
             </div>
             <p id="reviews-status-box"></p>
             <div id="reviews-container">
-                <p class="add-rev-label">* Добавление нового отзыва, для преподавателя...</p>
-                <div id="addrev-teacher-input-wrapper" class="rev-input-wrapper">
-                    <label for="addrev-teacher-input">ФИО преподавателя</label>
-                    <input type="text" id="addrev-teacher-input" class="rev-input" placeholder="Иванов Иван Иванович" />
-                    <button type="reset" id="addrev-teacher-input-reset" class="rev-input-reset">&times;</button>
-                </div>
-                <div id="addrev-teacher-container">
-                    <div class="search-list">
-                        <div class="search-item">
-                            👨‍🏫
-                            Трифанова Екатерина Станиславовна
-                            <span class="search-id">118479</span>
-                        </div>
-                        <div class="search-item">
-                            👨‍🏫
-                            Правдин Константин Владимирович
-                            <span class="search-id">138626</span>
-                        </div>
-                        <div class="search-item">
-                            ➕ Добавить нового!
-                        </div>
+
+                <div class="category">
+                    <h3 class="category-title">Английский</h3>
+                    <div class="tiles-container">
+                        <div class="tile orange" data-id="101">A1</div>
+                        <div class="tile orange" data-id="102">A2</div>
+                        <div class="tile orange" data-id="103">B1.1</div>
+                        <div class="tile orange" data-id="104">B1.2</div>
+                        <div class="tile orange" data-id="105">B2</div>
+                        <div class="tile orange" data-id="106">C1</div>
+                        <div class="tile orange" data-id="107">C2</div>
                     </div>
                 </div>
-                <p id="addrev-teacher-status" class="add-rev-status">Никого не выбрано</p>
-                <p class="add-rev-label">* По какому предмету вы его знаете? <i>(Выберите основной)</i></p>
-                <div id="addrev-subject-input-wrapper" class="rev-input-wrapper">
-                    <label for="addrev-subject-input">Название предмета</label>
-                    <input type="text" id="addrev-subject-input" class="rev-input" placeholder="Математический анализ" />
-                    <button type="reset" id="addrev-subject-input-reset" class="rev-input-reset">&times;</button>
-                </div>
-                <div id="addrev-subject-container">
-                    <div class="search-list">
-                        <div class="search-item">
-                            📚
-                            Дискретная математика
-                            <span class="search-id">14</span>
-                        </div>
-                        <div class="search-item">
-                            📚
-                            Математическая статистика
-                            <span class="search-id">24</span>
-                        </div>
-                        <div class="search-item">
-                            ➕ Добавить новый!
-                        </div>
+
+                <div class="category">
+                    <h3 class="category-title">Общие предметы</h3>
+                    <div class="tiles-container">
+                        <div class="tile green">Физкультура</div>
+                        <div class="tile green">Философия</div>
+                        <div class="tile green">Коммуникации и командообразование</div>
+                        <div class="tile green">Техники публичных выступлений</div>
                     </div>
                 </div>
-                <p id="addrev-subject-status" class="add-rev-status">Ничего не выбрано</p>
-                <p class="add-rev-label">Какие еще предметы ведет? <i>(Отметьте, если знаете)</i></p>
-                <div id="addrev-sub-input-wrapper" class="rev-input-wrapper">
-                    <label for="addrev-sub-input">Название предмета</label>
-                    <input type="text" id="addrev-sub-input" class="rev-input" placeholder="Математический анализ" />
-                    <button type="reset" id="addrev-sub-input-reset" class="rev-input-reset">&times;</button>
-                </div>
-                <div id="addrev-sub-container">
-                    <div class="search-list">
-                        <div class="search-item">
-                            📚
-                            Дискретная математика
-                            <span class="search-id">14</span>
-                        </div>
-                        <div class="search-item">
-                            📚
-                            Математическая статистика
-                            <span class="search-id">24</span>
-                        </div>
-                        <div class="search-item">
-                            ➕ Добавить новый!
-                        </div>
+
+                <div class="category">
+                    <h3 class="category-title">Математика</h3>
+                    <div class="tiles-container">
+                        <div class="tile red">Матанализ</div>
+                        <div class="tile red">Матанализ (прод)</div>
+                        <div class="tile red">Алгебра</div>
+                        <div class="tile red">Алгебра (прод)</div>
+                        <div class="tile red">Дискретная математика</div>
+                        <div class="tile red">Теорвер</div>
+                        <div class="tile red">Матстат</div>
+                        <div class="tile red">ДГМА</div>
+                        <div class="tile red">ТФКП</div>
+                        <div class="tile red">Основы теории игр</div>
+                        <div class="tile red">Дифференциальные уравнения</div>
+                        <div class="tile red">Численные методы моделирования</div>
                     </div>
                 </div>
-                <div class="rev-list">
-                    <p id="addrev-sub-status" class="rev-list-title">Выбрано: </p>
-                    <div class="rev-list-item">
-                        Дискретная математика
-                        <button class="rev-list-item-reset">&times;</button>
-                    </div>
-                    <div class="rev-list-item">
-                        Математическая статистика
-                        <button class="rev-list-item-reset">&times;</button>
-                    </div>
-                    <div class="rev-list-item">
-                        <span class="add-rev-status">Новый:</span> ТФКП
-                        <button class="rev-list-item-reset">&times;</button>
+
+                <div class="category">
+                    <h3 class="category-title">ПИН</h3>
+                    <div class="tiles-container">
+                        <div class="tile yellow">Программирование</div>
+                        <div class="tile yellow">Алгосы</div>
+                        <div class="tile yellow">Инфоком</div>
+                        <div class="tile yellow">ПиРБД</div>
+                        <div class="tile yellow">ООП</div>
                     </div>
                 </div>
-                <p class="add-rev-label">
-                    * Что можете о нём сказать? <br/>
-                    <i>Что он за человек? Как он преподаёт? Трудно ли закрыться?</i>
-                </p>
-                <div class="comment-textarea-wrapper">
-                    <label for="addrev-comment-input">Комментарий</label>
-                    <textarea
-                            id="addrev-comment-input"
-                            class="comment-input"
-                            placeholder="Можно писать кратко (обычно пишут 3–5 предложений)..."
-                            maxlength="32768"
-                    ></textarea>
-                <div class="comment-char-counter">
-                    <span id="addrev-comment-char-count">0</span>/32768
+
+                <div class="category">
+                    <h3 class="category-title">ВТ</h3>
+                    <div class="tiles-container">
+                        <div class="tile purple">Дискретка (база³)</div>
+                        <div class="tile purple">Дискретка (прод)</div>
+                        <div class="tile purple">ОПД</div>
+                        <div class="tile purple">Программирование</div>
+                        <div class="tile purple">Информатика</div>
+                        <div class="tile purple">БД</div>
+                        <div class="tile purple">ЯПы</div>
+                        <div class="tile purple">web</div>
+                        <div class="tile purple">Арх ЭВМ</div>
+                        <div class="tile purple">ИБ</div>
+                    </div>
                 </div>
-                <button id="addrev-commit" class="rev-button">Отправить анонимный отзыв</button>
+
+                <div class="category">
+                    <h3 class="category-title">История</h3>
+                    <div class="tiles-container">
+                        <div class="tile blue">История русской культуры в контексте мировой культуры</div>
+                        <div class="tile blue">Россия в истории современных международных отношений</div>
+                        <div class="tile blue">Реформы и реформаторы в истории России</div>
+                        <div class="tile blue">История российской науки и техники</div>
+                        <div class="tile blue">История России и мира в ХХ веке</div>
+                        <div class="tile blue">Социальная история России</div>
+                    </div>
+                </div>
+
+                <div class="category">
+                    <h3 class="category-title">Вашего факультета нет?!</h3>
+                    <a href="https://t.me/reviews_ext">Напишите в директ</a>
+                </div>
             </div>
             <div class="note">
                 Если вы хотите поддержать проект, поставьте <b>★</b> на

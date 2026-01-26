@@ -1,5 +1,5 @@
 import * as strings from "../strings.js";
-import {createMenu} from "./tabs/tabMenu.js";
+import {createMainPageFilling} from "./tabs/tabMenu.js";
 import {createSearch} from "./tabs/tabSearch.js";
 import {createTeacher} from "./tabs/tabTeacher.js";
 import {createSubject} from "./tabs/tabSubject.js";
@@ -60,7 +60,7 @@ export function clearMainPage() {
     header.innerHTML = strings.mainHeader;
     statusBox.innerHTML = '';
     container.innerHTML = '';
-    container.appendChild(createMenu(
+    container.appendChild(createMainPageFilling(
         isAuth, isUserModerator,
         logoutCallback,
         load,

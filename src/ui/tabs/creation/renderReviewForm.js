@@ -107,7 +107,7 @@ export function renderAddReviewForm(isUserModerator, externalSource=false) {
         </div>
         
         ${isUserModerator || externalSource ?
-        `<button id="addrev-submit" class="rev-button-s">
+        `<button id="addrev-submit" class="rev-button">
             Добавить отзыв
         </button>`: 
         `<button id="addrev-submit" class="rev-button">

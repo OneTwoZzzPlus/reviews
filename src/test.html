@@ -46,11 +46,29 @@
         }
     </style>
     <style>
-        :root {
-
+        .mod-form {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 0.325rem;
         }
 
+        .mod-form-group {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+            gap: 0.325rem;
+        }
 
+        .mod-row {
+            width: 100%;
+        }
+
+        #mod-subject-id {
+            flex: 1;
+        }
     </style>
 </head>
 <body>
@@ -68,91 +86,36 @@
             </div>
             <p id="reviews-status-box"></p>
             <div id="reviews-container">
+                <details>
+                    <summary>Добавление преподавателя</summary>
+                    <form class="mod-form">
+                        <label for="mod-teacher-id">ИСУ</label>
+                        <input type="text" id="mod-teacher-id" class="mod-row" placeholder="XXXXXX">
 
-                <div class="category">
-                    <h3 class="category-title">Английский</h3>
-                    <div class="tiles-container">
-                        <div class="tile orange" data-id="101">A1</div>
-                        <div class="tile orange" data-id="102">A2</div>
-                        <div class="tile orange" data-id="103">B1.1</div>
-                        <div class="tile orange" data-id="104">B1.2</div>
-                        <div class="tile orange" data-id="105">B2</div>
-                        <div class="tile orange" data-id="106">C1</div>
-                        <div class="tile orange" data-id="107">C2</div>
-                    </div>
-                </div>
+                        <label for="mod-teacher-title">ФИО</label>
+                        <input type="text" id="mod-teacher-title" class="mod-row" placeholder="ФИО">
 
-                <div class="category">
-                    <h3 class="category-title">Общие предметы</h3>
-                    <div class="tiles-container">
-                        <div class="tile green">Физкультура</div>
-                        <div class="tile green">Философия</div>
-                        <div class="tile green">Коммуникации и командообразование</div>
-                        <div class="tile green">Техники публичных выступлений</div>
-                    </div>
-                </div>
+                        <button type="submit" id="mod-teacher-submit" class="mod-row">Задать</button>
+                    </form>
+                </details>
 
-                <div class="category">
-                    <h3 class="category-title">Математика</h3>
-                    <div class="tiles-container">
-                        <div class="tile red">Матанализ</div>
-                        <div class="tile red">Матанализ (прод)</div>
-                        <div class="tile red">Алгебра</div>
-                        <div class="tile red">Алгебра (прод)</div>
-                        <div class="tile red">Дискретная математика</div>
-                        <div class="tile red">Теорвер</div>
-                        <div class="tile red">Матстат</div>
-                        <div class="tile red">ДГМА</div>
-                        <div class="tile red">ТФКП</div>
-                        <div class="tile red">Основы теории игр</div>
-                        <div class="tile red">Дифференциальные уравнения</div>
-                        <div class="tile red">Численные методы моделирования</div>
-                    </div>
-                </div>
+                <details>
+                    <summary>Добавление предмета</summary>
+                    <form class="mod-form">
+                        <div class="mod-form-group">
+                            <input type="checkbox" id="mod-subject-new">
+                            <label for="mod-subject-new">новый</label>
 
-                <div class="category">
-                    <h3 class="category-title">ПИН</h3>
-                    <div class="tiles-container">
-                        <div class="tile yellow">Программирование</div>
-                        <div class="tile yellow">Алгосы</div>
-                        <div class="tile yellow">Инфоком</div>
-                        <div class="tile yellow">ПиРБД</div>
-                        <div class="tile yellow">ООП</div>
-                    </div>
-                </div>
+                            <label for="mod-subject-id">ID</label>
+                            <input type="text" id="mod-subject-id" placeholder="добавить новый" disabled>
+                        </div>
 
-                <div class="category">
-                    <h3 class="category-title">ВТ</h3>
-                    <div class="tiles-container">
-                        <div class="tile purple">Дискретка (база³)</div>
-                        <div class="tile purple">Дискретка (прод)</div>
-                        <div class="tile purple">ОПД</div>
-                        <div class="tile purple">Программирование</div>
-                        <div class="tile purple">Информатика</div>
-                        <div class="tile purple">БД</div>
-                        <div class="tile purple">ЯПы</div>
-                        <div class="tile purple">web</div>
-                        <div class="tile purple">Арх ЭВМ</div>
-                        <div class="tile purple">ИБ</div>
-                    </div>
-                </div>
+                        <label for="mod-subject-title">название</label>
+                        <input type="text" id="mod-subject-title" class="mod-row" placeholder="название">
 
-                <div class="category">
-                    <h3 class="category-title">История</h3>
-                    <div class="tiles-container">
-                        <div class="tile blue">История русской культуры в контексте мировой культуры</div>
-                        <div class="tile blue">Россия в истории современных международных отношений</div>
-                        <div class="tile blue">Реформы и реформаторы в истории России</div>
-                        <div class="tile blue">История российской науки и техники</div>
-                        <div class="tile blue">История России и мира в ХХ веке</div>
-                        <div class="tile blue">Социальная история России</div>
-                    </div>
-                </div>
-
-                <div class="category">
-                    <h3 class="category-title">Вашего факультета нет?!</h3>
-                    <a href="https://t.me/reviews_ext">Напишите в директ</a>
-                </div>
+                        <button type="submit" id="mod-subject-submit" class="mod-row" >Задать</button>
+                    </form>
+                </details>
             </div>
             <div class="note">
                 Если вы хотите поддержать проект, поставьте <b>★</b> на

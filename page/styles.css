@@ -552,7 +552,7 @@
     margin-bottom: 0.5rem;
 }
 
-/** Главная страница */
+/** Main page */
 
 .category {
     margin-bottom: 1rem;
@@ -614,7 +614,7 @@
     outline-offset: 2px;
 }
 
-/* Цвета */
+/** Main page colors */
 .tile.orange {
     background-color: var(--secondary-orange);
     color: white;
@@ -643,4 +643,42 @@
 .tile.yellow {
     background-color: var(--secondary-yellow);
     color: white;
+}
+
+/** Mod update forms */
+.mod-form {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 0.325rem;
+}
+
+.mod-form-group {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 0.325rem;
+}
+
+.mod-row {
+    width: 100%;
+    margin: 0;
+}
+
+#mod-subject-id {
+    flex: 1;
+}
+
+.mod-input {
+    padding: var(--padding);
+    border: var(--border);
+    border-radius: var(--radius);
+    padding-right: 2rem;
+    transition: border-color 200ms;
+}
+
+.mod-input:hover {
+    border-color: var(--color-hover);
 }

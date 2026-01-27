@@ -14,6 +14,7 @@ import {
     fetchGetSuggestion
 } from "../api/api.js";
 import {createListReviewsForm} from "./tabs/tabListReviews.js";
+import {createUpdateForm} from "./tabs/tabModUpdate.js";
 
 let header;
 let isuBox, container, statusBox;
@@ -213,6 +214,7 @@ function openModeratorPanel() {
     header.innerHTML = strings.moderationHeader;
     statusBox.innerHTML = 'Загрузка предложки...';
     container.innerHTML = '';
+    container.appendChild(createUpdateForm());
 
     /** @param {SuggestionListResponse} data */
     fetchGetSuggestionList().then(data => {
@@ -221,7 +223,6 @@ function openModeratorPanel() {
         if (data.items.length === 0) {
             statusBox.innerHTML = 'Предложка пуста =)';
         }
-        container.innerHTML = '';
         container.appendChild(createListReviewsForm(openModerationReview, data));
     }).catch(status => {
         statusBox.innerHTML = `Сервер ответил ${status}`;
@@ -238,6 +239,7 @@ function openModerationReview(id) {
     fetchGetSuggestion(id).then(data => {
         statusBox.innerHTML = '';
         container.innerHTML = '';
+        container.appendChild(createUpdateForm());
         container.appendChild(createAddReviewForm(
             openModeratorPanel, data, true
         ));

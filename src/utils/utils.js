@@ -92,3 +92,11 @@ export function normalizeString(str) {
         .replace(/[\s\uFEFF\xA0]+/g, ' ') // все пробельные символы в 1 пробел
         .trim(); // удаляем пробелы с концов
 }
+
+export function getNonNegativeInt(str) {
+    if (/^\d+$/.test(str)) {
+        return parseInt(str, 10);
+    }
+
+    return null;
+}

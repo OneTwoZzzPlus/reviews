@@ -139,3 +139,15 @@ export async function fetchCommitSuggestion(id, body) {
 export async function fetchCancelSuggestion(id, status='rejected') {
     return await fetchJSON('POST', `/mod/suggestion/${id}/cancel`, {'status': status})
 }
+
+export async function fetchUpsertTeacher(body) {
+    return await fetchJSON('POST', `/mod/teacher`, body)
+}
+
+export async function fetchUpsertSubject(body) {
+    return await fetchJSON('POST', `/mod/subject`, body)
+}
+
+export async function fetchInsertComment(body) {
+    return await fetchJSON('POST', `/mod/comment`, body)
+}

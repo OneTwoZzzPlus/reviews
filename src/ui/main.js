@@ -132,6 +132,10 @@ async function search() {
     abortController = new AbortController();
 
     fetchSearch(name, abortController).then(data => {
+        if (data.results.length === 0) {
+            statusBox.innerHTML = strings.statusSearchText(404);
+            return;
+        }
         if (content !== 'search') return;
         header.innerHTML = strings.mainHeader;
         const searchBox = createSearch(data, (id, type) => {

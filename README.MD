@@ -30,21 +30,21 @@ npm install --save-dev archiver
 
 Сборка сайта
 ```shell
-node run build:prod
+npm run build-page:prod
 # или если api работает на localhost
-node run build:dev
+npm run build-page:dev
 ```
 
 Сборка расширения
 ```shell
-node run build-page:prod
+npm run build:prod
 # или если api работает на localhost
-node run build-page:dev
+npm run build:dev
 ```
 
 ### Деплой сайта (Github Pages)
 ```shell
-node run build-page:prod
+npm run build-page:prod
 git add .
 git commit -m "commit_message"
 git push -u origin main 
@@ -52,7 +52,7 @@ git push -u origin main
 
 ### Релиз расширения `release.js`
 ```shell
-node run release
+npm run release
 ```
 - Версию нужно указывать в `manifest.json`.
 - Для описания релиза будет использовано `release-notes.md`.

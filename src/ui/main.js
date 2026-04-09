@@ -15,6 +15,7 @@ import {
 } from "../api/api.js";
 import {createListReviewsForm} from "./tabs/tabListReviews.js";
 import {createUpdateForm} from "./tabs/tabModUpdate.js";
+import {navigation} from "./navigation.js";
 
 let header;
 let isuBox, container, statusBox;
@@ -40,22 +41,33 @@ export function createMainPage(logoutCallbackLocal, loginCallbackLocal=undefined
     menuBtn = document.querySelector('#reviews-menu');
     header = document.querySelector('#reviews-header');
 
-    inputReset.addEventListener('click', () => {
-        input.value = '';
-        input.focus();
-        clearMainPage();
-    });
-    menuBtn.addEventListener('click', clearMainPage)
-
+    menuBtn.addEventListener('click', () => {navigation.go('')});
     input.addEventListener('input', inputEvent);
     input.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
             inputEvent();
         }
     });
+    inputReset.addEventListener('click', () => {
+        input.value = '';
+        input.focus();
+    });
+
+    const routes = {
+        "/": clearMainPage,
+        "/login": openLoginForm,
+        "/suggestion": openAddReview,
+        "/moderation": openModeratorPanel,
+        "/moderation/suggestion": openModerationReview,
+        "/moderation/external": openExternalReview,
+    };
+    navigation.subscribe((path) => {
+        (routes[path] || clearMainPage)();
+    });
+    navigation.start();
 }
 
-/** Чистим страницу */
+/** Основная страница */
 export function clearMainPage() {
     content = 'dashboard';
     header.innerHTML = strings.mainHeader;
@@ -65,8 +77,8 @@ export function clearMainPage() {
         isAuth, isUserModerator,
         logoutCallback,
         load,
-        openAddReview,
-        openModeratorPanel
+        ()=>{navigation.go('/suggestion')},
+        ()=>{navigation.go('/moderation')}
     ));
 }
 
@@ -82,15 +94,15 @@ export function openLoginForm() {
 export function resolveLogin(payload) {
     isAuth = true;
     isuBox.innerHTML = strings.authStatusText(payload?.isu, payload?.name);
-    if (loginCallback !== undefined) isuBox.removeEventListener('click', openLoginForm);
-    clearMainPage()
+    if (loginCallback !== undefined) isuBox.removeEventListener('click', () => {navigation.go('/login')});
+    navigation.refresh();
 
     /** @param {ModeratorResponse} data */
     fetchIsModerator().then(data => {
         if (data?.access) {
             isUserModerator = true;
-            console.log('You are moderator: ', isUserModerator);
-            clearMainPage();
+            console.log('You are moderator!');
+            navigation.refresh();
         }
     }).catch(() => {})
 }
@@ -101,10 +113,10 @@ export function rejectLogin(isuBoxHTML) {
     isUserModerator = false;
     isuBox.innerHTML = isuBoxHTML;
     if (loginCallback !== undefined) {
-        isuBox.removeEventListener('click', openLoginForm);
-        isuBox.addEventListener('click', openLoginForm);
+        isuBox.removeEventListener('click', () => {navigation.go('/login')});
+        isuBox.addEventListener('click', () => {navigation.go('/login')});
     }
-    clearMainPage()
+    navigation.refresh();
 }
 
 /** Обработка отправки */
@@ -209,7 +221,7 @@ function openAddReview() {
     header.innerHTML = strings.addHeader;
     statusBox.innerHTML = '';
     container.innerHTML = '';
-    container.appendChild(createAddReviewForm(clearMainPage));
+    container.appendChild(createAddReviewForm(() => {navigation.go('/')}));
 }
 
 function openModeratorPanel() {
@@ -224,7 +236,7 @@ function openModeratorPanel() {
     button.classList.add('rev-button-s');
     button.style.margin = '0 0 0.5rem 0';
     button.innerHTML = "Добавить сторонний отзыв";
-    button.addEventListener('click', openExternalReview);
+    button.addEventListener('click', () => {navigation.go('/moderation/external')});
     container.appendChild(button);
 
     /** @param {SuggestionListResponse} data */
@@ -234,7 +246,7 @@ function openModeratorPanel() {
         if (data.items.length === 0) {
             statusBox.innerHTML = 'Предложка пуста =)';
         }
-        container.appendChild(createListReviewsForm(openModerationReview, data));
+        container.appendChild(createListReviewsForm(() => {navigation.go('/moderation/suggestion')}, data));
     }).catch(status => {
         statusBox.innerHTML = `Сервер ответил ${status}`;
     })
@@ -249,7 +261,7 @@ function openExternalReview() {
     container.innerHTML = '';
     container.appendChild(createUpdateForm());
     container.appendChild(createAddReviewForm(
-        openModeratorPanel, null, true, true
+        () => {navigation.go('/')}, null, true, true
     ));
 }
 
@@ -264,10 +276,10 @@ function openModerationReview(id) {
         container.innerHTML = '';
         container.appendChild(createUpdateForm());
         container.appendChild(createAddReviewForm(
-            openModeratorPanel, data, true
+            () => {navigation.go('/moderation')}, data, true
         ));
     }).catch(status => {
-        openModeratorPanel()
+        navigation.go('/moderation');
         if (status === 404) statusBox.innerHTML = 'Нет такого отзыва в предложке =(';
         statusBox.innerHTML = `Сервер ответил ${status}`;
     })

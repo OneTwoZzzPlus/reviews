@@ -19,10 +19,9 @@ import {router} from "./router.js";
 
 let header;
 let isuBox, container, statusBox;
-let input, inputReset, menuBtn;
+let input, inputReset, menuBtn, overlay;
 let loginCallback = undefined;
 let logoutCallback = undefined;
-let content = 'dashboard';
 let isAuth = false;
 let isUserModerator = false;
 let timeoutId;
@@ -40,6 +39,7 @@ export function createMainPage(logoutCallbackLocal, loginCallbackLocal=undefined
     inputReset = document.querySelector('#reviews-input-reset');
     menuBtn = document.querySelector('#reviews-menu');
     header = document.querySelector('#reviews-header');
+    overlay = document.querySelector('#reviews-search-overlay');
 
     menuBtn.addEventListener('click', () => {router.go('/')});
     input.addEventListener('input', inputEvent);
@@ -49,6 +49,7 @@ export function createMainPage(logoutCallbackLocal, loginCallbackLocal=undefined
         }
     });
     inputReset.addEventListener('click', () => {
+        overlay.innerHTML = "";
         input.value = '';
         input.focus();
     });
@@ -57,6 +58,7 @@ export function createMainPage(logoutCallbackLocal, loginCallbackLocal=undefined
     router.subscribe((params) => {
         statusBox.innerHTML = '';
         container.innerHTML = '';
+        overlay.innerHTML = "";
         header.innerHTML = params.header || strings.mainHeader;
     });
     router.route("/login", {header: strings.loginHeader}, openLoginForm)
@@ -64,24 +66,23 @@ export function createMainPage(logoutCallbackLocal, loginCallbackLocal=undefined
     router.route("/moderation", {header: strings.moderationHeader}, openModeratorPanel)
     router.route("/moderation/suggestion", {header: strings.moderationHeader}, openExternalReview)
     router.route("/moderation/suggestion/{id}", {header: strings.moderationHeader}, openModerationReview)
+    router.route("/{type}/{id}", {header: strings.mainHeader}, load)
     router.start();
 }
 
 /** Основная страница */
 export function clearMainPage() {
-    content = 'dashboard';
     container.appendChild(createMainPageFilling(
         isAuth, isUserModerator,
         logoutCallback,
-        load,
-        ()=>{router.go('/suggestion')},
-        ()=>{router.go('/moderation')}
+        (type, id) => router.go(`/${type}/${id}`),
+        () => router.go('/suggestion'),
+        () => router.go('/moderation')
     ));
 }
 
 /** Открыть login форму */
 export function openLoginForm() {
-    content = 'login';
     container.appendChild(createLoginForm(loginCallback));
 }
 
@@ -89,7 +90,7 @@ export function openLoginForm() {
 export function resolveLogin(payload) {
     isAuth = true;
     isuBox.innerHTML = strings.authStatusText(payload?.isu, payload?.name);
-    if (loginCallback !== undefined) isuBox.removeEventListener('click', () => {router.go('/login')});
+    if (loginCallback !== undefined) isuBox.removeEventListener('click', () => router.go('/login'));
     router.notify();
 
     /** @param {ModeratorResponse} data */
@@ -114,10 +115,8 @@ export function rejectLogin(isuBoxHTML) {
     router.notify();
 }
 
-/** Обработка отправки */
+/** Обработка отправки - debouncer */
 function inputEvent() {
-    content = 'search';
-    // debouncer
     clearTimeout(timeoutId);
     timeoutId = setTimeout(search, 300);
 }
@@ -126,54 +125,47 @@ function inputEvent() {
 async function search() {
     const name = input.value.trim();
     if (!name) {
-        statusBox.innerHTML = "";
+        overlay.innerHTML = "";
         return;
-    } else if (name.length < 3) {
-        statusBox.innerHTML = strings.fewCharactersText;
+    }
+    if (name.length < 3) {
+        overlay.innerHTML = strings.fewCharactersText;
         return;
     }
 
-    statusBox.innerHTML = strings.loadingText;
+    overlay.innerHTML = strings.loadingText;
 
     abortController?.abort();
     abortController = new AbortController();
 
     fetchSearch(name, abortController).then(data => {
         if (data.results.length === 0) {
-            statusBox.innerHTML = strings.statusSearchText(404);
+            overlay.innerHTML = strings.statusSearchText(404);
             return;
         }
-        if (content !== 'search') return;
-        header.innerHTML = strings.mainHeader;
-        const searchBox = createSearch(data, (id, type) => {
-            if (content !== 'search') return;
-            load(id, type);
-        }, isUserModerator);
+
+        const searchBox = createSearch(data,
+            (id, type) => router.go(`/${type}/${id}`),
+            isUserModerator
+        );
         if (searchBox) {
-            statusBox.innerHTML = "";
-            container.innerHTML = "";
-            container.appendChild(searchBox);
+            overlay.innerHTML = "";
+            overlay.appendChild(searchBox);
         } else {
-            container.innerHTML = "";
-            statusBox.innerHTML = strings.brokeSearchText;
+            overlay.innerHTML = strings.brokeSearchText;
         }
     }).catch(status => {
-        if (content !== 'search') return;
-        header.innerHTML = strings.mainHeader;
-        container.innerHTML = "";
-        statusBox.innerHTML = strings.statusSearchText(status);
+        overlay.innerHTML = strings.statusSearchText(status);
     })
 }
 
 /** Загрузка отзывов по преподу/предмету **/
-async function load(id, type) {
-    content = 'reviews'
+async function load(params) {
     statusBox.innerHTML = strings.loadingText;
-    switch (type) {
+    switch (params.type) {
         case 'teacher':
-            fetchTeacher(id).then(data => {
+            fetchTeacher(params.id).then(data => {
                 const teacher = createTeacher(data, isAuth);
-                if (content !== 'reviews') return;
                 if (teacher !== null) {
                     statusBox.innerHTML = "";
                     container.innerHTML = "";
@@ -181,16 +173,13 @@ async function load(id, type) {
                     return;
                 }
                 statusBox.innerHTML = strings.brokeReviewsText;
-                content = 'search';
             }).catch(status => {
                 statusBox.innerHTML = strings.statusReviewsText(status);
-                content = 'search';
             })
             break;
         case 'subject':
-            fetchSubject(id).then(data => {
+            fetchSubject(params.id).then(data => {
                 const subject = createSubject(data, isAuth);
-                if (content !== 'reviews') return;
                 if (subject !== null) {
                     statusBox.innerHTML = "";
                     container.innerHTML = "";
@@ -198,27 +187,22 @@ async function load(id, type) {
                     return;
                 }
                 statusBox.innerHTML = strings.brokeReviewsText;
-                content = 'search';
             }).catch(status => {
                 statusBox.innerHTML = strings.statusReviewsText(status);
-                content = 'search';
             })
             break;
         default:
-            console.error(`Неизвестный type ${type}`);
+            console.error(`Неизвестный type ${params.type}`);
             statusBox.innerHTML = strings.unknownTypeText;
-            content = 'search';
     }
 }
 
 function openAddReview() {
-    content = 'add-review';
     container.appendChild(createAddReviewForm(() => {router.go('/')}));
 }
 
 function openModeratorPanel() {
     if (!isUserModerator) return;
-    content = 'moderator';
     statusBox.innerHTML = 'Загрузка предложки...';
     container.appendChild(createUpdateForm());
 
@@ -231,7 +215,6 @@ function openModeratorPanel() {
 
     /** @param {SuggestionListResponse} data */
     fetchGetSuggestionList().then(data => {
-        if (content !== 'moderator') return;
         statusBox.innerHTML = '';
         if (data.items.length === 0) {
             statusBox.innerHTML = 'Предложка пуста =)';
@@ -248,7 +231,6 @@ function openModeratorPanel() {
 
 function openExternalReview() {
     if (!isUserModerator) return;
-    content = 'moderator-external';
     container.appendChild(createUpdateForm());
     container.appendChild(createAddReviewForm(
         () => {router.go('/moderation')}, null, true, true
@@ -257,7 +239,6 @@ function openExternalReview() {
 
 function openModerationReview(params) {
     if (!isUserModerator) return;
-    content = 'moderator-review';
     statusBox.innerHTML = 'Загрузка отзыва...';
 
     fetchGetSuggestion(params.id).then(data => {

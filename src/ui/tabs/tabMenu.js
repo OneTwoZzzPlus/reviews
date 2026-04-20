@@ -63,7 +63,7 @@ function createContent(loadReviewsCallback) {
     wrapper.addEventListener("click", (e) => {
         if (e.target.classList.contains('tile')) {
             const key = e.target.getAttribute('data-id');
-            loadReviewsCallback(key, 'subject')
+            loadReviewsCallback('subject', key)
         }
     })
     return wrapper

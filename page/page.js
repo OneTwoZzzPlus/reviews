@@ -194,7 +194,7 @@
     wrapper.addEventListener("click", (e) => {
       if (e.target.classList.contains("tile")) {
         const key = e.target.getAttribute("data-id");
-        loadReviewsCallback(key, "subject");
+        loadReviewsCallback("subject", key);
       }
     });
     return wrapper;
@@ -204,9 +204,8 @@
   function createSearch(data, callback, modeModerator2 = false) {
     const wrapper = document.createElement("div");
     wrapper.className = "search-list";
-    console.log(modeModerator2);
     data.results.forEach((s) => {
-      const item = document.createElement("div");
+      const item = document.createElement("button");
       item.className = "search-item";
       item.innerHTML = `
             ${symbols[s.type] || ""}
@@ -328,7 +327,6 @@
         console.error(err);
       } else {
         setTokens(rToken, aToken);
-        console.log("[AUTHP] tokens saved successfully");
       }
     });
   }
@@ -378,7 +376,6 @@
   // src/api/api.js
   async function fetchJSON(method, path, options = {}, controller = null) {
     const hasOptions = Object.keys(options).length > 0;
-    console.log(`[API] send ${method} ${path} ${hasOptions ? `with options = ${JSON.stringify(options)}` : ""}`);
     const url = new URL(path, "https://onetwozzzplus.work.gd/");
     const fetchOptions = {
       method: method.toUpperCase(),
@@ -390,7 +387,6 @@
     if (refreshToken) {
       try {
         if (!accessToken || isAccessTokenExpired()) {
-          console.log("[API] Refreshing token...");
           const urlRefresh = new URL("/authp/notify", "https://onetwozzzplus.work.gd/");
           const resp = await fetch(urlRefresh, {
             method: "POST",
@@ -402,7 +398,6 @@
             const aToken = res?.access_token;
             if (aToken && validateTokenISU(aToken)) {
               saveTokensAuto(refreshToken, aToken);
-              console.log("[API] Token refreshed successfully");
             } else {
               console.error("[API] Invalid token in notify response");
               resetTokensAuto();
@@ -429,13 +424,11 @@
     return new Promise((resolve, reject) => {
       fetch(url, fetchOptions).then(async (res) => {
         if (res.ok) {
-          console.log(`[API] fetch resolved ${method} ${path}`);
           const text = await res.text();
           resolve(text ? JSON.parse(text) : {});
         } else {
           const errorDetail = await res.json().catch(() => ({}));
           if (res.status === 401 || res.status === 404) {
-            console.info("[API] error details:", errorDetail);
           } else {
             console.error("[API] error details:", errorDetail);
           }
@@ -446,7 +439,6 @@
           console.error("[API] network error:", err);
           reject(0);
         } else {
-          console.log(`[API] fetch aborted ${method} ${path}`);
         }
       });
     });
@@ -507,7 +499,6 @@
       const dropdown = createDropdown(commentsData);
       dropdown.addEventListener("change", (event) => {
         const model = parseInt(event.target.value);
-        console.log(`[UI] sorting model ${model}`);
         const newCL = createCommentsList(commentsData, isAuth3, model);
         wrapper.replaceChild(newCL, commentsList);
         commentsList = newCL;
@@ -1559,9 +1550,9 @@
   var input;
   var inputReset;
   var menuBtn;
+  var overlay;
   var loginCallback = void 0;
   var logoutCallback = void 0;
-  var content = "dashboard";
   var isAuth2 = false;
   var isUserModerator = false;
   var timeoutId;
@@ -1576,6 +1567,7 @@
     inputReset = document.querySelector("#reviews-input-reset");
     menuBtn = document.querySelector("#reviews-menu");
     header = document.querySelector("#reviews-header");
+    overlay = document.querySelector("#reviews-search-overlay");
     menuBtn.addEventListener("click", () => {
       router.go("/");
     });
@@ -1586,6 +1578,7 @@
       }
     });
     inputReset.addEventListener("click", () => {
+      overlay.innerHTML = "";
       input.value = "";
       input.focus();
     });
@@ -1593,6 +1586,7 @@
     router.subscribe((params) => {
       statusBox.innerHTML = "";
       container.innerHTML = "";
+      overlay.innerHTML = "";
       header.innerHTML = params.header || mainHeader;
     });
     router.route("/login", { header: loginHeader }, openLoginForm);
@@ -1600,33 +1594,26 @@
     router.route("/moderation", { header: moderationHeader }, openModeratorPanel);
     router.route("/moderation/suggestion", { header: moderationHeader }, openExternalReview);
     router.route("/moderation/suggestion/{id}", { header: moderationHeader }, openModerationReview);
+    router.route("/{type}/{id}", { header: mainHeader }, load);
     router.start();
   }
   function clearMainPage() {
-    content = "dashboard";
     container.appendChild(createMainPageFilling(
       isAuth2,
       isUserModerator,
       logoutCallback,
-      load,
-      () => {
-        router.go("/suggestion");
-      },
-      () => {
-        router.go("/moderation");
-      }
+      (type, id) => router.go(`/${type}/${id}`),
+      () => router.go("/suggestion"),
+      () => router.go("/moderation")
     ));
   }
   function openLoginForm() {
-    content = "login";
     container.appendChild(createLoginForm(loginCallback));
   }
   function resolveLogin(payload) {
     isAuth2 = true;
     isuBox.innerHTML = authStatusText(payload?.isu, payload?.name);
-    if (loginCallback !== void 0) isuBox.removeEventListener("click", () => {
-      router.go("/login");
-    });
+    if (loginCallback !== void 0) isuBox.removeEventListener("click", () => router.go("/login"));
     router.notify();
     fetchIsModerator().then((data) => {
       if (data?.access) {
@@ -1652,56 +1639,48 @@
     router.notify();
   }
   function inputEvent() {
-    content = "search";
     clearTimeout(timeoutId);
     timeoutId = setTimeout(search2, 300);
   }
   async function search2() {
     const name = input.value.trim();
     if (!name) {
-      statusBox.innerHTML = "";
-      return;
-    } else if (name.length < 3) {
-      statusBox.innerHTML = fewCharactersText;
+      overlay.innerHTML = "";
       return;
     }
-    statusBox.innerHTML = loadingText;
+    if (name.length < 3) {
+      overlay.innerHTML = fewCharactersText;
+      return;
+    }
+    overlay.innerHTML = loadingText;
     abortController?.abort();
     abortController = new AbortController();
     fetchSearch(name, abortController).then((data) => {
       if (data.results.length === 0) {
-        statusBox.innerHTML = statusSearchText(404);
+        overlay.innerHTML = statusSearchText(404);
         return;
       }
-      if (content !== "search") return;
-      header.innerHTML = mainHeader;
-      const searchBox = createSearch(data, (id, type) => {
-        if (content !== "search") return;
-        load(id, type);
-      }, isUserModerator);
+      const searchBox = createSearch(
+        data,
+        (id, type) => router.go(`/${type}/${id}`),
+        isUserModerator
+      );
       if (searchBox) {
-        statusBox.innerHTML = "";
-        container.innerHTML = "";
-        container.appendChild(searchBox);
+        overlay.innerHTML = "";
+        overlay.appendChild(searchBox);
       } else {
-        container.innerHTML = "";
-        statusBox.innerHTML = brokeSearchText;
+        overlay.innerHTML = brokeSearchText;
       }
     }).catch((status) => {
-      if (content !== "search") return;
-      header.innerHTML = mainHeader;
-      container.innerHTML = "";
-      statusBox.innerHTML = statusSearchText(status);
+      overlay.innerHTML = statusSearchText(status);
     });
   }
-  async function load(id, type) {
-    content = "reviews";
+  async function load(params) {
     statusBox.innerHTML = loadingText;
-    switch (type) {
+    switch (params.type) {
       case "teacher":
-        fetchTeacher(id).then((data) => {
+        fetchTeacher(params.id).then((data) => {
           const teacher = createTeacher(data, isAuth2);
-          if (content !== "reviews") return;
           if (teacher !== null) {
             statusBox.innerHTML = "";
             container.innerHTML = "";
@@ -1709,16 +1688,13 @@
             return;
           }
           statusBox.innerHTML = brokeReviewsText;
-          content = "search";
         }).catch((status) => {
           statusBox.innerHTML = statusReviewsText(status);
-          content = "search";
         });
         break;
       case "subject":
-        fetchSubject(id).then((data) => {
+        fetchSubject(params.id).then((data) => {
           const subject = createSubject(data, isAuth2);
-          if (content !== "reviews") return;
           if (subject !== null) {
             statusBox.innerHTML = "";
             container.innerHTML = "";
@@ -1726,27 +1702,22 @@
             return;
           }
           statusBox.innerHTML = brokeReviewsText;
-          content = "search";
         }).catch((status) => {
           statusBox.innerHTML = statusReviewsText(status);
-          content = "search";
         });
         break;
       default:
-        console.error(`\u041D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u044B\u0439 type ${type}`);
+        console.error(`\u041D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u044B\u0439 type ${params.type}`);
         statusBox.innerHTML = unknownTypeText;
-        content = "search";
     }
   }
   function openAddReview() {
-    content = "add-review";
     container.appendChild(createAddReviewForm(() => {
       router.go("/");
     }));
   }
   function openModeratorPanel() {
     if (!isUserModerator) return;
-    content = "moderator";
     statusBox.innerHTML = "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u043A\u0438...";
     container.appendChild(createUpdateForm());
     const button = document.createElement("button");
@@ -1758,7 +1729,6 @@
     });
     container.appendChild(button);
     fetchGetSuggestionList().then((data) => {
-      if (content !== "moderator") return;
       statusBox.innerHTML = "";
       if (data.items.length === 0) {
         statusBox.innerHTML = "\u041F\u0440\u0435\u0434\u043B\u043E\u0436\u043A\u0430 \u043F\u0443\u0441\u0442\u0430 =)";
@@ -1775,7 +1745,6 @@
   }
   function openExternalReview() {
     if (!isUserModerator) return;
-    content = "moderator-external";
     container.appendChild(createUpdateForm());
     container.appendChild(createAddReviewForm(
       () => {
@@ -1788,7 +1757,6 @@
   }
   function openModerationReview(params) {
     if (!isUserModerator) return;
-    content = "moderator-review";
     statusBox.innerHTML = "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u043E\u0442\u0437\u044B\u0432\u0430...";
     fetchGetSuggestion(params.id).then((data) => {
       statusBox.innerHTML = "";

@@ -17,7 +17,7 @@ export default function createComments(commentsData, isAuth) {
         const dropdown = createDropdown(commentsData);
         dropdown.addEventListener("change", (event) => {
             const model = parseInt(event.target.value);
-            console.log(`[UI] sorting model ${model}`);
+            // console.log(`[UI] sorting model ${model}`);
             const newCL = createCommentsList(commentsData, isAuth, model);
             wrapper.replaceChild(newCL, commentsList);
             commentsList = newCL;

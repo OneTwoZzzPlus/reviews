@@ -18,7 +18,7 @@ try {
         entryPoints: [path.join(SRC_DIR, 'page.js')],
         bundle: true,
         outfile: path.join(PAGE_DIR, 'page.js'),
-        minify: true,
+        minify: false,
         sourcemap: true,
         target: ['chrome110'],
         define: {

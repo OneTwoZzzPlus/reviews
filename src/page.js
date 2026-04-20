@@ -2,7 +2,7 @@
 
 import {createMainPage, resolveLogin, rejectLogin} from "./ui/main.js";
 import {isAuth, loadTokensPage, resetTokensPage} from "./api/authp.js";
-import {navigation} from "./ui/navigation.js";
+import {router} from "./ui/router.js";
 
 const isuBoxHTML = `<a>Вход</a>`;
 const logoutConfirm = "Вы точно хотите выйти из аккаунта?";
@@ -21,10 +21,10 @@ async function main() {
 function loginCallback() {
     loadTokensPage().then((payload) => {
         resolveLogin(payload);
-        navigation.go('/');
+        router.go('/');
     }).catch(() => {
         rejectLogin(isuBoxHTML);
-        navigation.refresh();
+        router.notify();
     })
 }
 

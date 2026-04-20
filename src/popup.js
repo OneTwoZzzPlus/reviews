@@ -2,7 +2,7 @@
 
 import {clearMainPage, createMainPage, rejectLogin, resolveLogin} from "./ui/main.js";
 import {isAuth, loadTokensExtension, resetTokensExtension} from "./api/authp.js";
-import {navigation} from "./ui/navigation.js";
+import {router} from "./ui/router.js";
 
 const isuBoxHTML = `<a href="https://my.itmo.ru">Вход</a>`;
 
@@ -29,5 +29,5 @@ function logoutCallback() {
     if (!isAuth()) return;
     resetTokensExtension();
     rejectLogin(isuBoxHTML);
-    navigation.refresh();
+    router.notify();
 }

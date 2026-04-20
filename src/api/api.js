@@ -28,7 +28,7 @@ async function fetchJSON(method, path, options = {}, controller = null) {
         try {
             if (!accessToken || isAccessTokenExpired()) {
                 console.log('[API] Refreshing token...');
-                const urlRefresh = new URL("/authp/refresh", API_HOST);
+                const urlRefresh = new URL("/authp/notify", API_HOST);
                 const resp = await fetch(urlRefresh, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -41,7 +41,7 @@ async function fetchJSON(method, path, options = {}, controller = null) {
                         saveTokensAuto(refreshToken, aToken);
                         console.log('[API] Token refreshed successfully');
                     } else {
-                        console.error('[API] Invalid token in refresh response');
+                        console.error('[API] Invalid token in notify response');
                         resetTokensAuto();
                     }
                 } else {
@@ -53,7 +53,7 @@ async function fetchJSON(method, path, options = {}, controller = null) {
                 fetchOptions.headers['token'] = accessToken;
             }
         } catch (err) {
-            console.error('[API] Unable to refresh the token', err);
+            console.error('[API] Unable to notify the token', err);
         }
     }
 

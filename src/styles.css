@@ -171,7 +171,13 @@
 }
 
 /*===== Search list =====*/
+.search-overlay {
+    display: block;
+}
+
 .search-item {
+    width: 100%;
+    text-align: left;
     background: var(--color-bg);
     padding: 0.375rem;
     border: var(--border);

@@ -1,7 +1,8 @@
 'use strict';
 
-import {createMainPage, clearMainPage, resolveLogin, rejectLogin} from "./ui/main.js";
+import {createMainPage, resolveLogin, rejectLogin} from "./ui/main.js";
 import {isAuth, loadTokensPage, resetTokensPage} from "./api/authp.js";
+import {router} from "./ui/router.js";
 
 const isuBoxHTML = `<a>Вход</a>`;
 const logoutConfirm = "Вы точно хотите выйти из аккаунта?";
@@ -13,16 +14,17 @@ async function main() {
     loadTokensPage().then((payload) => {
         resolveLogin(payload);
     }).catch(() => {
-        rejectLogin(isuBoxHTML)
+        rejectLogin(isuBoxHTML);
     })
 }
 
 function loginCallback() {
     loadTokensPage().then((payload) => {
         resolveLogin(payload);
-        clearMainPage();
+        router.go('/');
     }).catch(() => {
-        rejectLogin(isuBoxHTML)
+        rejectLogin(isuBoxHTML);
+        router.notify();
     })
 }
 
@@ -32,5 +34,4 @@ function logoutCallback() {
     if (!confirmation) return;
     resetTokensPage();
     rejectLogin(isuBoxHTML);
-    clearMainPage();
 }

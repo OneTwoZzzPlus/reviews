@@ -15,13 +15,13 @@ import {
 } from "../api/api.js";
 import {createListReviewsForm} from "./tabs/tabListReviews.js";
 import {createUpdateForm} from "./tabs/tabModUpdate.js";
+import {router} from "./router.js";
 
 let header;
 let isuBox, container, statusBox;
-let input, inputReset, menuBtn;
+let input, inputReset, menuBtn, overlay;
 let loginCallback = undefined;
 let logoutCallback = undefined;
-let content = 'dashboard';
 let isAuth = false;
 let isUserModerator = false;
 let timeoutId;
@@ -39,42 +39,50 @@ export function createMainPage(logoutCallbackLocal, loginCallbackLocal=undefined
     inputReset = document.querySelector('#reviews-input-reset');
     menuBtn = document.querySelector('#reviews-menu');
     header = document.querySelector('#reviews-header');
+    overlay = document.querySelector('#reviews-search-overlay');
 
-    inputReset.addEventListener('click', () => {
-        input.value = '';
-        input.focus();
-        clearMainPage();
-    });
-    menuBtn.addEventListener('click', clearMainPage)
-
+    menuBtn.addEventListener('click', () => {router.go('/')});
     input.addEventListener('input', inputEvent);
     input.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
             inputEvent();
         }
     });
+    inputReset.addEventListener('click', () => {
+        overlay.innerHTML = "";
+        input.value = '';
+        input.focus();
+    });
+
+    router.init("/", strings.mainHeader, clearMainPage)
+    router.subscribe((params) => {
+        statusBox.innerHTML = '';
+        container.innerHTML = '';
+        overlay.innerHTML = "";
+        header.innerHTML = params.header || strings.mainHeader;
+    });
+    router.route("/login", {header: strings.loginHeader}, openLoginForm)
+    router.route("/suggestion", {header: strings.addHeader}, openAddReview)
+    router.route("/moderation", {header: strings.moderationHeader}, openModeratorPanel)
+    router.route("/moderation/suggestion", {header: strings.moderationHeader}, openExternalReview)
+    router.route("/moderation/suggestion/{id}", {header: strings.moderationHeader}, openModerationReview)
+    router.route("/{type}/{id}", {header: strings.mainHeader}, load)
+    router.start();
 }
 
-/** Чистим страницу */
+/** Основная страница */
 export function clearMainPage() {
-    content = 'dashboard';
-    header.innerHTML = strings.mainHeader;
-    statusBox.innerHTML = '';
-    container.innerHTML = '';
     container.appendChild(createMainPageFilling(
         isAuth, isUserModerator,
         logoutCallback,
-        load,
-        openAddReview,
-        openModeratorPanel
+        (type, id) => router.go(`/${type}/${id}`),
+        () => router.go('/suggestion'),
+        () => router.go('/moderation')
     ));
 }
 
 /** Открыть login форму */
 export function openLoginForm() {
-    content = 'login';
-    header.innerHTML = strings.loginHeader;
-    container.innerHTML = "";
     container.appendChild(createLoginForm(loginCallback));
 }
 
@@ -82,15 +90,15 @@ export function openLoginForm() {
 export function resolveLogin(payload) {
     isAuth = true;
     isuBox.innerHTML = strings.authStatusText(payload?.isu, payload?.name);
-    if (loginCallback !== undefined) isuBox.removeEventListener('click', openLoginForm);
-    clearMainPage()
+    if (loginCallback !== undefined) isuBox.removeEventListener('click', () => router.go('/login'));
+    router.notify();
 
     /** @param {ModeratorResponse} data */
     fetchIsModerator().then(data => {
         if (data?.access) {
             isUserModerator = true;
-            console.log('You are moderator: ', isUserModerator);
-            clearMainPage();
+            console.log('You are moderator!');
+            router.notify();
         }
     }).catch(() => {})
 }
@@ -101,16 +109,14 @@ export function rejectLogin(isuBoxHTML) {
     isUserModerator = false;
     isuBox.innerHTML = isuBoxHTML;
     if (loginCallback !== undefined) {
-        isuBox.removeEventListener('click', openLoginForm);
-        isuBox.addEventListener('click', openLoginForm);
+        isuBox.removeEventListener('click', () => {router.go('/login')});
+        isuBox.addEventListener('click', () => {router.go('/login')});
     }
-    clearMainPage()
+    router.notify();
 }
 
-/** Обработка отправки */
+/** Обработка отправки - debouncer */
 function inputEvent() {
-    content = 'search';
-    // debouncer
     clearTimeout(timeoutId);
     timeoutId = setTimeout(search, 300);
 }
@@ -119,54 +125,47 @@ function inputEvent() {
 async function search() {
     const name = input.value.trim();
     if (!name) {
-        statusBox.innerHTML = "";
+        overlay.innerHTML = "";
         return;
-    } else if (name.length < 3) {
-        statusBox.innerHTML = strings.fewCharactersText;
+    }
+    if (name.length < 3) {
+        overlay.innerHTML = strings.fewCharactersText;
         return;
     }
 
-    statusBox.innerHTML = strings.loadingText;
+    overlay.innerHTML = strings.loadingText;
 
     abortController?.abort();
     abortController = new AbortController();
 
     fetchSearch(name, abortController).then(data => {
         if (data.results.length === 0) {
-            statusBox.innerHTML = strings.statusSearchText(404);
+            overlay.innerHTML = strings.statusSearchText(404);
             return;
         }
-        if (content !== 'search') return;
-        header.innerHTML = strings.mainHeader;
-        const searchBox = createSearch(data, (id, type) => {
-            if (content !== 'search') return;
-            load(id, type);
-        }, isUserModerator);
+
+        const searchBox = createSearch(data,
+            (id, type) => router.go(`/${type}/${id}`),
+            isUserModerator
+        );
         if (searchBox) {
-            statusBox.innerHTML = "";
-            container.innerHTML = "";
-            container.appendChild(searchBox);
+            overlay.innerHTML = "";
+            overlay.appendChild(searchBox);
         } else {
-            container.innerHTML = "";
-            statusBox.innerHTML = strings.brokeSearchText;
+            overlay.innerHTML = strings.brokeSearchText;
         }
     }).catch(status => {
-        if (content !== 'search') return;
-        header.innerHTML = strings.mainHeader;
-        container.innerHTML = "";
-        statusBox.innerHTML = strings.statusSearchText(status);
+        overlay.innerHTML = strings.statusSearchText(status);
     })
 }
 
 /** Загрузка отзывов по преподу/предмету **/
-async function load(id, type) {
-    content = 'reviews'
+async function load(params) {
     statusBox.innerHTML = strings.loadingText;
-    switch (type) {
+    switch (params.type) {
         case 'teacher':
-            fetchTeacher(id).then(data => {
+            fetchTeacher(params.id).then(data => {
                 const teacher = createTeacher(data, isAuth);
-                if (content !== 'reviews') return;
                 if (teacher !== null) {
                     statusBox.innerHTML = "";
                     container.innerHTML = "";
@@ -174,16 +173,13 @@ async function load(id, type) {
                     return;
                 }
                 statusBox.innerHTML = strings.brokeReviewsText;
-                content = 'search';
             }).catch(status => {
                 statusBox.innerHTML = strings.statusReviewsText(status);
-                content = 'search';
             })
             break;
         case 'subject':
-            fetchSubject(id).then(data => {
+            fetchSubject(params.id).then(data => {
                 const subject = createSubject(data, isAuth);
-                if (content !== 'reviews') return;
                 if (subject !== null) {
                     statusBox.innerHTML = "";
                     container.innerHTML = "";
@@ -191,50 +187,42 @@ async function load(id, type) {
                     return;
                 }
                 statusBox.innerHTML = strings.brokeReviewsText;
-                content = 'search';
             }).catch(status => {
                 statusBox.innerHTML = strings.statusReviewsText(status);
-                content = 'search';
             })
             break;
         default:
-            console.error(`Неизвестный type ${type}`);
+            console.error(`Неизвестный type ${params.type}`);
             statusBox.innerHTML = strings.unknownTypeText;
-            content = 'search';
     }
 }
 
 function openAddReview() {
-    content = 'add-review';
-    header.innerHTML = strings.addHeader;
-    statusBox.innerHTML = '';
-    container.innerHTML = '';
-    container.appendChild(createAddReviewForm(clearMainPage));
+    container.appendChild(createAddReviewForm(() => {router.go('/')}));
 }
 
 function openModeratorPanel() {
     if (!isUserModerator) return;
-    content = 'moderator';
-    header.innerHTML = strings.moderationHeader;
     statusBox.innerHTML = 'Загрузка предложки...';
-    container.innerHTML = '';
     container.appendChild(createUpdateForm());
 
     const button = document.createElement('button');
     button.classList.add('rev-button-s');
     button.style.margin = '0 0 0.5rem 0';
-    button.innerHTML = "Добавить сторонний отзыв";
-    button.addEventListener('click', openExternalReview);
+    button.innerHTML = "Добавить новый отзыв";
+    button.addEventListener('click', () => {router.go('/moderation/suggestion')});
     container.appendChild(button);
 
     /** @param {SuggestionListResponse} data */
     fetchGetSuggestionList().then(data => {
-        if (content !== 'moderator') return;
         statusBox.innerHTML = '';
         if (data.items.length === 0) {
             statusBox.innerHTML = 'Предложка пуста =)';
         }
-        container.appendChild(createListReviewsForm(openModerationReview, data));
+        container.appendChild(createListReviewsForm(
+            (id) => {router.go('/moderation/suggestion/' + id)},
+            data
+        ));
     }).catch(status => {
         statusBox.innerHTML = `Сервер ответил ${status}`;
     })
@@ -243,31 +231,25 @@ function openModeratorPanel() {
 
 function openExternalReview() {
     if (!isUserModerator) return;
-    content = 'moderator-external';
-    header.innerHTML = strings.moderationHeader;
-    statusBox.innerHTML = '';
-    container.innerHTML = '';
     container.appendChild(createUpdateForm());
     container.appendChild(createAddReviewForm(
-        openModeratorPanel, null, true, true
+        () => {router.go('/moderation')}, null, true, true
     ));
 }
 
-function openModerationReview(id) {
+function openModerationReview(params) {
     if (!isUserModerator) return;
-    content = 'moderator-review';
-    header.innerHTML = strings.moderationHeader;
     statusBox.innerHTML = 'Загрузка отзыва...';
 
-    fetchGetSuggestion(id).then(data => {
+    fetchGetSuggestion(params.id).then(data => {
         statusBox.innerHTML = '';
         container.innerHTML = '';
         container.appendChild(createUpdateForm());
         container.appendChild(createAddReviewForm(
-            openModeratorPanel, data, true
+            () => {router.go('/moderation')}, data, true
         ));
     }).catch(status => {
-        openModeratorPanel()
+        router.go('/moderation');
         if (status === 404) statusBox.innerHTML = 'Нет такого отзыва в предложке =(';
         statusBox.innerHTML = `Сервер ответил ${status}`;
     })

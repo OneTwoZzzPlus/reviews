@@ -42,7 +42,7 @@ export function saveTokensExtension(rToken, aToken) {
             console.error(err);
         } else {
             setTokens(rToken, aToken);
-            console.log('[AUTHP] tokens saved successfully');
+            // console.log('[AUTHP] tokens saved successfully');
         }
     });
 }

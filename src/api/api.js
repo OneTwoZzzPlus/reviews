@@ -12,7 +12,7 @@ import {refreshToken, accessToken, isAccessTokenExpired,
  */
 async function fetchJSON(method, path, options = {}, controller = null) {
     const hasOptions = Object.keys(options).length > 0;
-    console.log(`[API] send ${method} ${path} ${hasOptions ? `with options = ${JSON.stringify(options)}` : ''}`);
+    // console.log(`[API] send ${method} ${path} ${hasOptions ? `with options = ${JSON.stringify(options)}` : ''}`);
 
     const url = new URL(path, API_HOST);
 
@@ -27,8 +27,8 @@ async function fetchJSON(method, path, options = {}, controller = null) {
     if (refreshToken) {
         try {
             if (!accessToken || isAccessTokenExpired()) {
-                console.log('[API] Refreshing token...');
-                const urlRefresh = new URL("/authp/refresh", API_HOST);
+                // console.log('[API] Refreshing token...');
+                const urlRefresh = new URL("/authp/notify", API_HOST);
                 const resp = await fetch(urlRefresh, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -39,9 +39,9 @@ async function fetchJSON(method, path, options = {}, controller = null) {
                     const aToken = res?.access_token;
                     if (aToken && validateTokenISU(aToken)) {
                         saveTokensAuto(refreshToken, aToken);
-                        console.log('[API] Token refreshed successfully');
+                        // console.log('[API] Token refreshed successfully');
                     } else {
-                        console.error('[API] Invalid token in refresh response');
+                        console.error('[API] Invalid token in notify response');
                         resetTokensAuto();
                     }
                 } else {
@@ -53,7 +53,7 @@ async function fetchJSON(method, path, options = {}, controller = null) {
                 fetchOptions.headers['token'] = accessToken;
             }
         } catch (err) {
-            console.error('[API] Unable to refresh the token', err);
+            console.error('[API] Unable to notify the token', err);
         }
     }
 
@@ -68,13 +68,13 @@ async function fetchJSON(method, path, options = {}, controller = null) {
     return new Promise((resolve, reject) => {
         fetch(url, fetchOptions).then(async (res) => {
             if (res.ok) {
-                console.log(`[API] fetch resolved ${method} ${path}`);
+                // console.log(`[API] fetch resolved ${method} ${path}`);
                 const text = await res.text();
                 resolve(text ? JSON.parse(text) : {});
             } else {
                 const errorDetail = await res.json().catch(() => ({}));
                 if (res.status === 401 || res.status === 404) {
-                    console.info('[API] error details:', errorDetail);
+                    // console.info('[API] error details:', errorDetail);
                 } else {
                     console.error('[API] error details:', errorDetail);
                 }
@@ -85,7 +85,7 @@ async function fetchJSON(method, path, options = {}, controller = null) {
                 console.error('[API] network error:', err);
                 reject(0);
             } else {
-                console.log(`[API] fetch aborted ${method} ${path}`);
+                // console.log(`[API] fetch aborted ${method} ${path}`);
             }
         });
     });

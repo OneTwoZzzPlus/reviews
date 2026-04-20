@@ -8,9 +8,8 @@ import * as strings from "../../strings.js";
 export function createSearch(data, callback, modeModerator=false) {
     const wrapper = document.createElement('div');
     wrapper.className = 'search-list';
-    console.log(modeModerator);
     data.results.forEach(s => {
-        const item = document.createElement('div');
+        const item = document.createElement('button');
         item.className = 'search-item';
         item.innerHTML = `
             ${strings.symbols[s.type] || ''}

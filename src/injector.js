@@ -51,7 +51,7 @@ async function resolveReviewBlock(data) {
         injected.append(content);
         status_box.innerHTML = "";
     } else {
-        console.log(data);
+        // console.log(data);
         status_box.innerHTML = strings.brokeReviewsText;
     }
 }

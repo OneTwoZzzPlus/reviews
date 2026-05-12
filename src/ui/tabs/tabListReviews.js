@@ -13,7 +13,8 @@ export function createListReviewsForm(callback, data) {
         const item = document.createElement('div');
         item.className = 'suggestions-list-item';
         item.innerHTML = `
-            Отзыв <b>№${s.id}</b> в статусе <b>${strings.suggestionStatus[s.status] ?? 'непонятном'}</b> </br>
+            Отзыв <b>№${s.id}</b> от <b>${strings.suggestionSource[s.source_id ?? 0] ?? "n/a"}</b> в статусе 
+            <b>${strings.suggestionStatus[s.status] ?? 'непонятном'}</b> </br>
             <span class="muted-text">${s.title}</span>
         `;
         item.addEventListener('click', async () => callback(s.id));

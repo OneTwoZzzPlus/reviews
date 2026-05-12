@@ -11,7 +11,7 @@ import {
     fetchSubject,
     fetchIsModerator,
     fetchGetSuggestionList,
-    fetchGetSuggestion
+    fetchGetSuggestion, fetchGSParser
 } from "../api/api.js";
 import {createListReviewsForm} from "./tabs/tabListReviews.js";
 import {createUpdateForm} from "./tabs/tabModUpdate.js";
@@ -206,12 +206,26 @@ function openModeratorPanel() {
     statusBox.innerHTML = 'Загрузка предложки...';
     container.appendChild(createUpdateForm());
 
-    const button = document.createElement('button');
-    button.classList.add('rev-button-s');
-    button.style.margin = '0 0 0.5rem 0';
-    button.innerHTML = "Добавить новый отзыв";
-    button.addEventListener('click', () => {router.go('/moderation/suggestion')});
-    container.appendChild(button);
+    const btn_add = document.createElement('button');
+    btn_add.classList.add('rev-button-s');
+    btn_add.style.margin = '0 0 0.5rem 0';
+    btn_add.innerHTML = "Добавить новый отзыв";
+    btn_add.addEventListener('click', () => {router.go('/moderation/suggestion')});
+    container.appendChild(btn_add);
+
+    const btn_parse = document.createElement('button');
+    btn_parse.classList.add('rev-button-s');
+    btn_parse.style.margin = '0 0 0.5rem 0';
+    btn_parse.innerHTML = "Запустить GSParser";
+    btn_parse.addEventListener('click', () => {
+        fetchGSParser().then(data => {
+            const c = data['count'] ?? 0
+            alert(c === 0 ? `Ничего нового` : `Найдено новых записей: ${c}`);
+        }).catch(status => {
+            statusBox.innerHTML = `Сервер ответил ${status}`;
+        });
+    });
+    container.appendChild(btn_parse);
 
     /** @param {SuggestionListResponse} data */
     fetchGetSuggestionList().then(data => {
@@ -225,8 +239,7 @@ function openModeratorPanel() {
         ));
     }).catch(status => {
         statusBox.innerHTML = `Сервер ответил ${status}`;
-    })
-
+    });
 }
 
 function openExternalReview() {

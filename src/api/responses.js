@@ -47,7 +47,8 @@
  *     items: Array<{
  *         id: number,
  *         status: string,
- *         title: string
+ *         title: string,
+ *         source_id: int | null
  *     }>
  * }} SuggestionListResponse
  *

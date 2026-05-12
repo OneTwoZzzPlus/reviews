@@ -65,3 +65,4 @@ export const moderationHeader = "Модерация";
 
 /** Статусы предложки */
 export const suggestionStatus = {"delayed": "на рассмотрении", "accepted": "опубликован", "rejected": "отклонён"}
+export const suggestionSource = {0: "n/a", 1: "reviews", 2: "gs-parser"}

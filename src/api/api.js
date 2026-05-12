@@ -151,3 +151,7 @@ export async function fetchUpsertSubject(body) {
 export async function fetchInsertComment(body) {
     return await fetchJSON('POST', `/mod/comment`, body)
 }
+
+export async function fetchGSParser() {
+    return await fetchJSON('GET', `/mod/gsparser`)
+}

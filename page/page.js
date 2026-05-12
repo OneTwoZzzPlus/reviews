@@ -54,6 +54,7 @@
   var addHeader = "\u041D\u043E\u0432\u044B\u0439 \u043E\u0442\u0437\u044B\u0432";
   var moderationHeader = "\u041C\u043E\u0434\u0435\u0440\u0430\u0446\u0438\u044F";
   var suggestionStatus = { "delayed": "\u043D\u0430 \u0440\u0430\u0441\u0441\u043C\u043E\u0442\u0440\u0435\u043D\u0438\u0438", "accepted": "\u043E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D", "rejected": "\u043E\u0442\u043A\u043B\u043E\u043D\u0451\u043D" };
+  var suggestionSource = { 0: "n/a", 1: "reviews", 2: "gs-parser" };
 
   // src/ui/tabs/creation/renderMainPage.js
   function renderMainPage() {
@@ -488,6 +489,9 @@
   }
   async function fetchInsertComment(body) {
     return await fetchJSON("POST", `/mod/comment`, body);
+  }
+  async function fetchGSParser() {
+    return await fetchJSON("GET", `/mod/gsparser`);
   }
 
   // src/ui/tabs/reviews/reviewsComments.js
@@ -1328,7 +1332,8 @@
       const item = document.createElement("div");
       item.className = "suggestions-list-item";
       item.innerHTML = `
-            \u041E\u0442\u0437\u044B\u0432 <b>\u2116${s.id}</b> \u0432 \u0441\u0442\u0430\u0442\u0443\u0441\u0435 <b>${suggestionStatus[s.status] ?? "\u043D\u0435\u043F\u043E\u043D\u044F\u0442\u043D\u043E\u043C"}</b> </br>
+            \u041E\u0442\u0437\u044B\u0432 <b>\u2116${s.id}</b> \u043E\u0442 <b>${suggestionSource[s.source_id ?? 0] ?? "n/a"}</b> \u0432 \u0441\u0442\u0430\u0442\u0443\u0441\u0435 
+            <b>${suggestionStatus[s.status] ?? "\u043D\u0435\u043F\u043E\u043D\u044F\u0442\u043D\u043E\u043C"}</b> </br>
             <span class="muted-text">${s.title}</span>
         `;
       item.addEventListener("click", async () => callback(s.id));
@@ -1720,14 +1725,27 @@
     if (!isUserModerator) return;
     statusBox.innerHTML = "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u043A\u0438...";
     container.appendChild(createUpdateForm());
-    const button = document.createElement("button");
-    button.classList.add("rev-button-s");
-    button.style.margin = "0 0 0.5rem 0";
-    button.innerHTML = "\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u043D\u043E\u0432\u044B\u0439 \u043E\u0442\u0437\u044B\u0432";
-    button.addEventListener("click", () => {
+    const btn_add = document.createElement("button");
+    btn_add.classList.add("rev-button-s");
+    btn_add.style.margin = "0 0 0.5rem 0";
+    btn_add.innerHTML = "\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u043D\u043E\u0432\u044B\u0439 \u043E\u0442\u0437\u044B\u0432";
+    btn_add.addEventListener("click", () => {
       router.go("/moderation/suggestion");
     });
-    container.appendChild(button);
+    container.appendChild(btn_add);
+    const btn_parse = document.createElement("button");
+    btn_parse.classList.add("rev-button-s");
+    btn_parse.style.margin = "0 0 0.5rem 0";
+    btn_parse.innerHTML = "\u0417\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u044C GSParser";
+    btn_parse.addEventListener("click", () => {
+      fetchGSParser().then((data) => {
+        const c = data["count"] ?? 0;
+        alert(c === 0 ? `\u041D\u0438\u0447\u0435\u0433\u043E \u043D\u043E\u0432\u043E\u0433\u043E` : `\u041D\u0430\u0439\u0434\u0435\u043D\u043E \u043D\u043E\u0432\u044B\u0445 \u0437\u0430\u043F\u0438\u0441\u0435\u0439: ${c}`);
+      }).catch((status) => {
+        statusBox.innerHTML = `\u0421\u0435\u0440\u0432\u0435\u0440 \u043E\u0442\u0432\u0435\u0442\u0438\u043B ${status}`;
+      });
+    });
+    container.appendChild(btn_parse);
     fetchGetSuggestionList().then((data) => {
       statusBox.innerHTML = "";
       if (data.items.length === 0) {

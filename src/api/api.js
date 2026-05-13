@@ -11,7 +11,7 @@ import {refreshToken, accessToken, isAccessTokenExpired,
  * @param {AbortController} [controller]
  */
 async function fetchJSON(method, path, options = {}, controller = null) {
-    const hasOptions = Object.keys(options).length > 0;
+    // const hasOptions = Object.keys(options).length > 0;
     // console.log(`[API] send ${method} ${path} ${hasOptions ? `with options = ${JSON.stringify(options)}` : ''}`);
 
     const url = new URL(path, API_HOST);
@@ -27,8 +27,8 @@ async function fetchJSON(method, path, options = {}, controller = null) {
     if (refreshToken) {
         try {
             if (!accessToken || isAccessTokenExpired()) {
-                // console.log('[API] Refreshing token...');
-                const urlRefresh = new URL("/authp/notify", API_HOST);
+                console.log('[API] Refreshing token...');
+                const urlRefresh = new URL("/authp/refresh", API_HOST);
                 const resp = await fetch(urlRefresh, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -46,7 +46,7 @@ async function fetchJSON(method, path, options = {}, controller = null) {
                     }
                 } else {
                     console.error('[API] Refresh failed with status:', resp.status);
-                    resetTokensAuto();
+                    // resetTokensAuto();
                 }
             }
             if (accessToken) {

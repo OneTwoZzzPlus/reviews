@@ -3,7 +3,7 @@ export const loadingText = "Загружаем...";
 const tip = "<br/>(обновите расширение/сайт)";
 const tipConnection = "<br/>Попробуйте ещё раз (проверьте подключение к сети Интернет, VPN, анти-DPI, ограничения провайдера)";
 
-export const fewCharactersText = "Введите хотя бы 3 символа =]";
+export const fewCharactersText = "Введите хотя бы 2 символа =]";
 export const unknownTypeText = `<span class="error">Не понятно, что это такое :|</span>` + tip;
 
 export const brokeReviewsText = "Отзывы пришли сломанные =(" + tip;

@@ -128,7 +128,7 @@ async function search() {
         overlay.innerHTML = "";
         return;
     }
-    if (name.length < 3) {
+    if (name.length < 2) {
         overlay.innerHTML = strings.fewCharactersText;
         return;
     }

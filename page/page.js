@@ -119,6 +119,8 @@
             <div class="tiles-container">
                 <div class="tile purple" data-id="42">\u0414\u0438\u0441\u043A\u0440\u0435\u0442\u043A\u0430 (\u0431\u0430\u0437\u0430\xB3)</div>
                 <div class="tile purple" data-id="43">\u0414\u0438\u0441\u043A\u0440\u0435\u0442\u043A\u0430 (\u043F\u0440\u043E\u0434)</div>
+                <div class="tile purple" data-id="45">\u0412\u044B\u0447\u041C\u0430\u0442</div>
+                <div class="tile purple" data-id="56">\u041C\u0435\u0442\u041E\u043F\u0442\u044B</div>
                 <div class="tile purple" data-id="33">\u041E\u041F\u0414</div>
                 <div class="tile purple" data-id="30">\u041F\u0440\u043E\u0433\u0440\u0430\u043C\u043C\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435</div>
                 <div class="tile purple" data-id="29">\u0418\u043D\u0444\u043E\u0440\u043C\u0430\u0442\u0438\u043A\u0430</div>
@@ -127,6 +129,13 @@
                 <div class="tile purple" data-id="27">WEB</div>
                 <div class="tile purple" data-id="32">\u0410\u041A</div>
                 <div class="tile purple" data-id="26">\u0418\u0411</div>
+                <div class="tile purple" data-id="28">\u041E\u041F\u0418</div>
+                <div class="tile purple" data-id="44">\u0410\u0438\u0421\u0414</div>
+                <div class="tile purple" data-id="52">\u0420\u0411\u0414\u0438\u041F</div>
+                <div class="tile purple" data-id="208">\u0424\u041F</div>
+                <div class="tile purple" data-id="209">\u041E\u0421\u0438</div>
+                <div class="tile purple" data-id="210">\u0411\u041B\u041F\u0421</div>
+                <div class="tile purple" data-id="204">\u0421\u0438\u0441\u0418\u0441\u043A\u0418</div>
             </div>
         </div>
 

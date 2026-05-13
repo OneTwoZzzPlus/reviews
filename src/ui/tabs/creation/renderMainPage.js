@@ -60,6 +60,8 @@ export function renderMainPage() {
             <div class="tiles-container">
                 <div class="tile purple" data-id="42">Дискретка (база³)</div>
                 <div class="tile purple" data-id="43">Дискретка (прод)</div>
+                <div class="tile purple" data-id="45">ВычМат</div>
+                <div class="tile purple" data-id="56">МетОпты</div>
                 <div class="tile purple" data-id="33">ОПД</div>
                 <div class="tile purple" data-id="30">Программирование</div>
                 <div class="tile purple" data-id="29">Информатика</div>
@@ -68,6 +70,13 @@ export function renderMainPage() {
                 <div class="tile purple" data-id="27">WEB</div>
                 <div class="tile purple" data-id="32">АК</div>
                 <div class="tile purple" data-id="26">ИБ</div>
+                <div class="tile purple" data-id="28">ОПИ</div>
+                <div class="tile purple" data-id="44">АиСД</div>
+                <div class="tile purple" data-id="52">РБДиП</div>
+                <div class="tile purple" data-id="208">ФП</div>
+                <div class="tile purple" data-id="209">ОСи</div>
+                <div class="tile purple" data-id="210">БЛПС</div>
+                <div class="tile purple" data-id="204">СисИскИ</div>
             </div>
         </div>
 

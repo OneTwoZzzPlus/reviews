@@ -1,28 +1,16 @@
 # Node.js dependencies
 node_modules/
 
-# Logs
-logs
-*.log
-npm-debug.log*
-
-# Environment variables
-.env
-.env.local
-.env.*.local
-
-# Build output
-releases/
-dist/
-
-# IDE or Editor Specific Files
+# IDE
 .vscode/
 .idea/
 *.sublime-project
 *.sublime-workspace
 
-# OS generated files
-.DS_Store
-Thumbs.db
+# Build output
+dist/
+page/
+releases/
 
+# Local directory
 testing

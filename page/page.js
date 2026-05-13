@@ -385,8 +385,6 @@
 
   // src/api/api.js
   async function fetchJSON(method, path, options = {}, controller = null) {
-    const hasOptions = Object.keys(options).length > 0;
-    console.log(`[API] send ${method} ${path} ${hasOptions ? `with options = ${JSON.stringify(options)}` : ""}`);
     const url = new URL(path, "https://onetwozzzplus.work.gd/");
     const fetchOptions = {
       method: method.toUpperCase(),
@@ -399,7 +397,7 @@
       try {
         if (!accessToken || isAccessTokenExpired()) {
           console.log("[API] Refreshing token...");
-          const urlRefresh = new URL("/authp/refreshg", "https://onetwozzzplus.work.gd/");
+          const urlRefresh = new URL("/authp/refresh", "https://onetwozzzplus.work.gd/");
           const resp = await fetch(urlRefresh, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -410,14 +408,12 @@
             const aToken = res?.access_token;
             if (aToken && validateTokenISU(aToken)) {
               saveTokensAuto(refreshToken, aToken);
-              console.log("[API] Token refreshed successfully");
             } else {
               console.error("[API] Invalid token in notify response");
               resetTokensAuto();
             }
           } else {
             console.error("[API] Refresh failed with status:", resp.status);
-            resetTokensAuto();
           }
         }
         if (accessToken) {
@@ -437,13 +433,11 @@
     return new Promise((resolve, reject) => {
       fetch(url, fetchOptions).then(async (res) => {
         if (res.ok) {
-          console.log(`[API] fetch resolved ${method} ${path}`);
           const text = await res.text();
           resolve(text ? JSON.parse(text) : {});
         } else {
           const errorDetail = await res.json().catch(() => ({}));
           if (res.status === 401 || res.status === 404) {
-            console.info("[API] error details:", errorDetail);
           } else {
             console.error("[API] error details:", errorDetail);
           }
@@ -454,7 +448,6 @@
           console.error("[API] network error:", err);
           reject(0);
         } else {
-          console.log(`[API] fetch aborted ${method} ${path}`);
         }
       });
     });

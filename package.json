@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "build:ext:dev": "cross-env API_HOST_VALUE=\"http://localhost:8000\" node build.js --ext",
+    "build:ext:prod": "cross-env API_HOST_VALUE=\"https://reviews.work.gd/\" NODE_ENV=production node build.js --ext --minify",
+    "build:page:dev": "cross-env API_HOST_VALUE=\"http://localhost:8000\" node build.js --page",
+    "build:page:prod": "cross-env API_HOST_VALUE=\"https://reviews.work.gd/\" NODE_ENV=production node build.js --page --minify",
     "build:dev": "cross-env API_HOST_VALUE=\"http://localhost:8000\" node build.js",
-    "build:prod": "cross-env API_HOST_VALUE=\"https://reviews.work.gd/\" node build.js",
-    "build-page:dev": "cross-env API_HOST_VALUE=\"http://localhost:8000\" node build-page.js",
-    "build-page:prod": "cross-env API_HOST_VALUE=\"https://reviews.work.gd/\" node build-page.js",
+    "build:prod": "cross-env API_HOST_VALUE=\"https://reviews.work.gd/\" NODE_ENV=production node build.js --minify",
     "release": "node release.js"
   },
   "keywords": [],

@@ -18,36 +18,45 @@
 
 # Для желающих разрабатывать...
 
-### Сборка сайта (`build-page.js`) и расширения (`build.js`)
-
-Установка
+### Установка зависимостей
 ```shell
-npm init -y
-npm install --save-dev esbuild
-npm install --save-dev cross-env
-npm install --save-dev archiver
+npm install
+npm install react react-dom
+npm install --save-dev esbuild cross-env archiver
 ```
 
-Сборка сайта
-```shell
-npm run build-page:prod
-# или если api работает на localhost
-npm run build-page:dev
-```
-
-Сборка расширения
+### Сборка проекта (`build.js`)
+Сборка сайта и расширения одной командой.
 ```shell
 npm run build:prod
-# или если api работает на localhost
-npm run build:dev
+npm run build:dev # если api на localhost:8000
 ```
 
-### Деплой сайта (Github Pages)
+<details>
+<summary>Отдельная сборка сайта</summary>
+
 ```shell
-npm run build-page:prod
+npm run build:page:prod
+npm run build:page:dev  # если api на localhost:8000
+```
+</details>
+
+<details>
+<summary>Отдельная сборка расширения</summary>
+
+```shell
+npm run build:ext:prod
+npm run build:ext:dev  # если api на localhost:8000
+```
+</details>
+
+### Деплой сайта (Github Pages)
+Деплой веб-версии происходит автоматически через GitHub Actions при каждом push в ветку main. Ручная сборка не требуется.
+
+```shell
 git add .
-git commit -m "commit_message"
-git push -u origin main 
+git commit -m "commit message"
+git push origin main
 ```
 
 ### Релиз расширения `release.js`
@@ -56,7 +65,6 @@ npm run release
 ```
 - Версию нужно указывать в `manifest.json`.
 - Для описания релиза будет использовано `release-notes.md`.
-- Может сойти за глупенький ci/cd.
 
 ### Содержимое `src`
 

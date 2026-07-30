@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 import { createMainPage, resolveLogin, rejectLogin } from "./ui/main.js";
 import { isAuth, loadTokens, resetTokens } from "./api/authp.js";
@@ -11,7 +11,7 @@ useStorage(new LocalStorageAdapter());
 const isuBoxHTML = `<a>Вход</a>`;
 const logoutConfirm = "Вы точно хотите выйти из аккаунта?";
 
-document.addEventListener('DOMContentLoaded', main);
+document.addEventListener("DOMContentLoaded", main);
 
 async function main() {
     syncCache();
@@ -29,7 +29,7 @@ async function loginCallback() {
     try {
         const payload = await loadTokens();
         resolveLogin(payload);
-        router.go('/');
+        router.go("/");
     } catch {
         rejectLogin(isuBoxHTML);
         router.notify();

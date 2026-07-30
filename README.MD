@@ -9,6 +9,7 @@
 ❤ [Скачайте последнюю собранную версию расширения тут](https://github.com/OneTwoZzzPlus/reviews/releases/)
 
 **Два режима работы!**
+
 - Быстрый поиск по предмету или преподавателю в окне расширения.
 - Встраивание на страницу преподавателя на сайте.
 
@@ -19,14 +20,16 @@
 # Для желающих разрабатывать...
 
 ### Установка зависимостей
+
 ```shell
 npm install
-npm install react react-dom
 npm install --save-dev esbuild cross-env archiver
 ```
 
 ### Сборка проекта (`build.js`)
+
 Сборка сайта и расширения одной командой.
+
 ```shell
 npm run build:prod
 npm run build:dev # если api на localhost:8000
@@ -39,6 +42,7 @@ npm run build:dev # если api на localhost:8000
 npm run build:page:prod
 npm run build:page:dev  # если api на localhost:8000
 ```
+
 </details>
 
 <details>
@@ -48,9 +52,11 @@ npm run build:page:dev  # если api на localhost:8000
 npm run build:ext:prod
 npm run build:ext:dev  # если api на localhost:8000
 ```
+
 </details>
 
 ### Деплой сайта (Github Pages)
+
 Деплой веб-версии происходит автоматически через GitHub Actions при каждом push в ветку main. Ручная сборка не требуется.
 
 ```shell
@@ -60,15 +66,18 @@ git push origin main
 ```
 
 ### Релиз расширения `release.js`
+
 ```shell
 npm run release
 ```
+
 - Версию нужно указывать в `manifest.json`.
 - Для описания релиза будет использовано `release-notes.md`.
 
 ### Содержимое `src`
 
 Изначально у нас три путя
+
 1. `page.html` запускает `page.js` который обеспечивает работу сайта
 2. `popup.html` запускает `popup.js` который обеспечивает работу окошечка
 3. `injector.js` производит встраивание на сайт блока отзывов и поиск jwt токена

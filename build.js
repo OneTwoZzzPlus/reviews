@@ -33,7 +33,7 @@ function getEntryPoint(name) {
 
 const baseEsbuildConfig = {
     bundle: true,
-    minify: isProd,
+    minify: false,
     sourcemap: !isProd,
     target: ['chrome110'],
     loader: { '.js': 'jsx' },

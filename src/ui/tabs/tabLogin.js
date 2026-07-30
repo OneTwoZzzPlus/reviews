@@ -1,6 +1,6 @@
 import * as strings from "../../strings.js";
 import {fetchAuthPLogin} from "../../api/api.js";
-import {validateTokenISU, saveTokensPage} from "../../api/authp.js";
+import {validateTokenISU, saveTokens} from "../../api/authp.js";
 
 export function createLoginForm(loginCallback) {
     const form = document.createElement("form");
@@ -29,7 +29,7 @@ export function createLoginForm(loginCallback) {
                 return;
             }
             if (!validateTokenISU(aToken)) return;
-            saveTokensPage(rToken, aToken);
+            saveTokens(rToken, aToken);
 
             loginCallback()
         }).catch(status => {

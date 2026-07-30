@@ -1,22 +1,13 @@
-import {parseJwt, setCookie, getCookie} from "../utils/utils.js";
+import { parseJwt } from "../utils/utils.js";
+import { getStorage } from "./storage.js";
 
-let isExtension = false;
 export let refreshToken = null;
 export let accessToken = null;
 let accessTokenExpiration = 0;
 const TIMEOUT = 300;
 
 export function isAuth() {
-    return refreshToken !== null
-}
-
-function setTokens(rToken, aToken) {
-    refreshToken = rToken;
-    accessToken = aToken;
-
-    /** @type {JWTPayload} */
-    const payload = parseJwt(accessToken);
-    if (payload?.exp) accessTokenExpiration = payload.exp || 0;
+    return refreshToken !== null;
 }
 
 export function isAccessTokenExpired() {
@@ -33,85 +24,53 @@ export function validateTokenISU(aToken) {
     return true;
 }
 
-export function saveTokensExtension(rToken, aToken) {
-    isExtension = true;
-    if (!chrome.runtime?.id) return;
-    chrome.storage.local.set({ refresh_token: rToken, access_token: aToken }, () => {
-        const err = chrome.runtime.lastError;
-        if (err && !err.message.includes('Extension context invalidated')) {
-            console.error(err);
-        } else {
-            setTokens(rToken, aToken);
-            // console.log('[AUTHP] tokens saved successfully');
-        }
-    });
+/** Внутренняя установка токенов в оперативной памяти */
+function setTokensInMemory(rToken, aToken) {
+    refreshToken = rToken;
+    accessToken = aToken;
+
+    /** @type {JWTPayload} */
+    const payload = parseJwt(accessToken);
+    if (payload?.exp) {
+        accessTokenExpiration = payload.exp;
+    }
 }
 
-export function loadTokensExtension() {
-    isExtension = true;
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.get((data) => {
-            const rToken = data.refresh_token;
-            const aToken = data.access_token;
-            if (rToken && aToken) {
-                setTokens(rToken, aToken);
-                const payloadAT = parseJwt(aToken);
-                if (payloadAT) resolve(payloadAT);
-                else reject();
-            } else reject();
-        })
-    })
+/** Сохранение токенов */
+export async function saveTokens(rToken, aToken) {
+    setTokensInMemory(rToken, aToken);
+
+    const storage = getStorage();
+    await storage.set('refresh_token', rToken);
+    await storage.set('access_token', aToken);
 }
 
-export function resetTokensExtension() {
-    isExtension = true;
-    chrome.storage.local.remove(["refresh_token", "access_token"]);
+/** Загрузка токенов */
+export async function loadTokens() {
+    const storage = getStorage();
+    const rToken = await storage.get('refresh_token');
+    const aToken = await storage.get('access_token');
+
+    if (rToken && aToken) {
+        setTokensInMemory(rToken, aToken);
+        const payloadAT = parseJwt(aToken);
+        if (payloadAT) return payloadAT;
+    }
+    
+    throw new Error('[AUTHP] Tokens not found');
+}
+
+/** Сброс токенов */
+export async function resetTokens() {
     refreshToken = null;
     accessToken = null;
     accessTokenExpiration = 0;
+
+    const storage = getStorage();
+    await storage.remove('refresh_token');
+    await storage.remove('access_token');
 }
 
-export function saveTokensPage(rToken, aToken) {
-    isExtension = false;
-    setCookie('refresh_token', rToken, {secure: false});
-    setCookie('access_token', aToken, {secure: false});
-    setTokens(rToken, aToken)
-}
-
-export function loadTokensPage() {
-    isExtension = false;
-    return new Promise((resolve, reject) => {
-        const rToken = getCookie('refresh_token');
-        const aToken = getCookie('access_token');
-        if (rToken && aToken) {
-            setTokens(rToken, aToken);
-            const payloadAT = parseJwt(aToken);
-            if (payloadAT) resolve(payloadAT);
-            else reject();
-        } else reject();
-    })
-}
-
-export function resetTokensPage() {
-    isExtension = false;
-    document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    refreshToken = null;
-    accessToken = null;
-    accessTokenExpiration = 0;
-}
-
-export function saveTokensAuto(rToken, aToken) {
-    if (isExtension) saveTokensExtension(rToken, aToken);
-    else saveTokensPage(rToken, aToken);
-}
-
-export function loadTokensAuto() {
-    if (isExtension) return loadTokensExtension();
-    else return loadTokensPage();
-}
-
-export function resetTokensAuto() {
-    if (isExtension) resetTokensExtension();
-    else resetTokensPage();
-}
+export const saveTokensAuto = saveTokens;
+export const loadTokensAuto = loadTokens;
+export const resetTokensAuto = resetTokens;

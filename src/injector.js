@@ -3,7 +3,11 @@
 import * as strings from "./strings.js";
 import createReviewsContentBox from "./ui/tabs/reviews/reviewsContentBox.js";
 import {fetchTeacher} from "./api/api.js";
-import {validateTokenISU, saveTokensExtension} from "./api/authp.js";
+import {validateTokenISU, saveTokens} from "./api/authp.js";
+
+import { syncCache } from "./api/syncCache.js";
+import { useStorage, ChromeStorageAdapter } from "./api/storage.js";
+useStorage(new ChromeStorageAdapter());
 
 let isAuth = false;
 
@@ -37,6 +41,7 @@ function createReviewBlock(id) {
     const box = document.createElement('div');
     box.id = INJECTED_ELEMENT_SELECTOR;
     box.innerHTML = REVIEW_TITLE_HTML;
+    syncCache()
     fetchTeacher(id).then(resolveReviewBlock, rejectReviewBlock)
     return box;
 }
@@ -77,7 +82,7 @@ function identify() {
     const aToken = matchAT[2];
     if (!validateTokenISU(aToken)) return;
 
-    saveTokensExtension(rToken, aToken);
+    saveTokens(rToken, aToken);
     isAuth = true;
 }
 

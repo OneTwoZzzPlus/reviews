@@ -1,8 +1,12 @@
 'use strict';
 
 import {clearMainPage, createMainPage, rejectLogin, resolveLogin} from "./ui/main.js";
-import {isAuth, loadTokensExtension, resetTokensExtension} from "./api/authp.js";
+import {isAuth, loadTokens, resetTokens} from "./api/authp.js";
 import {router} from "./ui/router.js";
+
+import { syncCache } from "./api/syncCache.js";
+import { useStorage, ChromeStorageAdapter } from "./api/storage.js";
+useStorage(new ChromeStorageAdapter());
 
 const isuBoxHTML = `<a href="https://my.itmo.ru">Вход</a>`;
 
@@ -16,9 +20,10 @@ document.body.addEventListener('click', function (e) {
 document.addEventListener('DOMContentLoaded', main);
 
 async function main() {
+    syncCache();
     createMainPage(logoutCallback)
 
-    loadTokensExtension().then((payload) => {
+    loadTokens().then((payload) => {
         resolveLogin(payload);
     }).catch(() => {
         rejectLogin(isuBoxHTML)
@@ -27,7 +32,7 @@ async function main() {
 
 function logoutCallback() {
     if (!isAuth()) return;
-    resetTokensExtension();
+    resetTokens();
     rejectLogin(isuBoxHTML);
     router.notify();
 }

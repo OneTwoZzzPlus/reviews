@@ -8,9 +8,7 @@ node_modules/
 *.sublime-workspace
 
 # Build output
-dist/
-page/
-releases/
-
-# Local directory
-testing
+/admin/
+/dist/
+/page/
+/releases/

@@ -27,33 +27,11 @@ export function getElements(root) {
         },
         submit: root.querySelector("#addrev-submit"),
         cancel: root.querySelector("#addrev-cancel"),
-        exit: root.querySelector("#addrev-exit"),
-        spam: root.querySelector("#addrev-spam"),
-        ext: {
-            source: root.querySelector("#addrev-source"),
-            date: root.querySelector("#addrev-date"),
-        },
-
     };
 }
 
-export function renderAddReviewForm(isUserModerator, externalSource=false) {
-    if (!isUserModerator) externalSource = false;
-    return `
-        ${isUserModerator || externalSource ?
-        `<button id="addrev-exit" class="rev-button-s">
-            Отмена
-        </button>`: ''}
-        
-        ${externalSource ? 
-        `<div class="mod-form" style="margin-top: 1rem;">
-        <label for="addrev-source">ID источника</label>
-        <input type="text" id="addrev-source" class="mod-row mod-input" placeholder="source_id"/>
-
-        <label for="addrev-date">Дата</label>
-        <input type="text" id="addrev-date" class="mod-row mod-input" placeholder="HH:MM DD.MM.YYYY"/>
-        </div>` : ''}
-        
+export function renderAddReviewForm() {
+    return `        
         <p class="add-rev-label">* Добавление нового отзыва, для преподавателя...</p>
         <div id="addrev-teacher-input-wrapper" class="rev-input-wrapper">
             <label for="addrev-teacher-input">ФИО преподавателя</label>
@@ -106,25 +84,11 @@ export function renderAddReviewForm(isUserModerator, externalSource=false) {
             </div>
         </div>
         
-        ${isUserModerator || externalSource ?
-        `<button id="addrev-submit" class="rev-button">
-            Добавить отзыв
-        </button>`: 
-        `<button id="addrev-submit" class="rev-button">
+        <button id="addrev-submit" class="rev-button">
             Отправить анонимный отзыв
-        </button>`}
-        
-        ${isUserModerator && !externalSource ? 
-        `<button id="addrev-cancel" class="rev-button-s">
-            Отклонить (нарушает правила)
-        </button>`:
-        `<button id="addrev-cancel" class="rev-button-s">
+        </button>
+        <button id="addrev-cancel" class="rev-button-s">
             Очистить
-        </button>`}
-        
-        ${isUserModerator && !externalSource ?
-        `<button id="addrev-spam" class="rev-button-s">
-            Отправить в спам
-        </button>`: ''}
-    `
+        </button>
+    `;
 }

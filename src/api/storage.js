@@ -8,7 +8,7 @@ export class LocalStorageAdapter {
         }
     }
     async set(key, value) {
-        console.log(`[storage] ${key}: ${value}`)
+        console.log(`[storage] ${key}: ${value}`);
         localStorage.setItem(key, JSON.stringify(value));
     }
     async remove(key) {
@@ -41,12 +41,10 @@ export class ChromeStorageAdapter {
 
 let activeStorage = new LocalStorageAdapter();
 
-/** Выбор хранилища на точке входа */
 export function useStorage(adapter) {
     activeStorage = adapter;
 }
 
-/** Получение текущего хранилища */
 export function getStorage() {
     return activeStorage;
 }

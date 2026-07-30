@@ -8,12 +8,12 @@ function getPath() {
 
 function compileRoute(handle) {
     const regexString = handle
-        .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-        .replace(/\\\{(\w+)\\}/g, '(?<$1>[^/]+)');
+        .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+        .replace(/\\\{(\w+)\\}/g, "(?<$1>[^/]+)");
     const regex = new RegExp(`^${regexString}$`);
     return (path) => {
         const match = path.match(regex);
-        return match ? { ...match.groups} : null;
+        return match ? { ...match.groups } : null;
     };
 }
 
@@ -24,7 +24,7 @@ function matchRoute() {
         if (params !== null) {
             return {
                 handle: path,
-                params: {...params, ...route.params},
+                params: { ...params, ...route.params },
                 render: route.render,
             };
         }
@@ -35,7 +35,7 @@ function matchRoute() {
 function notify() {
     const route = matchRoute();
     for (const listener of listeners) listener(route.params);
-    route.render(route.params)
+    route.render(route.params);
 }
 
 window.addEventListener("hashchange", notify);
@@ -47,7 +47,7 @@ export const router = {
             handle,
             params,
             render,
-            extractParams
+            extractParams,
         };
         routes.push(route_default);
     },
@@ -60,7 +60,7 @@ export const router = {
             handle: handle || route_default.handle,
             params: params || route_default.params,
             render: render || route_default.render,
-            extractParams: extractParams
+            extractParams: extractParams,
         });
     },
     start() {

@@ -4,36 +4,21 @@ export async function fetchSearch(query, controller, strainer = null) {
     const options = strainer === null ? { query } : { query, strainer };
 
     return await cachedRequest(
-        {
-            key: `search_${JSON.stringify(options)}`,
-            type: "ttl",
-            ttlMs: 60 * 1000,
-        },
+        `search_${JSON.stringify(options)}`,
         "GET",
         "/search",
         options,
-        "optional",
+        {},
+        controller?.signal,
     );
 }
 
 export async function fetchTeacher(id) {
-    return await cachedRequest(
-        { key: `teacher_${id}`, type: "eternal" },
-        "GET",
-        `/teacher/${id}`,
-        {},
-        "optional",
-    );
+    return await cachedRequest(`teacher_${id}`, "GET", `/teacher/${id}`);
 }
 
 export async function fetchSubject(id) {
-    return await cachedRequest(
-        { key: `subject_${id}`, type: "eternal" },
-        "GET",
-        `/subject/${id}`,
-        {},
-        "optional",
-    );
+    return await cachedRequest(`subject_${id}`, "GET", `/subject/${id}`);
 }
 
 export async function fetchSendSuggestion(body) {

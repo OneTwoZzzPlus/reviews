@@ -8,7 +8,6 @@ export class LocalStorageAdapter {
         }
     }
     async set(key, value) {
-        console.log(`[storage] ${key}: ${value}`);
         localStorage.setItem(key, JSON.stringify(value));
     }
     async remove(key) {

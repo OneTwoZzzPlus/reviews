@@ -1,8 +1,5 @@
 /* global API_HOST */
-import { getStorage } from "./storage.js";
 import { cache } from "./cache.js";
-
-let refreshPromise = null;
 
 export async function request(
     method,
@@ -33,42 +30,86 @@ export async function request(
         fetchOptions.body = JSON.stringify(options);
     }
 
-    const response = await fetch(url, fetchOptions);
+    try {
+        const response = await fetch(url, fetchOptions);
 
-    if (!response.ok) {
-        const errorDetail = await response.json().catch(() => ({}));
-        const error = new Error(`HTTP Error ${response.status}`);
-        error.status = response.status;
-        error.detail = errorDetail;
-        throw error;
+        if (!response.ok) {
+            throw response.status;
+        }
+
+        const text = await response.text();
+        return text ? JSON.parse(text) : {};
+    } catch (err) {
+        throw typeof err === "number" ? err : 0;
     }
-
-    const text = await response.text();
-    return text ? JSON.parse(text) : {};
 }
 
 export async function cachedRequest(
-    cacheConfig,
+    key,
     method,
     path,
     options = {},
     headers = {},
     signal = null,
 ) {
-    const { key, type = "eternal", ttlMs = 60000 } = cacheConfig;
+    const cached = key ? await cache.get(key) : null;
 
-    const cachedData = await cache.get(key);
-    if (cachedData !== null && cachedData !== undefined) {
-        return cachedData;
+    const requestHeaders = { ...headers };
+    if (cached?.etag) {
+        requestHeaders["If-None-Match"] = cached.etag;
     }
 
-    const data = await request(method, path, options, headers, signal);
+    const url = new URL(path, API_HOST);
+    const uppercaseMethod = method.toUpperCase();
 
-    if (type === "eternal") {
-        await cache.setEternal(key, data);
-    } else if (type === "ttl") {
-        await cache.setWithTTL(key, data, ttlMs);
+    if (uppercaseMethod === "GET") {
+        Object.entries(options).forEach(([k, v]) => {
+            if (v !== null && v !== undefined) {
+                url.searchParams.set(k, v.toString());
+            }
+        });
     }
 
-    return data;
+    try {
+        const response = await fetch(url, {
+            method: uppercaseMethod,
+            headers: {
+                "Content-Type": "application/json",
+                ...requestHeaders,
+            },
+            signal,
+        });
+
+        if (response.status === 304 && cached) {
+            return cached.data;
+        }
+
+        if (!response.ok) {
+            if (cached) {
+                console.warn(
+                    `[Cache] Server error ${response.status}. Using cached data.`,
+                );
+                return cached.data;
+            }
+
+            throw response.status;
+        }
+
+        const newEtag = response.headers.get("ETag");
+        const text = await response.text();
+        const data = text ? JSON.parse(text) : {};
+
+        if (newEtag && key) {
+            await cache.set(key, data, newEtag);
+        }
+
+        return data;
+    } catch (err) {
+        if (cached && typeof err !== "number") {
+            console.warn("[Cache] Network failed. Using cached data.");
+            return cached.data;
+        }
+
+        throw typeof err === "number" ? err : 0;
+    }
 }

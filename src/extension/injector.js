@@ -3,7 +3,6 @@
 import * as strings from "../strings.js";
 import createReviewsContentBox from "../ui/tabs/reviews/reviewsContentBox.js";
 import { fetchTeacher } from "../api/api.js";
-import { syncCache } from "../api/cache.js";
 import { useStorage, ChromeStorageAdapter } from "../api/storage.js";
 useStorage(new ChromeStorageAdapter());
 
@@ -36,7 +35,6 @@ function createReviewBlock(id) {
     const box = document.createElement("div");
     box.id = INJECTED_ELEMENT_SELECTOR;
     box.innerHTML = REVIEW_TITLE_HTML;
-    syncCache();
     fetchTeacher(id).then(resolveReviewBlock, rejectReviewBlock);
     return box;
 }

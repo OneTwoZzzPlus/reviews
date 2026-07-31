@@ -71,7 +71,7 @@ async function load(params) {
                 });
             break;
         default:
-            console.error(`Неизвестный type ${params.type}`);
+            console.error(`Неизвестный search item type ${params.type}`);
             statusBox.innerHTML = strings.unknownTypeText;
     }
 }

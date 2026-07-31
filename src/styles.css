@@ -47,6 +47,7 @@
 }
 
 .reviews-note {
+    margin-top: 1rem;
     color: var(--color-muted);
     text-align: center;
 }

@@ -7,17 +7,15 @@ import { createSubject } from "./tabs/tabSubject.js";
 import { createSuggestionForm } from "./tabs/tabAddReview.js";
 import { fetchTeacher, fetchSubject } from "../api/api.js";
 
-let container, statusBox;
+let container;
 
 export function createRoot() {
-    statusBox = document.querySelector("#reviews-status-box");
     container = document.querySelector("#reviews-container");
     const header = document.querySelector("#reviews-header");
     const overlay = createSearchEngine();
 
     router.init("/", strings.mainHeader, openMainPage);
     router.subscribe((params) => {
-        statusBox.innerHTML = "";
         container.innerHTML = "";
         overlay.innerHTML = "";
         header.innerHTML = params.header || strings.mainHeader;
@@ -36,42 +34,42 @@ function openAddReview() {
 }
 
 async function load(params) {
-    statusBox.innerHTML = strings.loadingText;
+    container.innerHTML = strings.loadingText;
     switch (params.type) {
         case "teacher":
             fetchTeacher(params.id)
                 .then((data) => {
+                    if (router.getPath() !== `/teacher/${data.id}`) return;
                     const teacher = createTeacher(data);
                     if (teacher !== null) {
-                        statusBox.innerHTML = "";
                         container.innerHTML = "";
                         container.appendChild(teacher);
                         return;
                     }
-                    statusBox.innerHTML = strings.brokeReviewsText;
+                    container.innerHTML = strings.brokeReviewsText;
                 })
                 .catch((status) => {
-                    statusBox.innerHTML = strings.statusReviewsText(status);
+                    container.innerHTML = strings.statusReviewsText(status);
                 });
             break;
         case "subject":
             fetchSubject(params.id)
                 .then((data) => {
+                    if (router.getPath() !== `/subject/${data.id}`) return;
                     const subject = createSubject(data);
                     if (subject !== null) {
-                        statusBox.innerHTML = "";
                         container.innerHTML = "";
                         container.appendChild(subject);
                         return;
                     }
-                    statusBox.innerHTML = strings.brokeReviewsText;
+                    container.innerHTML = strings.brokeReviewsText;
                 })
                 .catch((status) => {
-                    statusBox.innerHTML = strings.statusReviewsText(status);
+                    container.innerHTML = strings.statusReviewsText(status);
                 });
             break;
         default:
             console.error(`Неизвестный search item type ${params.type}`);
-            statusBox.innerHTML = strings.unknownTypeText;
+            container.innerHTML = strings.unknownTypeText;
     }
 }

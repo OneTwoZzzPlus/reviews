@@ -17,9 +17,7 @@ const REVIEW_TITLE_HTML = `<div class="border-top mt-3"></div>
     Загружаем...
 </div>`;
 
-/** Блок отзывов для вставки на сайт
- * @param {Teacher} data
- * */
+// Creates review wrapper element
 export function createInjector(data) {
     const reviewBox = createReviewsContentBox(data);
     if (reviewBox === null) return null;
@@ -30,7 +28,7 @@ export function createInjector(data) {
     return wrapper;
 }
 
-/** Создаёт пустой блок reviews на сайте **/
+// Creates placeholder block and fetches teacher data
 function createReviewBlock(id) {
     const box = document.createElement("div");
     box.id = INJECTED_ELEMENT_SELECTOR;
@@ -39,7 +37,7 @@ function createReviewBlock(id) {
     return box;
 }
 
-/** Заполняет блок отзывов в случае удачного запроса **/
+// Renders review content on successful response
 async function resolveReviewBlock(data) {
     const status_box = document.querySelector("#" + STATUS_BOX_SELECTOR);
     const injected = document.querySelector("#" + INJECTED_ELEMENT_SELECTOR);
@@ -54,25 +52,24 @@ async function resolveReviewBlock(data) {
     }
 }
 
-/** Заполняет status в случае неудачного запроса **/
+// Displays status message on request failure
 async function rejectReviewBlock(status) {
     const status_box = document.querySelector("#" + STATUS_BOX_SELECTOR);
     status_box.innerHTML = strings.statusReviewsText(status);
 }
 
-/** Реагирует на изменения в DOM **/
+// Observes DOM mutations to inject reviews block
 function observeChangeDOM() {
     console.log("[INJECTOR] injector started");
     const observer = new MutationObserver(() => {
-        // Идентификация пользователя
-        identify();
-        // Проверяем корректность URL
+        // Validate URL pattern
         const match = location.pathname.match(/^\/persons\/(\d+)/);
         if (!match) {
             // console.log("[INJECTOR] unsuitable URL");
             return;
         }
-        // Проверяем отсутствие вставляемого элемента
+
+        // Prevent duplicate injection
         const injected = document.querySelector(
             "#" + INJECTED_ELEMENT_SELECTOR,
         );
@@ -80,7 +77,8 @@ function observeChangeDOM() {
             // console.log("[INJECTOR] element already injected");
             return;
         }
-        // Находим элемент для вставки
+
+        // Find target container
         const injectable = document
             .querySelector("div.flex-grow-1.w-100.col-lg.col-12")
             ?.querySelector("div.card-body.p-3");
@@ -88,7 +86,8 @@ function observeChangeDOM() {
             // console.log("[INJECTOR] injectable element is not exists");
             return;
         }
-        // Вставляем элемент
+
+        // Inject element into DOM
         injectable.appendChild(createReviewBlock(match[1]));
         console.log("[INJECTOR] element injected");
     });

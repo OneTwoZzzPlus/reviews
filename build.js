@@ -22,7 +22,6 @@ const buildPageTarget = buildAll || hasPageFlag;
 const isProd =
     process.env.NODE_ENV === "production" || args.includes("--minify");
 
-/** Поиск точки входа (.jsx или .js) с поддержкой кастомной папки */
 function getEntryPoint(targetDir, name) {
     const jsxPath = path.join(targetDir, `${name}.jsx`);
     const jsPath = path.join(targetDir, `${name}.js`);

@@ -1,4 +1,3 @@
-/** Создаём блок параметр-значение */
 export default function createSummaries(summariesData) {
     const summariesHTML = summariesData
         .map(

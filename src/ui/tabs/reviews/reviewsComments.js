@@ -1,7 +1,7 @@
 import { parseCommentDate } from "../../../utils.js";
 
-/** Создаём блок отзывов
- * @param {Array<Comment>} commentsData - Данные списка отзывов
+/**
+ * @param {Array<Comment>} commentsData
  * @returns {HTMLDivElement}
  */
 export default function createComments(commentsData) {
@@ -26,9 +26,9 @@ export default function createComments(commentsData) {
     return wrapper;
 }
 
-/** Создаём отсортированный список отзывов
- * @param {Array<Comment>} commentsData - Данные списка отзывов
- * @param {number} model - Режим сортировки
+/**
+ * @param {Array<Comment>} commentsData
+ * @param {number} model
  */
 function createCommentsList(commentsData, model = 0) {
     const wrapper = document.createElement("div");
@@ -38,8 +38,8 @@ function createCommentsList(commentsData, model = 0) {
     return wrapper;
 }
 
-/** Создание отзыва
- * @param {Comment} comment - Данные отзыва
+/**
+ * @param {Comment} comment
  */
 function createComment(comment) {
     const wrapper = document.createElement("div");
@@ -55,7 +55,6 @@ function createComment(comment) {
     return wrapper;
 }
 
-/** Выпадающий список моделей сортировки */
 function createDropdown() {
     const wrapper = document.createElement("select");
     wrapper.name = "sort";
@@ -66,7 +65,6 @@ function createDropdown() {
     return wrapper;
 }
 
-/** Сортировка массива комментариев согласно модели */
 function sortComments(comments, model = 0) {
     return [...comments].sort((a, b) => {
         const timeA = parseCommentDate(a.date);

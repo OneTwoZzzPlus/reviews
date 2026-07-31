@@ -2,7 +2,7 @@ import createComments from "./reviewsComments.js";
 import createSummaries from "./reviewsSummaries.js";
 import * as strings from "../../../strings.js";
 
-/** Создаём контент по преподавателю: рейтинг, отзывы и остальное
+/**
  * @param {Teacher} data
  */
 export default function createReviewsContentBox(data) {

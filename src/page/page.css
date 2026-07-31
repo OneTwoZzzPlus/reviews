@@ -77,3 +77,6 @@ summary {
 #reviews-wrapper {
     padding: var(--padding);
 }
+#reviews-header-wrapper {
+    padding-bottom: 1rem;
+}

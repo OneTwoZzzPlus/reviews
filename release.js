@@ -1,73 +1,85 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { execSync } from "node:child_process";
-import archiver from "archiver";
 
-const manifestPath = "src/manifest.json";
-const distDir = "dist";
-const releasesDir = "releases";
-const notesFile = "release-notes.md";
+const dirname = path.dirname(fileURLToPath(import.meta.url));
+const DIST_DIR = path.resolve(dirname, "dist");
+const RELEASES_DIR = path.resolve(dirname, "releases");
+const MANIFEST_PATH = path.resolve(dirname, "manifest.json");
+const NOTES_FILE = path.resolve(dirname, "release-notes.md");
 
-try {
-    // 1. Автоматически собираем свежий продакшн-билд перед релизом
-    console.log("[RELEASE] Running production build...");
-    execSync("npm run build:ext:prod", { stdio: "inherit" });
+async function main() {
+    const startTime = Date.now();
+    try {
+        console.log("\n🚀 [Release] Starting...");
 
-    // 2. Читаем версию из манифеста
-    const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
-    const version = manifest.version;
-    const tag = `v${version}`;
+        // Build production assets before release
+        console.log("\n📦 [Build] Running production build...");
+        execSync("npm run build:ext:prod", { stdio: "inherit" });
 
-    // 3. Создаем папку releases/, если ее еще нет
-    if (!fs.existsSync(releasesDir)) {
-        fs.mkdirSync(releasesDir, { recursive: true });
-    }
+        // Read version from manifest
+        if (!fs.existsSync(MANIFEST_PATH)) {
+            throw new Error(
+                `[release error] Manifest file not found at ${MANIFEST_PATH}`,
+            );
+        }
+        const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, "utf8"));
+        const version = manifest.version;
+        const tag = `v${version}`;
 
-    const archiveName = path.join(releasesDir, `dist-${version}.zip`);
+        console.log(`  ✔ Version: ${version} (${tag})`);
 
-    console.log(`[RELEASE] Version: ${version}`);
-    console.log(`[RELEASE] Tag: ${tag}`);
+        // Ensure releases directory exists
+        if (!fs.existsSync(RELEASES_DIR)) {
+            fs.mkdirSync(RELEASES_DIR, { recursive: true });
+        }
 
-    // 4. Проверяем наличие dist/
-    if (!fs.existsSync(distDir) || fs.readdirSync(distDir).length === 0) {
-        console.error("[RELEASE] Error: dist directory is missing or empty");
+        // Ensure dist directory exists and is not empty
+        if (!fs.existsSync(DIST_DIR) || fs.readdirSync(DIST_DIR).length === 0) {
+            throw new Error(
+                "[release error] dist directory is missing or empty",
+            );
+        }
+
+        const archiveName = path.join(RELEASES_DIR, `dist-${version}.zip`);
+
+        // Remove existing archive for this version if present
+        if (fs.existsSync(archiveName)) {
+            fs.unlinkSync(archiveName);
+        }
+
+        // Create ZIP archive without npm dependencies
+        console.log("\n📁 [Archive] Creating ZIP package...");
+        if (process.platform === "win32") {
+            execSync(
+                `powershell -Command "Compress-Archive -Path '${DIST_DIR}\\*' -DestinationPath '${archiveName}' -Force"`,
+            );
+        } else {
+            execSync(`zip -r "${archiveName}" .`, { cwd: DIST_DIR });
+        }
+
+        console.log(`  ✔ Archive created: ${archiveName}`);
+
+        // Set release notes flag (from file or default string)
+        const notesFlag = fs.existsSync(NOTES_FILE)
+            ? `--notes-file "${NOTES_FILE}"`
+            : `--notes "Release ${tag}"`;
+
+        // Create GitHub release
+        console.log("\n🏷️  [GitHub] Creating release...");
+        execSync(`gh release create ${tag} "${archiveName}" ${notesFlag}`, {
+            stdio: "inherit",
+        });
+        console.log(`  ✔ GitHub release ${tag} published`);
+
+        console.log(
+            `\n✨ Release completed successfully in ${Date.now() - startTime}ms`,
+        );
+    } catch (err) {
+        console.error("\n❌ Release failed:", err.message || err);
         process.exit(1);
     }
-
-    // Удаляем прошлый архив с этой же версией, если он был
-    if (fs.existsSync(archiveName)) {
-        fs.unlinkSync(archiveName);
-    }
-
-    // 5. Создаем ZIP-архив и строго ждем события 'close' у потока
-    console.log("[RELEASE] Creating zip archive...");
-    await new Promise((resolve, reject) => {
-        const output = fs.createWriteStream(archiveName);
-        const archive = archiver("zip", { zlib: { level: 9 } });
-
-        output.on("close", resolve);
-        archive.on("error", reject);
-
-        archive.pipe(output);
-        archive.directory(distDir, false);
-        archive.finalize();
-    });
-
-    console.log(`[RELEASE] Archive created: ${archiveName}`);
-
-    // 6. Формируем флаг для чейнджлога (файл или дефолтный текст)
-    const notesFlag = fs.existsSync(notesFile) 
-        ? `--notes-file "${notesFile}"` 
-        : `--notes "Release ${tag}"`;
-
-    // 7. Создаем релиз на GitHub
-    console.log("[RELEASE] Creating GitHub release...");
-    execSync(`gh release create ${tag} "${archiveName}" ${notesFlag}`, {
-        stdio: "inherit"
-    });
-
-    console.log("[RELEASE] Release completed successfully!");
-} catch (err) {
-    console.error("[RELEASE] Release failed:", err.message);
-    process.exit(1);
 }
+
+main();

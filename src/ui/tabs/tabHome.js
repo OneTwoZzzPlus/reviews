@@ -1,4 +1,21 @@
-export function renderMainPage() {
+import * as strings from "../../strings.js";
+import { router } from "../router.js";
+
+export function createMainPage() {
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = renderMainPage();
+
+    wrapper.addEventListener("click", (e) => {
+        if (e.target.classList.contains("tile")) {
+            const key = e.target.getAttribute("data-id");
+            router.go(`/subject/${key}`);
+        }
+    });
+
+    return wrapper;
+}
+
+function renderMainPage() {
     return `
         <div class="category">
             <h3 class="category-title">Английский</h3>
@@ -97,5 +114,5 @@ export function renderMainPage() {
             <a href="https://t.me/reviews_ext">Напишите в директ канала</a> или
             <a href="https://github.com/OneTwoZzzPlus/reviews/issues">в issues github</a>
         </div>
-    `
+    `;
 }

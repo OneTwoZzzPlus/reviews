@@ -1,17 +1,14 @@
 import * as strings from "../../strings.js";
-import {getNonNegativeInt, normalizeString} from "../../utils/utils.js"
-import {renderAddReviewForm, getElements, MAX_TEXTAREA} from "./creation/renderReviewForm.js";
+import { router } from "../router.js";
+import { getNonNegativeInt, normalizeString } from "../../utils.js";
 import {
-    fetchCancelSuggestion,
-    fetchCommitSuggestion,
-    fetchInsertComment,
-    fetchSearch,
-    fetchSendSuggestion
-} from "../../api/api.js";
-import {createSearch} from "./tabSearch.js";
+    renderAddReviewForm,
+    getElements,
+    MAX_TEXTAREA,
+} from "./creation/renderReviewForm.js";
+import { fetchSearch, fetchSendSuggestion } from "../../api/api.js";
+import { createSearchOverlay } from "./tabSearch.js";
 
-let modeModerator = false;
-let externalSource = false;
 let isSent = false;
 let clearFormCallback = undefined;
 const emptyState = {
@@ -26,36 +23,18 @@ const emptyState = {
     },
     subs: new Map(),
     comment: "",
-}
+};
 let state = structuredClone(emptyState);
 
-/** Форма добавления отзыва
- * @param clearFormCallbackLocal
- * @param {SuggestionGetResponse|null} data
- * @param {boolean} isModeModerator
- * @param {boolean} isExternalSource
- * */
-export function createAddReviewForm(clearFormCallbackLocal, data=null, isModeModerator=false, isExternalSource=false) {
-    externalSource = isExternalSource ? isModeModerator : false;
-    modeModerator = isModeModerator;
-    clearFormCallback = clearFormCallbackLocal;
+export function createSuggestionForm() {
+    clearFormCallback = () => router.go("/");
 
     const wrapper = document.createElement("div");
-    wrapper.innerHTML = renderAddReviewForm(modeModerator, externalSource);
+    wrapper.innerHTML = renderAddReviewForm();
 
     const root = getElements(wrapper);
 
-    bindEvents(wrapper, root)
-
-    if (data) {
-        state.id = data.id;
-        state.teacher.id = data.teacher.id || null;
-        state.teacher.title = data.teacher.title;
-        state.subject.id = data.subject.id || null;
-        state.subject.title = data.subject.title;
-        state.comment = data.text;
-        state.subs = new Map(data.subs.map(item => [item.title, {id: item.id || null, title: item.title}]));
-    }
+    bindEvents(wrapper, root);
 
     refreshForm(root);
 
@@ -97,54 +76,36 @@ function bindEvents(wrapper, root) {
             root.subs.input.value = "";
             root.subs.container.innerHTML = "";
         }
-        if (e.target.classList.contains('rev-list-item-reset')) {
-            const key = e.target.getAttribute('data-id');
-            state.subs.delete(key)
+        if (e.target.classList.contains("rev-list-item-reset")) {
+            const key = e.target.getAttribute("data-id");
+            state.subs.delete(key);
             refreshList(root.subs, state.subs);
         }
-        if (modeModerator) {
-            if (externalSource) {
-                if (e.target === root.submit) {
-                    addComment(root)
-                }
-            } else {
-                if (e.target === root.submit) {
-                    commitSuggestion()
-                }
-                if (e.target === root.cancel) {
-                    rejectSuggestion('rejected')
-                }
-                if (e.target === root.spam) {
-                    rejectSuggestion('spam')
-                }
-            }
-            if (e.target === root.exit) {
-                state = structuredClone(emptyState);
-                clearFormCallback();
-            }
-        } else {
-            if (e.target === root.submit) {
-                sendSuggestion()
-            }
-            if (e.target === root.cancel) {
-                clearForm(root);
-            }
+        if (e.target === root.submit) {
+            sendSuggestion();
+        }
+        if (e.target === root.cancel) {
+            clearForm(root);
         }
     });
-    function inputEvent (e)  {
+    function inputEvent(e) {
         if (e.target === root.comment.input) {
             state.comment = root.comment.input.value;
 
             const length = root.comment.input.value.length;
-            root.comment.counter.textContent = length.toString()
+            root.comment.counter.textContent = length.toString();
 
             const exceeded = length >= MAX_TEXTAREA;
-            root.comment.input.classList.toggle('limit-exceeded', exceeded);
-            root.comment.counter.parentElement.classList.toggle('limit-exceeded', exceeded);
+            root.comment.input.classList.toggle("limit-exceeded", exceeded);
+            root.comment.counter.parentElement.classList.toggle(
+                "limit-exceeded",
+                exceeded,
+            );
 
             const scrollY = window.scrollY;
-            root.comment.input.style.height = 'auto';
-            root.comment.input.style.height = root.comment.input.scrollHeight + 'px';
+            root.comment.input.style.height = "auto";
+            root.comment.input.style.height =
+                root.comment.input.scrollHeight + "px";
             window.scrollTo(window.scrollX, scrollY + 1000);
         }
         if (e.target === root.teacher.input) {
@@ -155,9 +116,9 @@ function bindEvents(wrapper, root) {
                     root.teacher,
                     inputState.teacher,
                     state.teacher,
-                    loadSingle
-                );}, 300
-            );
+                    loadSingle,
+                );
+            }, 300);
         }
         if (e.target === root.subject.input) {
             inputState.subject.value = root.subject.input.value;
@@ -167,29 +128,24 @@ function bindEvents(wrapper, root) {
                     root.subject,
                     inputState.subject,
                     state.subject,
-                    loadSingle
-                );}, 300
-            );
+                    loadSingle,
+                );
+            }, 300);
         }
         if (e.target === root.subs.input) {
             inputState.subs.value = root.subs.input.value;
             clearTimeout(inputState.subs.timeout);
             inputState.subs.timeout = setTimeout(() => {
-                search(
-                    root.subs,
-                    inputState.subs,
-                    state.subs,
-                    loadList
-                );}, 300
-            );
+                search(root.subs, inputState.subs, state.subs, loadList);
+            }, 300);
         }
     }
-    wrapper.addEventListener("input", inputEvent)
+    wrapper.addEventListener("input", inputEvent);
     wrapper.addEventListener("keydown", (event) => {
-        if (event.key === 'Enter') {
-            inputEvent(event)
+        if (event.key === "Enter") {
+            inputEvent(event);
         }
-    })
+    });
 }
 
 function addComment(root) {
@@ -199,7 +155,7 @@ function addComment(root) {
         return;
     }
     const date = normalizeString(root.ext.date.value);
-    if (date === '') {
+    if (date === "") {
         alert("Введите нормальную дату");
         return;
     }
@@ -223,21 +179,23 @@ function addComment(root) {
         subject: state.subject,
         subs: Array.from(state.subs.values()),
         text: state.comment,
-    }
+    };
 
     if (isSent) return;
     isSent = true;
 
-    fetchInsertComment(requestBody).then(data => {
-        alert(`Добавлено c id: ${data.id}`)
-        state = structuredClone(emptyState);
-        root.ext.date.value = "";
-        refreshForm(root)
-        isSent = false;
-    }).catch(status => {
-        alert(`Сервер ответил ${status}`)
-        isSent = false;
-    });
+    fetchInsertComment(requestBody)
+        .then((data) => {
+            alert(`Добавлено c id: ${data.id}`);
+            state = structuredClone(emptyState);
+            root.ext.date.value = "";
+            refreshForm(root);
+            isSent = false;
+        })
+        .catch((status) => {
+            alert(`Сервер ответил ${status}`);
+            isSent = false;
+        });
 }
 
 function sendSuggestion() {
@@ -258,23 +216,27 @@ function sendSuggestion() {
         subject: state.subject,
         subs: Array.from(state.subs.values()),
         text: state.comment,
-    }
+    };
 
     if (isSent) return;
     isSent = true;
-    fetchSendSuggestion(requestBody).then(_ => {
-        state = structuredClone(emptyState);
-        alert("Спасибо! Отзыв будет опубликован как только пройдёт модерацию =)")
-        isSent = false;
-        clearFormCallback();
-    }).catch(status => {
-        alert(`Сервер ответил ${status}`)
-        isSent = false;
-    })
+    fetchSendSuggestion(requestBody)
+        .then((_) => {
+            state = structuredClone(emptyState);
+            alert(
+                "Спасибо! Отзыв будет опубликован как только пройдёт модерацию =)",
+            );
+            isSent = false;
+            clearFormCallback();
+        })
+        .catch((status) => {
+            alert(`Сервер ответил ${status}`);
+            isSent = false;
+        });
 }
 
 function commitSuggestion() {
-    if (state.id === null) alert('Suggestion id пустой!')
+    if (state.id === null) alert("Suggestion id пустой!");
 
     if (state.teacher.id === null || state.teacher.id === undefined) {
         alert("Выберите существующего преподавателя");
@@ -299,22 +261,24 @@ function commitSuggestion() {
         subject: state.subject,
         subs: Array.from(state.subs.values()),
         text: state.comment,
-    }
+    };
 
     if (isSent) return;
     isSent = true;
-    fetchCommitSuggestion(state.id, requestBody).then(_ => {
-        state = structuredClone(emptyState);
-        clearFormCallback();
-        isSent = false;
-    }).catch(status => {
-        alert(`Сервер ответил ${status}`)
-        isSent = false;
-    })
+    fetchCommitSuggestion(state.id, requestBody)
+        .then((_) => {
+            state = structuredClone(emptyState);
+            clearFormCallback();
+            isSent = false;
+        })
+        .catch((status) => {
+            alert(`Сервер ответил ${status}`);
+            isSent = false;
+        });
 }
 
 function rejectSuggestion(status) {
-    if (state.id === null) alert('Suggestion id пустой!')
+    if (state.id === null) alert("Suggestion id пустой!");
 
     const confirmation = confirm(`Отклонить отзыв (${status})?`);
     if (!confirmation) return;
@@ -322,53 +286,59 @@ function rejectSuggestion(status) {
     /** @param {SuggestionCancelResponse} data */
     if (isSent) return;
     isSent = true;
-    fetchCancelSuggestion(state.id, status).then(data => {
-        if (data.status !== status) {
-            alert('Статус не сохранён');
-            return;
-        }
-        clearFormCallback();
-        isSent = false;
-    }).catch(status => {
-        alert(`Сервер ответил ${status}`);
-        isSent = false;
-    })
+    fetchCancelSuggestion(state.id, status)
+        .then((data) => {
+            if (data.status !== status) {
+                alert("Статус не сохранён");
+                return;
+            }
+            clearFormCallback();
+            isSent = false;
+        })
+        .catch((status) => {
+            alert(`Сервер ответил ${status}`);
+            isSent = false;
+        });
 }
 
 function search(rootEl, is, s, load) {
-    if (!is.value || is.value.length < 3) return;
+    if (!is.value || is.value.length < 2) return;
 
     is.controller?.abort();
     is.controller = new AbortController();
 
-    fetchSearch(normalizeString(is.value), is.controller, is.type).then(data => {
-        rootEl.container.innerHTML = "";
-        data.results.push({
-            id: null,
-            title: "Добавить новый",
-            type: "add"
-        })
-        const searchBox = createSearch(data, (id, type, title) => {
-            load(rootEl, is, s, id, type, title)
-        }, modeModerator);
-        if (searchBox) rootEl.container.appendChild(searchBox);
-        else rootEl.container.innerHTML = strings.brokeSearchText;
-    }).catch(status => {
-        rootEl.container.innerHTML = strings.statusSearchText(status);
-        if (status === 404) {
-            const dt = {
-                results: [{
-                    id: null,
-                    title: "Добавить новый",
-                    type: "add"
-                }],
-            }
-            const searchBox = createSearch(dt, (id, type, title) => {
-                load(rootEl, is, s, id, type, title)
-            }, modeModerator);
+    fetchSearch(normalizeString(is.value), is.controller, is.type)
+        .then((data) => {
+            rootEl.container.innerHTML = "";
+            data.results.push({
+                id: null,
+                title: "Добавить новый",
+                type: "add",
+            });
+            const searchBox = createSearchOverlay(data, (id, type, title) => {
+                load(rootEl, is, s, id, type, title);
+            });
             if (searchBox) rootEl.container.appendChild(searchBox);
-        }
-    })
+            else rootEl.container.innerHTML = strings.brokeSearchText;
+        })
+        .catch((status) => {
+            rootEl.container.innerHTML = strings.statusSearchText(status);
+            if (status === 404) {
+                const dt = {
+                    results: [
+                        {
+                            id: null,
+                            title: "Добавить новый",
+                            type: "add",
+                        },
+                    ],
+                };
+                const searchBox = createSearchOverlay(dt, (id, type, title) => {
+                    load(rootEl, is, s, id, type, title);
+                });
+                if (searchBox) rootEl.container.appendChild(searchBox);
+            }
+        });
 }
 
 function loadSingle(rootEl, is, s, id, type, title) {
@@ -376,7 +346,7 @@ function loadSingle(rootEl, is, s, id, type, title) {
     if (type !== is.type && type !== "add") return;
 
     if (type === "add") {
-        const newTitle = normalizeString(is.value)
+        const newTitle = normalizeString(is.value);
         if (newTitle.length === 0) return;
         s.id = null;
         s.title = newTitle;
@@ -385,7 +355,7 @@ function loadSingle(rootEl, is, s, id, type, title) {
         s.title = title;
     }
 
-    refreshSingle(rootEl, s)
+    refreshSingle(rootEl, s);
 }
 
 function refreshSingle(rootEl, s) {
@@ -397,7 +367,7 @@ function refreshSingle(rootEl, s) {
         rootEl.status.innerHTML = `Добавлен новый: <span class="normal-text">${s.title}</span>`;
     } else {
         rootEl.status.innerHTML = `
-            Выбран: <span class="normal-text">${s.title} ${modeModerator ? `<b>(${s.id})</b>`: ''}</span>`;
+            Выбран: <span class="normal-text">${s.title} <b>(${s.id})</b></span>`;
     }
     rootEl.input.value = "";
     rootEl.input.placeholder = s.title;
@@ -414,9 +384,9 @@ function loadList(rootEl, is, s, id, type, title) {
 
     s.set(title, {
         id: id,
-        title: title
-    })
-    refreshList(rootEl, s)
+        title: title,
+    });
+    refreshList(rootEl, s);
 }
 
 function refreshList(rootEl, s) {
@@ -431,14 +401,17 @@ function refreshList(rootEl, s) {
     revList.innerHTML = `
         <div class="rev-list">
             <p class="rev-list-title">Выбрано: </p>
-            ${Array.from(s, ([title, item]) => `
+            ${Array.from(
+                s,
+                ([title, item]) => `
                 <div class="rev-list-item">
-                    ${item.id === null ? `<span class="muted-text">(новый)</span>` : ''}
+                    ${item.id === null ? `<span class="muted-text">(новый)</span>` : ""}
                     ${item.title}
-                    ${modeModerator && item.id !== null ? `(<b>${item.id}</b>)`: ''}
+                    (<b>${item.id}</b>)
                     <button class="rev-list-item-reset" data-id="${title}">&times;</button>
                 </div>
-            `).join('')}
+            `,
+            ).join("")}
         </div>
     `;
 

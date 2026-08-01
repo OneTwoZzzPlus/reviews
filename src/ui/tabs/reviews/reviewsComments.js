@@ -1,24 +1,21 @@
-import {parseCommentDate} from "../../../utils/utils.js";
-import {fetchCommentVote} from "../../../api/api.js";
+import { parseCommentDate } from "../../../utils.js";
 
-
-/** Создаём блок отзывов
- * @param {Array<Comment>} commentsData - Данные списка отзывов
- * @param {boolean} isAuth
+/**
+ * @param {Array<Comment>} commentsData
  * @returns {HTMLDivElement}
  */
-export default function createComments(commentsData, isAuth) {
-    const wrapper = document.createElement('div');
-    wrapper.classList.add('comments-wrap');
+export default function createComments(commentsData) {
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("comments-wrap");
 
-    let commentsList = createCommentsList(commentsData, isAuth);
+    let commentsList = createCommentsList(commentsData);
 
     if (commentsData.length > 1) {
         const dropdown = createDropdown(commentsData);
         dropdown.addEventListener("change", (event) => {
             const model = parseInt(event.target.value);
             // console.log(`[UI] sorting model ${model}`);
-            const newCL = createCommentsList(commentsData, isAuth, model);
+            const newCL = createCommentsList(commentsData, model);
             wrapper.replaceChild(newCL, commentsList);
             commentsList = newCL;
         });
@@ -29,109 +26,45 @@ export default function createComments(commentsData, isAuth) {
     return wrapper;
 }
 
-/** Создаём отсортированный список отзывов
- * @param {Array<Comment>} commentsData - Данные списка отзывов
- * @param {boolean} isAuth
- * @param {number} model - Режим сортировки
+/**
+ * @param {Array<Comment>} commentsData
+ * @param {number} model
  */
-function createCommentsList(commentsData, isAuth, model = 0) {
-    const wrapper = document.createElement('div');
-    wrapper.classList.add('comments');
+function createCommentsList(commentsData, model = 0) {
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("comments");
     const sortedCommentsData = sortComments(commentsData, model);
-    sortedCommentsData.map(cData => wrapper.append(createComment(cData, isAuth)));
+    sortedCommentsData.map((cData) => wrapper.append(createComment(cData)));
     return wrapper;
 }
 
-/** Создание отзыва
- * @param {Comment} comment - Данные отзыва
- * @param {boolean} isAuth
+/**
+ * @param {Comment} comment
  */
-function createComment(comment, isAuth) {
+function createComment(comment) {
     const wrapper = document.createElement("div");
     wrapper.classList.add("comment");
     wrapper.innerHTML = `
         <div class="comment-head">
             Отзыв ${comment.date}
-            ${comment?.subject ? ` по предмету "${comment.subject.title}"` : ' '}
-            ${comment?.source ? ` источник "<a href="${comment.source.link ?? ''}">${comment.source.title}</a>"` : ''}
+            ${comment?.subject ? ` по предмету "${comment.subject.title}"` : " "}
+            ${comment?.source ? ` источник "<a href="${comment.source.link ?? ""}">${comment.source.title}</a>"` : ""}
         </div>
         <div>${comment.text}</div>
-    `
-    wrapper.appendChild(createKarma(comment.id, comment.karma, comment.user_karma, isAuth));
-    return wrapper
+    `;
+    return wrapper;
 }
 
-/** Создание панельки кармы ▲▼△▽ */
-function createKarma(id, karma, user_karma, isAuth) {
-    const wrapper = document.createElement("div");
-    wrapper.classList.add("karma");
-    const karmaSpan = document.createElement("span");
-    karmaSpan.classList.add("karma-value");
-    const upBtn = document.createElement("button");
-    upBtn.classList.add("karma-btn");
-    const downBtn = document.createElement("button");
-    downBtn.classList.add("karma-btn");
-
-    if (isAuth) {
-        let isFetched = false;
-        upBtn.addEventListener("click", async (_event) => {
-            if (isFetched) return;
-            try {
-                isFetched = true;
-                const data = await fetchCommentVote(id, user_karma === 1 ? 0 : 1);
-                user_karma = data.user_karma;
-                karma = data.karma;
-                updateKarma(karmaSpan, upBtn, downBtn, karma, user_karma);
-            } finally {
-                isFetched = false;
-            }
-        })
-        downBtn.addEventListener("click", async (_event) => {
-            if (isFetched) return;
-            try {
-                const data = await fetchCommentVote(id, user_karma === -1 ? 0 : -1);
-                user_karma = data.user_karma;
-                karma = data.karma;
-                updateKarma(karmaSpan, upBtn, downBtn, karma, user_karma);
-            } finally {
-                isFetched = false;
-            }
-        })
-    } else {
-        upBtn.disabled = true;
-        downBtn.disabled = true;
-    }
-
-    updateKarma(karmaSpan, upBtn, downBtn, karma, user_karma)
-
-    wrapper.appendChild(upBtn);
-    wrapper.appendChild(karmaSpan);
-    wrapper.appendChild(downBtn);
-    return wrapper
-}
-
-/** Обновляем состояние панели кармы */
-function updateKarma(karmaSpan, upBtn, downBtn, karma, user_karma) {
-    if (user_karma === null || user_karma === undefined) user_karma = 0;
-    karmaSpan.innerHTML = karma;
-    upBtn.innerHTML = user_karma === 1 ? "▲" : "△"
-    downBtn.innerHTML = user_karma === -1 ? "▼" : "▽"
-}
-
-/** Выпадающий список моделей сортировки */
 function createDropdown() {
     const wrapper = document.createElement("select");
     wrapper.name = "sort";
     wrapper.classList.add("comments-dropdown");
     wrapper.innerHTML = `
-        <option value="0">C высокой кармы</option>
-        <option value="1">С низкой кармы</option>
-        <option value="2">Сначала новые</option>
-        <option value="3">Сначала старые</option>`
+        <option value="0">Сначала новые</option>
+        <option value="1">Сначала старые</option>`;
     return wrapper;
 }
 
-/** Сортировка массива комментариев согласно модели */
 function sortComments(comments, model = 0) {
     return [...comments].sort((a, b) => {
         const timeA = parseCommentDate(a.date);
@@ -139,26 +72,13 @@ function sortComments(comments, model = 0) {
         let diff;
         switch (model) {
             case 0:
-                diff = b.karma - a.karma;
-                if (diff === 0) {
-                    if (Number.isNaN(timeA) || Number.isNaN(timeB)) return 0;
-                    else return timeB - timeA;
-                }
-                return diff;
-            case 1:
-                diff = a.karma - b.karma;
-                if (diff === 0) {
-                    if (Number.isNaN(timeA) || Number.isNaN(timeB)) return 0;
-                    else return timeB - timeA;
-                }
-                return diff;
-            case 2:
                 if (Number.isNaN(timeA) || Number.isNaN(timeB)) return 0;
                 else return timeB - timeA;
-            case 3:
+            case 1:
                 if (Number.isNaN(timeA) || Number.isNaN(timeB)) return 0;
                 else return timeA - timeB;
-            default: return 0;
+            default:
+                return 0;
         }
     });
 }

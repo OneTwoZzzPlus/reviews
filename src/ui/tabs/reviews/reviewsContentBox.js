@@ -1,5 +1,6 @@
 import createComments from "./reviewsComments.js";
 import createSummaries from "./reviewsSummaries.js";
+import reviewsInsights from "./reviewsInsights.js";
 import * as strings from "../../../strings.js";
 
 /**
@@ -15,7 +16,9 @@ export default function createReviewsContentBox(data) {
 
     const wrapper = document.createElement("div");
     wrapper.classList.add("reviews-content-box");
-
+    if (data.insights) {
+        wrapper.appendChild(reviewsInsights(data.insights));
+    }
     if (data.summaries.length !== 0) {
         wrapper.appendChild(createSummaries(data.summaries));
     }

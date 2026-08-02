@@ -1,4 +1,4 @@
-import createReviewsContentBox from "./reviews/reviewsContentBox.js";
+import createTeacherCard from "./reviews/createTeacherCard.js";
 import { getNonNegativeInt, parseCommentDate } from "../../utils.js";
 
 /**
@@ -27,17 +27,14 @@ export function createSubject(data) {
     });
 
     const reviewBoxes = data.teachers.map((teacher) =>
-        createReviewsContentBox(teacher),
+        createTeacherCard(teacher),
     );
     if (reviewBoxes.some((box) => box === null)) return null;
 
     const wrapper = document.createElement("div");
     wrapper.innerHTML = `<h2>${data.title}</h2>`;
     data.teachers.forEach((teacher, i) => {
-        const box = document.createElement("details");
-        box.innerHTML = `<summary class="reviews-title">${teacher.name}</summary>`;
-        box.appendChild(reviewBoxes[i]);
-        wrapper.appendChild(box);
+        wrapper.appendChild(reviewBoxes[i]);
     });
     return wrapper;
 }

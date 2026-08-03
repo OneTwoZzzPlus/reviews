@@ -21,7 +21,8 @@ export function createRoot() {
         header.innerHTML = params.header || strings.mainHeader;
     });
     router.route("/suggestion", { header: strings.addHeader }, openAddReview);
-    router.route("/{type}/{id}", { header: strings.mainHeader }, load);
+    router.route("/teacher/{id}", { header: strings.mainHeader }, openTeacher);
+    router.route("/subject/{id}", { header: strings.mainHeader }, openSubject);
     router.start();
 }
 
@@ -33,43 +34,40 @@ function openAddReview() {
     container.appendChild(createSuggestionForm());
 }
 
-async function load(params) {
+async function openTeacher(params) {
     container.innerHTML = strings.loadingText;
-    switch (params.type) {
-        case "teacher":
-            fetchTeacher(params.id)
-                .then((data) => {
-                    if (router.getPath() !== `/teacher/${data.id}`) return;
-                    const teacher = createTeacher(data);
-                    if (teacher !== null) {
-                        container.innerHTML = "";
-                        container.appendChild(teacher);
-                        return;
-                    }
-                    container.innerHTML = strings.brokeReviewsText;
-                })
-                .catch((status) => {
-                    container.innerHTML = strings.statusReviewsText(status);
-                });
-            break;
-        case "subject":
-            fetchSubject(params.id)
-                .then((data) => {
-                    if (router.getPath() !== `/subject/${data.id}`) return;
-                    const subject = createSubject(data);
-                    if (subject !== null) {
-                        container.innerHTML = "";
-                        container.appendChild(subject);
-                        return;
-                    }
-                    container.innerHTML = strings.brokeReviewsText;
-                })
-                .catch((status) => {
-                    container.innerHTML = strings.statusReviewsText(status);
-                });
-            break;
-        default:
-            console.error(`Unknown search item type ${params.type}`);
-            container.innerHTML = strings.unknownTypeText;
+
+    try {
+        const data = await fetchTeacher(params.id);
+        if (router.getPath() !== `/teacher/${params.id}`) return;
+        const teacher = createTeacher(data);
+        if (teacher === null || teacher === undefined) {
+            container.innerHTML = strings.brokeReviewsText;
+            return;
+        }
+        container.innerHTML = "";
+        container.appendChild(teacher);
+    } catch (status) {
+        if (router.getPath() !== `/teacher/${params.id}`) return;
+        container.innerHTML = strings.statusReviewsText(status);
+    }
+}
+
+async function openSubject(params) {
+    container.innerHTML = strings.loadingText;
+
+    try {
+        const data = await fetchSubject(params.id);
+        if (router.getPath() !== `/subject/${params.id}`) return;
+        const subject = createSubject(data);
+        if (subject === null || subject === undefined) {
+            container.innerHTML = strings.brokeReviewsText;
+            return;
+        }
+        container.innerHTML = "";
+        container.appendChild(subject);
+    } catch (status) {
+        if (router.getPath() !== `/subject/${params.id}`) return;
+        container.innerHTML = strings.statusReviewsText(status);
     }
 }

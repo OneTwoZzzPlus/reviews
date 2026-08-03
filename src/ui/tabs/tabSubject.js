@@ -1,4 +1,4 @@
-import createTeacherCard from "./reviews/createTeacherCard.js";
+import createTeacherCard from "./reviews/reviewsTeacherCard.js";
 import { getNonNegativeInt, parseCommentDate } from "../../utils.js";
 
 /**

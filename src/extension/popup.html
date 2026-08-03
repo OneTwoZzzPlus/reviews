@@ -13,50 +13,51 @@
         <div id="reviews-page-wrapper">
             <div id="reviews-header-wrapper">
                 <div id="reviews-header-row">
-                    <a class="reviews-nav" href="#/">
+                    <a href="#/">
                         <p id="reviews-header">Поиск отзывов</p>
                     </a>
                     <div>
-                        <a class="reviews-nav" href="#/suggestion">
+                        <a href="#/suggestion">
                             <!-- Icons source https://fontawesome.com/search?ic=free-collection -->
                             <!-- prettier-ignore -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="1.75rem" height="1.75rem" viewBox="0 0 512 512"><!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L368 46.1 465.9 144 490.3 119.6c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L432 177.9 334.1 80 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
                         </a>
-                        <a class="reviews-nav" href="#/">
+                        <a href="#/">
                             <!-- Icons source https://fontawesome.com/search?ic=free-collection -->
                             <!-- prettier-ignore -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="1.75rem" height="1.75rem" viewBox="0 0 512 512"><!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M277.8 8.6c-12.3-11.4-31.3-11.4-43.5 0l-224 208c-9.6 9-12.8 22.9-8 35.1S18.8 272 32 272l16 0 0 176c0 35.3 28.7 64 64 64l288 0c35.3 0 64-28.7 64-64l0-176 16 0c13.2 0 25-8.1 29.8-20.3s1.6-26.2-8-35.1l-224-208zM240 320l32 0c26.5 0 48 21.5 48 48l0 96-128 0 0-96c0-26.5 21.5-48 48-48z"/></svg>
                         </a>
                     </div>
                 </div>
-                <div id="reviews-input-wrapper" class="rev-input-wrapper">
+                <div id="reviews-input-wrapper" class="search-input-wrapper">
                     <label for="reviews-input">Поиск отзывов</label>
                     <input
                         type="text"
                         id="reviews-input"
-                        class="rev-input"
+                        class="search-input"
                         placeholder="Поиск..."
                     />
                     <button
                         type="reset"
                         id="reviews-input-reset"
-                        class="rev-input-reset"
+                        class="search-input-reset"
                     >
                         &times;
                     </button>
                 </div>
-                <div id="reviews-search-overlay" class="search-overlay"></div>
+                <div id="reviews-search-overlay"></div>
             </div>
-            <div id="reviews-wrapper">
-                <div id="reviews-container"></div>
-                <div class="reviews-note">
-                    Если хотите поддержать проект, поставьте <b>★</b> на
-                    <a href="https://github.com/OneTwoZzzPlus/reviews"
-                        >репозиторий</a
-                    >. <br />
-                    Все отзывы субъективны. Проект – неофициальный ресурс,
-                    собранный из открытых данных.
-                </div>
+            <div id="reviews-container"></div>
+            <div id="reviews-footer-wrapper">
+                Понравилось? Поставьте <b style="color: #e3b341">★</b> на
+                <a
+                    href="https://github.com/OneTwoZzzPlus/reviews"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >GitHub</a
+                >.
+                <br />
+                Неофициальный ресурс из открытых данных. Отзывы субъективны.
             </div>
         </div>
         <script src="popup.js"></script>

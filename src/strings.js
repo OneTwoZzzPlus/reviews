@@ -10,14 +10,14 @@ export const symbols = {
 };
 
 /** Loading */
-export const loadingText = `<div class="loading-placeholder">
-    <span class="loading-placeholder-circle"></span>
+export const loadingText = `<div class="reviews-loading">
+    <span class="reviews-loading-circle"></span>
     <span>Загружаем...</span>
 </div>`;
 
 /** Tips */
-const tip = `<span class='hint'>Обновите страницу или расширение.</span>`;
-const tipConnection = `<span class='hint'>Проверьте интернет, VPN, анти-DPI или ограничения провайдера и попробуйте ещё раз.</span>`;
+const tip = `<span class='reviews-hint'>Обновите страницу или расширение.</span>`;
+const tipConnection = `<span class='reviews-hint'>Проверьте интернет, VPN, анти-DPI или ограничения провайдера и попробуйте ещё раз.</span>`;
 
 /** Labels */
 export const fewCharactersText = `Введите хотя бы 2 символа`;
@@ -25,15 +25,17 @@ export const emptyCommentsList = `Отзывы отсутствуют`;
 
 /** Errors */
 export const unknownTypeText =
-    `<span class="error">Неизвестный тип объекта</span>` + tip;
+    `<span class="reviews-error">Неизвестный тип объекта</span>` + tip;
 export const brokeReviewsText =
-    `<span class="error">Отзывы сломаны</span>` + tip;
+    `<span class="reviews-error">Отзывы сломаны</span>` + tip;
 export const brokeSearchText =
-    `<span class="error">Результаты сломаны</span>` + tip;
+    `<span class="reviews-error">Результаты сломаны</span>` + tip;
 const networkErrorText =
-    `<span class="error">До сервера не достучаться</span>` + tipConnection;
+    `<span class="reviews-error">До сервера не достучаться</span>` +
+    tipConnection;
 const serverErrorText = (status) => {
-    `<span class="error">Сервер неожиданно ответил ${status}</span>` + tip;
+    `<span class="reviews-error">Сервер неожиданно ответил ${status}</span>` +
+        tip;
 };
 
 export function statusReviewsText(status) {

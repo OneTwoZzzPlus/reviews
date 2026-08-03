@@ -1,5 +1,6 @@
 body {
     width: 500px;
+    margin: 0;
 }
 *,
 *::before,
@@ -46,7 +47,5 @@ h2 {
 }
 #reviews-header-wrapper {
     border: none !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    margin-bottom: 0.5rem;
+    padding-bottom: 0 !important;
 }

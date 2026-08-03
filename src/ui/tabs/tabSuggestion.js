@@ -71,7 +71,7 @@ function bindEvents(wrapper, root) {
             root.subs.input.value = "";
             root.subs.container.innerHTML = "";
         }
-        if (e.target.classList.contains("rev-list-item-reset")) {
+        if (e.target.classList.contains("addrev-list-item-reset")) {
             const key = e.target.getAttribute("data-id");
             state.subs.delete(key);
             refreshList(root.subs, state.subs);
@@ -302,7 +302,7 @@ function search(rootEl, is, s, load) {
     is.controller?.abort();
     is.controller = new AbortController();
 
-    fetchSearch(normalizeString(is.value), is.controller, is.type)
+    fetchSearch(normalizeString(is.value), is.controller?.signal, is.type)
         .then((data) => {
             rootEl.container.innerHTML = "";
             data.results.push({
@@ -359,10 +359,10 @@ function refreshSingle(rootEl, s) {
         return;
     }
     if (s.id === null) {
-        rootEl.status.innerHTML = `Добавлен новый: <span class="normal-text">${s.title}</span>`;
+        rootEl.status.innerHTML = `Добавлен новый: <span class="addrev-normal-text">${s.title}</span>`;
     } else {
         rootEl.status.innerHTML = `
-            Выбран: <span class="normal-text">${s.title} <b>(${s.id})</b></span>`;
+            Выбран: <span class="addrev-normal-text">${s.title} <b>(${s.id})</b></span>`;
     }
     rootEl.input.value = "";
     rootEl.input.placeholder = s.title;
@@ -386,24 +386,24 @@ function loadList(rootEl, is, s, id, type, title) {
 
 function refreshList(rootEl, s) {
     if (s.size === 0) {
-        rootEl.status.innerHTML = `<p class="add-rev-status">Ничего не выбрано</p>`;
+        rootEl.status.innerHTML = `<p class="addrev-status">Ничего не выбрано</p>`;
         return;
     }
 
     const revList = document.createElement("div");
-    revList.classList.add("rev-list");
+    revList.classList.add("addrev-list");
 
     revList.innerHTML = `
-        <div class="rev-list">
-            <p class="rev-list-title">Выбрано: </p>
+        <div class="addrev-list">
+            <p class="addrev-list-title">Выбрано: </p>
             ${Array.from(
                 s,
                 ([title, item]) => `
-                <div class="rev-list-item">
-                    ${item.id === null ? `<span class="muted-text">(новый)</span>` : ""}
+                <div class="addrev-list-item">
+                    ${item.id === null ? `<span class="addrev-muted-text">(новый)</span>` : ""}
                     ${item.title}
                     (<b>${item.id}</b>)
-                    <button class="rev-list-item-reset" data-id="${title}">&times;</button>
+                    <button class="addrev-list-item-reset" data-id="${title}">&times;</button>
                 </div>
             `,
             ).join("")}
@@ -454,7 +454,7 @@ function getElements(root) {
             status: root.querySelector("#addrev-sub-status"),
         },
         comment: {
-            input: root.querySelector("#addrev-comment-input"),
+            input: root.querySelector("#addrev-addrev-input"),
             counter: root.querySelector("#addrev-comment-char-count"),
         },
         submit: root.querySelector("#addrev-submit"),
@@ -464,62 +464,62 @@ function getElements(root) {
 
 function renderAddReviewForm() {
     return `        
-        <p class="add-rev-label">* Добавление нового отзыва, для преподавателя...</p>
-        <div id="addrev-teacher-input-wrapper" class="rev-input-wrapper">
+        <p class="addrev-label">* Добавление нового отзыва, для преподавателя...</p>
+        <div id="addrev-teacher-input-wrapper" class="search-input-wrapper">
             <label for="addrev-teacher-input">ФИО преподавателя</label>
-            <input type="text" id="addrev-teacher-input" class="rev-input" 
+            <input type="text" id="addrev-teacher-input" class="search-input" 
                 placeholder="Иванов Иван Иванович" 
                 maxlength="${MAX_INPUT}"/>
-            <button type="reset" id="addrev-teacher-input-reset" class="rev-input-reset">&times;</button>
+            <button type="reset" id="addrev-teacher-input-reset" class="search-input-reset">&times;</button>
         </div>
         <div id="addrev-teacher-container"></div>
-        <p id="addrev-teacher-status" class="add-rev-status">Никого не выбрано</p>
+        <p id="addrev-teacher-status" class="addrev-status">Никого не выбрано</p>
         
-        <p class="add-rev-label">* По какому предмету вы его знаете? <i>(Выберите основной)</i></p>
-        <div id="addrev-subject-input-wrapper" class="rev-input-wrapper">
+        <p class="addrev-label">* По какому предмету вы его знаете? <i>(Выберите основной)</i></p>
+        <div id="addrev-subject-input-wrapper" class="search-input-wrapper">
             <label for="addrev-subject-input">Название предмета</label>
-            <input type="text" id="addrev-subject-input" class="rev-input" 
+            <input type="text" id="addrev-subject-input" class="search-input" 
             placeholder="Математический анализ" 
             maxlength="${MAX_INPUT}"/>
-            <button type="reset" id="addrev-subject-input-reset" class="rev-input-reset">&times;</button>
+            <button type="reset" id="addrev-subject-input-reset" class="search-input-reset">&times;</button>
         </div>
         <div id="addrev-subject-container"></div>
-        <p id="addrev-subject-status" class="add-rev-status">Ничего не выбрано</p>
+        <p id="addrev-subject-status" class="addrev-status">Ничего не выбрано</p>
         
-        <p class="add-rev-label">Какие еще предметы ведет? <i>(Отметьте, если знаете)</i></p>
-        <div id="addrev-sub-input-wrapper" class="rev-input-wrapper">
+        <p class="addrev-label">Какие еще предметы ведет? <i>(Отметьте, если знаете)</i></p>
+        <div id="addrev-sub-input-wrapper" class="search-input-wrapper">
             <label for="addrev-sub-input">Название предмета</label>
-            <input type="text" id="addrev-sub-input" class="rev-input" 
+            <input type="text" id="addrev-sub-input" class="search-input" 
                 placeholder="Алгебра" 
                 maxlength="${MAX_INPUT}"/>
-            <button type="reset" id="addrev-sub-input-reset" class="rev-input-reset">&times;</button>
+            <button type="reset" id="addrev-sub-input-reset" class="search-input-reset">&times;</button>
         </div>
         <div id="addrev-sub-container"></div>
         <div id="addrev-sub-status">
-            <p class="add-rev-status">Ничего не выбрано</p>
+            <p class="addrev-status">Ничего не выбрано</p>
         </div>
                 
-        <p class="add-rev-label">
+        <p class="addrev-label">
             * Что можете о нём сказать? <br/>
             <i>Как относиться к студентам? Как преподаёт? Трудно ли закрыться? Укажите уровень, если это английский.</i>
         </p>
-        <div class="comment-textarea-wrapper">
-            <label for="addrev-comment-input">Комментарий</label>
+        <div class="addrev-textarea-wrapper">
+            <label for="addrev-addrev-input">Комментарий</label>
             <textarea
-                    id="addrev-comment-input"
-                    class="comment-input"
+                    id="addrev-addrev-input"
+                    class="addrev-input"
                     placeholder="Можно писать кратко (обычно пишут 3–5 предложений)..."
                     maxlength="${MAX_TEXTAREA}"
             ></textarea>
-            <div class="comment-char-counter">
+            <div class="addrev-char-counter">
                 <span id="addrev-comment-char-count">0</span>/${MAX_TEXTAREA}
             </div>
         </div>
         
-        <button id="addrev-submit" class="rev-button">
+        <button id="addrev-submit" class="addrev-button">
             Отправить анонимный отзыв
         </button>
-        <button id="addrev-cancel" class="rev-button-s">
+        <button id="addrev-cancel" class="addrev-button-s">
             Очистить
         </button>
     `;

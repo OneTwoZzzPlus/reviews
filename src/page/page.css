@@ -63,9 +63,6 @@ a {
     background: transparent;
     color: #1846c7;
 }
-h2 {
-    margin-top: 0;
-}
 summary {
     cursor: pointer;
 }
@@ -73,11 +70,4 @@ summary {
     margin-left: auto;
     margin-right: auto;
     max-width: max(50%, 800px);
-}
-#reviews-wrapper {
-    padding: var(--padding);
-}
-#reviews-header-wrapper {
-    padding-bottom: 1rem;
-    margin-bottom: 0.5rem;
 }

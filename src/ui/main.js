@@ -4,7 +4,7 @@ import { createSearchEngine } from "./tabs/tabSearch.js";
 import { createMainPage } from "./tabs/tabHome.js";
 import { createTeacher } from "./tabs/tabTeacher.js";
 import { createSubject } from "./tabs/tabSubject.js";
-import { createSuggestionForm } from "./tabs/tabAddReview.js";
+import { createSuggestionForm } from "./tabs/tabSuggestion.js";
 import { fetchTeacher, fetchSubject } from "../api/api.js";
 
 let container;

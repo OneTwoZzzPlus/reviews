@@ -1,4 +1,8 @@
 export default function createSummaries(summariesData) {
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("summaries-wrap");
+    wrapper.insertAdjacentHTML("beforeend", "<h3>Детали</h3>");
+
     const summariesHTML = summariesData
         .map(
             (item) => `
@@ -13,5 +17,8 @@ export default function createSummaries(summariesData) {
     const summaries = document.createElement("div");
     summaries.classList.add("summaries");
     summaries.innerHTML = summariesHTML;
-    return summaries;
+
+    wrapper.appendChild(summaries);
+
+    return wrapper;
 }

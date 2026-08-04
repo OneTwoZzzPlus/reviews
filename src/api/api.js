@@ -2,11 +2,11 @@ import { request, cachedRequest } from "./httpClient.js";
 
 /**
  * @param {string} query
- * @param {AbortController} [controller]
+ * @param {AbortSignal} [signal]
  * @param {import('./responses.js').SearchType | null} [strainer]
  * @returns {Promise<import('./responses.js').SearchResponse>}
  */
-export async function fetchSearch(query, controller, strainer = null) {
+export async function fetchSearch(query, signal, strainer = null) {
     const options = strainer === null ? { query } : { query, strainer };
 
     return await cachedRequest(
@@ -15,7 +15,7 @@ export async function fetchSearch(query, controller, strainer = null) {
         "/search",
         options,
         {},
-        controller?.signal,
+        signal,
     );
 }
 

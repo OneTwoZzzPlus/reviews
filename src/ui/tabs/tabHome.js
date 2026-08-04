@@ -3,6 +3,7 @@ import { router } from "../router.js";
 
 export function createMainPage() {
     const wrapper = document.createElement("div");
+    wrapper.classList.add("home-wrapper");
     wrapper.innerHTML = renderMainPage();
 
     wrapper.addEventListener("click", (e) => {

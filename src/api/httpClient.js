@@ -40,6 +40,7 @@ export async function request(
         const text = await response.text();
         return text ? JSON.parse(text) : {};
     } catch (err) {
+        if (err.name === "AbortError") throw -1;
         throw typeof err === "number" ? err : 0;
     }
 }
@@ -105,6 +106,8 @@ export async function cachedRequest(
 
         return data;
     } catch (err) {
+        if (err?.name === "AbortError" || err === -1) throw -1;
+
         if (cached && typeof err !== "number") {
             console.warn("[Cache] Network failed. Using cached data.");
             return cached.data;

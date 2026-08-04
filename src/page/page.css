@@ -63,9 +63,6 @@ a {
     background: transparent;
     color: #1846c7;
 }
-h2 {
-    margin-top: 0;
-}
 summary {
     cursor: pointer;
 }
@@ -74,10 +71,29 @@ summary {
     margin-right: auto;
     max-width: max(50%, 800px);
 }
-#reviews-wrapper {
-    padding: var(--padding);
+h1 {
+    font-size: 1.75rem;
+    margin-top: 1.75rem;
+    margin-bottom: 0.875rem;
 }
-#reviews-header-wrapper {
-    padding-bottom: 1rem;
+h2 {
+    font-size: 1.4rem;
+    margin-top: 1.4rem;
+    margin-bottom: 0.7rem;
+}
+h3 {
+    font-size: 1.12rem;
+    margin-top: 1.68rem;
+    margin-bottom: 0.56rem;
+}
+h4 {
+    font-size: 1rem;
+    margin-top: 1.5rem;
     margin-bottom: 0.5rem;
+}
+h1:first-child,
+h2:first-child,
+h3:first-child,
+h4:first-child {
+    margin-top: 0;
 }

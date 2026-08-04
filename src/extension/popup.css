@@ -42,10 +42,33 @@ a {
 summary {
     cursor: pointer;
 }
-h2 {
-    margin-top: 0;
-}
 #reviews-header-wrapper {
     border: none !important;
     padding-bottom: 0 !important;
+}
+h1 {
+    font-size: 1.75rem;
+    margin-top: 1.75rem;
+    margin-bottom: 0.875rem;
+}
+h2 {
+    font-size: 1.4rem;
+    margin-top: 1.4rem;
+    margin-bottom: 0.7rem;
+}
+h3 {
+    font-size: 1.12rem;
+    margin-top: 1.68rem;
+    margin-bottom: 0.56rem;
+}
+h4 {
+    font-size: 1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+h1:first-child,
+h2:first-child,
+h3:first-child,
+h4:first-child {
+    margin-top: 0;
 }

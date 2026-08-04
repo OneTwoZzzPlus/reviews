@@ -1,6 +1,8 @@
 export default function createInsights(data) {
-    const insights = document.createElement("div");
-    insights.innerHTML = `
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("insights-wrap");
+    wrapper.innerHTML = `
+        <h3>Выжимка AI</h3>
         <p>
             <span class="summary-title">Выжимка:</span> 
             <span class="summary-value">${data.summary ?? ""}</span>
@@ -60,5 +62,5 @@ export default function createInsights(data) {
             <span class="summary-value">${data.scores.difficulty.reason}</span>
         </p>
     `;
-    return insights;
+    return wrapper;
 }

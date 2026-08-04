@@ -32,6 +32,7 @@ export function createSubject(data) {
     if (reviewBoxes.some((box) => box === null)) return null;
 
     const wrapper = document.createElement("div");
+    wrapper.classList.add("tcards");
     wrapper.innerHTML = `<h2>${data.title}</h2>`;
     data.teachers.forEach((teacher, i) => {
         wrapper.appendChild(reviewBoxes[i]);

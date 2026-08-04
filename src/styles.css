@@ -211,6 +211,10 @@
 
 /*===== Summaries =====*/
 
+.summaries-wrap {
+    margin-top: 7px;
+}
+
 .summaries {
     padding: var(--padding);
     border: var(--border);
@@ -290,6 +294,29 @@
 }
 
 .sort-btn.active {
+    color: var(--color-primary);
+}
+
+/*===== Teacher Card =====*/
+
+.tcards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tcard {
+    padding: var(--padding);
+    border: var(--border);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.tcard-end {
+    margin: 0;
+    font-weight: bold;
     color: var(--color-primary);
 }
 

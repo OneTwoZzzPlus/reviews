@@ -15,7 +15,13 @@ const REVIEW_TITLE_HTML = `<div class="border-top mt-3"></div>
 </div></div>
 <div id="${STATUS_BOX_SELECTOR}">
     Загружаем...
-</div>`;
+</div>
+<style>
+    h2, h3 {
+        font-size: 1rem;
+    }
+</style>
+`;
 
 // Creates review wrapper element
 export function createInjector(data) {

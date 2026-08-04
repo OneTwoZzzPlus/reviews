@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Reviews",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "description": "Показывает отзывы о преподавателях на сайте университета",
     "permissions": ["storage"],
     "host_permissions": [

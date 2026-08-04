@@ -50,6 +50,13 @@ export default function createComments(commentsData) {
                 .forEach((b) => b.classList.remove("active"));
             btn.classList.add("active");
         });
+    } else {
+        wrapper.insertAdjacentHTML(
+            "beforeend",
+            `<div class="comments-header" style="margin: 7px 0;">
+                <h3>Единственный отзыв</h3>
+            </div>`,
+        );
     }
 
     wrapper.appendChild(commentsList);

@@ -9,30 +9,30 @@ export default function createComments(commentsData) {
     const wrapper = document.createElement("div");
     wrapper.classList.add("comments-wrap");
 
-    wrapper.insertAdjacentHTML(
-        "beforeend",
-        `<div class="comments-header">
-            <h3>Отзывы</h3>
-            <div class="sort-buttons">
-                <button type="button" class="sort-btn active" data-model="0" title="Сначала новые">
-                    ${strings.sortings.date_desc}
-                </button>
-                <button type="button" class="sort-btn" data-model="1" title="Сначала старые">
-                    ${strings.sortings.date_asc}
-                </button>
-                <button type="button" class="sort-btn" data-model="2" title="Сначала длинные">
-                    ${strings.sortings.size_desc}
-                </button>
-                <button type="button" class="sort-btn" data-model="3" title="Сначала короткие">
-                    ${strings.sortings.size_asc}
-                </button>
-            </div>
-        </div>`,
-    );
-
     let commentsList = createCommentsList(commentsData);
 
     if (commentsData.length > 1) {
+        wrapper.insertAdjacentHTML(
+            "beforeend",
+            `<div class="comments-header">
+                <h3>Отзывы</h3>
+                <div class="sort-buttons">
+                    <button type="button" class="sort-btn active" data-model="0" title="Сначала новые">
+                        ${strings.sortings.date_desc}
+                    </button>
+                    <button type="button" class="sort-btn" data-model="1" title="Сначала старые">
+                        ${strings.sortings.date_asc}
+                    </button>
+                    <button type="button" class="sort-btn" data-model="2" title="Сначала длинные">
+                        ${strings.sortings.size_desc}
+                    </button>
+                    <button type="button" class="sort-btn" data-model="3" title="Сначала короткие">
+                        ${strings.sortings.size_asc}
+                    </button>
+                </div>
+            </div>`,
+        );
+
         const sortContainer = wrapper.querySelector(".sort-buttons");
 
         sortContainer.addEventListener("click", (event) => {

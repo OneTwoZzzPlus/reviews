@@ -58,7 +58,7 @@ export default function createInsights(data) {
     const hasTags = prosHTML || highlightsHTML || consHTML;
 
     wrapper.innerHTML = `
-        <h3>Выжимка AI</h3>
+        <h3>Выжимка из отзывов AI</h3>
 
         <div class="insights">
             <div class="insights-row insights-row--overview">

@@ -320,6 +320,12 @@
     color: var(--color-primary);
 }
 
+@media (max-width: 500px) {
+    .tcard h3 {
+        font-size: 1rem;
+    }
+}
+
 /*===== Insights =====*/
 
 .insights {
@@ -353,6 +359,30 @@
 .insights-label {
     flex-shrink: 0;
     color: var(--color-muted);
+}
+
+@media (max-width: 700px) {
+    .insights-row-extended-100 {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .insights-row-extended-200 {
+        display: none;
+    }
+}
+
+@media (max-width: 500px) {
+    .insights-row-extended-300 {
+        display: none;
+    }
+}
+
+@media (max-width: 400px) {
+    .insights-row-extended-400 {
+        display: none;
+    }
 }
 
 /* Summary Box */
@@ -521,7 +551,7 @@
 .insights-score-item {
     display: flex;
     gap: 0.5rem;
-    flex-shrink: 0;
+    flex-wrap: wrap;
 }
 
 /*===== Suggestion =====*/
@@ -731,7 +761,7 @@
     white-space: normal;
     word-break: break-word;
     overflow-wrap: break-word;
-    text-align: center;
+    text-align: left;
     line-height: 1.3;
 
     gap: 0.5rem;

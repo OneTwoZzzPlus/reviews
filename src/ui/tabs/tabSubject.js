@@ -24,6 +24,7 @@ export function createSubject(data) {
     if (!data || !Array.isArray(data.teachers)) return null;
 
     const wrapper = document.createElement("div");
+    wrapper.insertAdjacentHTML("beforeend", `<h2>${data.title}</h2>`);
 
     let teachersList = createTeachersList(data.teachers);
 
@@ -31,8 +32,7 @@ export function createSubject(data) {
         wrapper.insertAdjacentHTML(
             "beforeend",
             `<div class="comments-header">
-                <h2>${data.title}</h2>
-
+                <h3>Преподаватели</h3>
                 <div class="sort-buttons">
                     <button type="button" class="sort-btn active" data-model="0" title="Лучший рейтинг">
                         ${strings.sortings.rating_desc}
@@ -67,8 +67,6 @@ export function createSubject(data) {
                 .forEach((b) => b.classList.remove("active"));
             btn.classList.add("active");
         });
-    } else {
-        wrapper.insertAdjacentHTML("beforeend", `<h2>${data.title}</h2>`);
     }
 
     wrapper.appendChild(teachersList);

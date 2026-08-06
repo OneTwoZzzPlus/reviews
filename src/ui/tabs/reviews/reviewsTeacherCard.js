@@ -96,18 +96,18 @@ export default function createTeacherCard(data) {
                 <span class="insights-label">Общая оценка:</span>
                 ${createBadgeHTML("rating", rating)}
             </div>
-            <div class="insights-item-inline">
+            <div class="insights-item-inline insights-row-extended-300">
                 <span class="insights-label">Надежность оценок:</span>
                 ${createBadgeHTML("confidence", confidence)}
             </div>
         </div>
-        <div class="insights-row insights-row--summary">
-                <span class="insights-summary-value">${summary}</span>
-            </div>
+        <div class="insights-row insights-row--summary insights-row-extended-300">
+            <span class="insights-summary-value">${summary}</span>
+        </div>
         ${
             hasTags
                 ? `
-            <div class="insights-row insights-row--tags">
+            <div class="insights-row insights-row--tags insights-row-extended-100">
                 <div class="insights-tags-list">
                     ${prosHTML}
                     ${highlightsHTML}

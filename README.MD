@@ -1,6 +1,6 @@
 # [Reviews](https://onetwozzzplus.github.io/reviews/#/) - отзывы на преподавателей
 
-> Понравился проект? Не забудь поставить ⭐ на репозитории.
+> Понравился проект? Не забудьте поставить ⭐ на репозитории, потому что это поможет развитию проекта.
 
 [![Frontend Repository](https://img.shields.io/badge/Frontend-24292E?style=for-the-badge&logo=github&logoColor=white)](https://github.com/OneTwoZzzPlus/reviews)
 [![Backend Repository](https://img.shields.io/badge/Backend-24292E?style=for-the-badge&logo=github&logoColor=white)](https://github.com/OneTwoZzzPlus/reviews-backend)

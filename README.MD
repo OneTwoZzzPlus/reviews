@@ -1,17 +1,29 @@
-# Сайт с отзывами
+# [Reviews](https://onetwozzzplus.github.io/reviews/#/) - отзывы на преподавателей
 
-⚡ [Открыть приложение на сайте](https://onetwozzzplus.github.io/reviews/)
+> Понравился проект? Не забудь поставить ⭐ на репозитории.
 
-# Расширение для браузера
+[![Frontend Repository](https://img.shields.io/badge/Frontend-24292E?style=for-the-badge&logo=github&logoColor=white)](https://github.com/OneTwoZzzPlus/reviews)
+[![Backend Repository](https://img.shields.io/badge/Backend-24292E?style=for-the-badge&logo=github&logoColor=white)](https://github.com/OneTwoZzzPlus/reviews-backend)
 
-❤ [Скачайте последнюю собранную версию расширения тут](https://github.com/OneTwoZzzPlus/reviews/releases/)
+## Расширение для браузера
 
-**Два режима работы!**
+🧩 Доступно для установки в [Chrome Web Store](https://chromewebstore.google.com/detail/reviews/dgcgdbgpjhcppmdphanlbhlobimoclbc)
 
-- Быстрый поиск по предмету или преподавателю в окне расширения.
+- Цветовая подсветка ФИО согласно отзывам (полезно на выборности).
 - Встраивание на страницу преподавателя на сайте.
+- Быстрый поиск по предмету или преподавателю в окне расширения.
 
-# Для желающих разрабатывать...
+📦 Скачайте последнюю собранную версию расширения [тут](https://github.com/OneTwoZzzPlus/reviews/releases/)
+
+## Стек
+
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![esbuild](https://img.shields.io/badge/esbuild-FFCF00?style=for-the-badge&logo=esbuild&logoColor=black)
+![Chrome Extension](https://img.shields.io/badge/Manifest_V3-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)
+
+## Разработчикам
 
 ### Установка зависимостей
 

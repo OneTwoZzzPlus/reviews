@@ -6,7 +6,12 @@ import * as strings from "../../../strings.js";
 /**
  * @param {Teacher} data
  */
-export default function createReviewsContentBox(data) {
+export default function createReviewsContentBox(
+    data,
+    insightsHeader,
+    summariesHeader,
+    commentsHeader,
+) {
     if (
         !data ||
         !Array.isArray(data.summaries) ||
@@ -17,13 +22,13 @@ export default function createReviewsContentBox(data) {
     const wrapper = document.createElement("div");
     wrapper.classList.add("reviews-content-box");
     if (data.insights) {
-        wrapper.appendChild(reviewsInsights(data.insights));
+        wrapper.appendChild(reviewsInsights(data.insights, insightsHeader));
     }
     if (data.summaries.length !== 0) {
-        wrapper.appendChild(createSummaries(data.summaries));
+        wrapper.appendChild(createSummaries(data.summaries, summariesHeader));
     }
     if (data.comments.length !== 0) {
-        wrapper.appendChild(createComments(data.comments));
+        wrapper.appendChild(createComments(data.comments, commentsHeader));
     }
     if (data.summaries.length === 0 && data.comments.length === 0) {
         const comment = document.createElement("p");

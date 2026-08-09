@@ -7,20 +7,27 @@ import { useStorage, ChromeStorageAdapter } from "../api/storage.js";
 useStorage(new ChromeStorageAdapter());
 
 const INJECTED_ELEMENT_SELECTOR = "reviews";
-const STATUS_BOX_SELECTOR = "reviews-status-box";
-
-const REVIEW_TITLE_HTML = `<div class="border-top mt-3"></div>
-<div class="person-info-label mt-3 mt-xl-2"><div class="text-gray-60 mb-2">
-    Оценки и отзывы:
-</div></div>
-<div id="${STATUS_BOX_SELECTOR}">
-    Загружаем...
+const TITLE_CLASS = "person-info-label mt-3 mt-xl-2";
+const REVIEW_HTML = `
+<div class="border-top mt-3"></div>
+<div class="${TITLE_CLASS}" id="${INJECTED_ELEMENT_SELECTOR}">
+    ${strings.loadingText}
 </div>
-<style>
-    h2, h3 {
-        font-size: 1rem;
-    }
-</style>
+`;
+const INSIGHTS_TITLE_HTML = `
+<div class="person-info-label mt-3 mt-xl-2"><div class="text-gray-60 mb-2">
+    Коротко по отзывам (ИИ):
+</div></div>
+`;
+const SUMMARY_TITLE_HTML = `
+<div class="person-info-label mt-3 mt-xl-2"><div class="text-gray-60 mb-2">
+    Детали:
+</div></div>
+`;
+const COMMENTS_TITLE_HTML = `
+<div class="person-info-label mt-3 mt-xl-2"><div class="text-gray-60 mb-2">
+    Отзывы:
+</div></div>
 `;
 
 // --- Highlighting Styles ---
@@ -251,39 +258,39 @@ function wrapTextMatches(textNode, pattern, map) {
 // --- Injection Logic ---
 
 export function createInjector(data) {
-    const reviewBox = createReviewsContentBox(data);
-    if (reviewBox === null) return null;
-
-    const wrapper = document.createElement("div");
-    wrapper.appendChild(reviewBox);
-
-    return wrapper;
+    return createReviewsContentBox(
+        data,
+        INSIGHTS_TITLE_HTML,
+        SUMMARY_TITLE_HTML,
+        COMMENTS_TITLE_HTML,
+    );
 }
 
 function createReviewBlock(id) {
     const box = document.createElement("div");
-    box.id = INJECTED_ELEMENT_SELECTOR;
-    box.innerHTML = REVIEW_TITLE_HTML;
+    box.innerHTML = REVIEW_HTML;
     fetchTeacher(id).then(resolveReviewBlock, rejectReviewBlock);
     return box;
 }
 
 async function resolveReviewBlock(data) {
-    const status_box = document.querySelector("#" + STATUS_BOX_SELECTOR);
     const injected = document.querySelector("#" + INJECTED_ELEMENT_SELECTOR);
 
     const content = createInjector(data);
     if (content !== null) {
+        injected.innerHTML = "";
         injected.append(content);
-        status_box.innerHTML = "";
     } else {
-        status_box.innerHTML = strings.brokeReviewsText;
+        injected.innerHTML = strings.brokeReviewsText;
     }
 }
 
 async function rejectReviewBlock(status) {
-    const status_box = document.querySelector("#" + STATUS_BOX_SELECTOR);
-    status_box.innerHTML = strings.statusReviewsText(status);
+    const injected = document.querySelector("#" + INJECTED_ELEMENT_SELECTOR);
+    injected.className = TITLE_CLASS;
+    if (injected) {
+        injected.innerHTML = strings.statusReviewsText(status);
+    }
 }
 
 function tryInjectReviews() {
@@ -303,7 +310,7 @@ function tryInjectReviews() {
 }
 
 async function observeChangeDOM() {
-    console.log("[INJECTOR] Extension script started");
+    console.log("[INJECTOR] Reviews script started");
     injectStyles();
 
     try {

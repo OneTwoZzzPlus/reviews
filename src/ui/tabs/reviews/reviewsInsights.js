@@ -1,6 +1,6 @@
 import * as strings from "../../../strings.js";
 
-export default function createInsights(data) {
+export default function createInsights(data, header) {
     const wrapper = document.createElement("div");
     wrapper.classList.add("insights-wrap");
 
@@ -58,7 +58,7 @@ export default function createInsights(data) {
     const hasTags = prosHTML || highlightsHTML || consHTML;
 
     wrapper.innerHTML = `
-        <h3>Выжимка из отзывов AI</h3>
+        ${header || `<h3>Коротко по отзывам (ИИ)</h3>`}
 
         <div class="insights">
             <div class="insights-row insights-row--overview">

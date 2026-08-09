@@ -2,20 +2,20 @@ import { parseCommentDate } from "../../../utils.js";
 import * as strings from "../../../strings.js";
 
 /**
- * @param {Array<Comment>} commentsData
+ * @param {Array<Comment>} data
  * @returns {HTMLDivElement}
  */
-export default function createComments(commentsData) {
+export default function createComments(data, header) {
     const wrapper = document.createElement("div");
     wrapper.classList.add("comments-wrap");
 
-    let commentsList = createCommentsList(commentsData);
+    let commentsList = createCommentsList(data);
 
-    if (commentsData.length > 1) {
+    if (data.length > 1) {
         wrapper.insertAdjacentHTML(
             "beforeend",
             `<div class="comments-header">
-                <h3>Отзывы</h3>
+                ${header || `<h3>Отзывы</h3>`}
                 <div class="sort-buttons">
                     <button type="button" class="sort-btn active" data-model="0" title="Сначала новые">
                         ${strings.sortings.date_desc}
@@ -41,7 +41,7 @@ export default function createComments(commentsData) {
 
             const model = parseInt(btn.dataset.model, 10);
 
-            const newCL = createCommentsList(commentsData, model);
+            const newCL = createCommentsList(data, model);
             wrapper.replaceChild(newCL, commentsList);
             commentsList = newCL;
 
@@ -54,7 +54,7 @@ export default function createComments(commentsData) {
         wrapper.insertAdjacentHTML(
             "beforeend",
             `<div class="comments-header" style="margin: 7px 0;">
-                <h3>Единственный отзыв</h3>
+                ${header || `<h3>Отзыв</h3>`}
             </div>`,
         );
     }

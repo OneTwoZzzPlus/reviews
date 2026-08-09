@@ -1,9 +1,9 @@
-export default function createSummaries(summariesData) {
+export default function createSummaries(data, header) {
     const wrapper = document.createElement("div");
     wrapper.classList.add("summaries-wrap");
-    wrapper.insertAdjacentHTML("beforeend", "<h3>Детали</h3>");
+    wrapper.insertAdjacentHTML("beforeend", header || "<h3>Детали</h3>");
 
-    const summariesHTML = summariesData
+    const summariesHTML = data
         .map(
             (item) => `
         <div class="summary">

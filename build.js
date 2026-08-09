@@ -38,12 +38,12 @@ const baseEsbuildConfig = {
     minify: false,
     sourcemap: !isProd,
     target: ["chrome110"],
-    loader: { ".js": "jsx" },
+    loader: {
+        ".js": "jsx",
+        ".html": "text",
+    },
     jsx: "automatic",
     jsxImportSource: "preact",
-    define: {
-        API_HOST: JSON.stringify(API_HOST_VALUE),
-    },
 };
 
 async function buildExtension() {
@@ -52,9 +52,13 @@ async function buildExtension() {
 
     const extSrcDir = path.join(SRC_DIR, "extension");
 
-    // 1. Сборка точек входа из src/extension/
     await esbuild.build({
         ...baseEsbuildConfig,
+        define: {
+            API_HOST: JSON.stringify(API_HOST_VALUE),
+            IS_EXTENSION: "true",
+            IS_PAGE: "false",
+        },
         entryPoints: [getEntryPoint(extSrcDir, "injector")],
         outfile: path.join(DIST_DIR, "injector.js"),
     });
@@ -62,18 +66,21 @@ async function buildExtension() {
 
     await esbuild.build({
         ...baseEsbuildConfig,
+        define: {
+            API_HOST: JSON.stringify(API_HOST_VALUE),
+            IS_EXTENSION: "true",
+            IS_PAGE: "false",
+        },
         entryPoints: [getEntryPoint(extSrcDir, "popup")],
         outfile: path.join(DIST_DIR, "popup.js"),
     });
     console.log("  ✔ popup.js");
 
-    // 2. Копирование manifest.json из корня проекта
     const manifestPath = path.join(dirname, "manifest.json");
     if (fs.existsSync(manifestPath)) {
         fs.copyFileSync(manifestPath, path.join(DIST_DIR, "manifest.json"));
     }
 
-    // 3. Копирование HTML/CSS из src/extension/
     ["popup.html", "popup.css"].forEach((file) => {
         const srcPath = path.join(extSrcDir, file);
         if (fs.existsSync(srcPath)) {
@@ -81,7 +88,6 @@ async function buildExtension() {
         }
     });
 
-    // 4. Копирование общих стилей из src/
     const globalStyles = path.join(SRC_DIR, "styles.css");
     if (fs.existsSync(globalStyles)) {
         fs.copyFileSync(globalStyles, path.join(DIST_DIR, "styles.css"));
@@ -100,15 +106,18 @@ async function buildWebPage() {
 
     const pageSrcDir = path.join(SRC_DIR, "page");
 
-    // 1. Сборка page.js из src/page/
     await esbuild.build({
         ...baseEsbuildConfig,
+        define: {
+            API_HOST: JSON.stringify(API_HOST_VALUE),
+            IS_EXTENSION: "false",
+            IS_PAGE: "true",
+        },
         entryPoints: [getEntryPoint(pageSrcDir, "page")],
         outfile: path.join(PAGE_DIR, "page.js"),
     });
     console.log("  ✔ page.js");
 
-    // 2. Копирование файлов из src/page/ и общих стилей
     fs.copyFileSync(
         path.join(pageSrcDir, "page.html"),
         path.join(PAGE_DIR, "index.html"),

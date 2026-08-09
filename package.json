@@ -9,7 +9,9 @@
         "build:page:prod": "cross-env API_HOST_VALUE=\"https://reviews.work.gd/\" NODE_ENV=production node build.js --page",
         "build:dev": "cross-env API_HOST_VALUE=\"http://localhost:8000\" node build.js",
         "build:prod": "cross-env API_HOST_VALUE=\"https://reviews.work.gd/\" NODE_ENV=production node build.js",
+        "watch:dev": "nodemon --watch src --watch static --watch manifest.json -e js,jsx,html,css,json --exec \"npm run build:dev\"",
         "watch:prod": "nodemon --watch src --watch static --watch manifest.json -e js,jsx,html,css,json --exec \"npm run build:prod\"",
+        "serve": "live-server page --entry=index.html",
         "release": "node release.js"
     },
     "keywords": [],
@@ -17,8 +19,10 @@
     "license": "ISC",
     "description": "",
     "devDependencies": {
+        "concurrently": "^10.0.4",
         "cross-env": "^10.1.0",
         "esbuild": "^0.27.1",
+        "live-server": "^1.2.0",
         "nodemon": "^3.1.14"
     }
 }

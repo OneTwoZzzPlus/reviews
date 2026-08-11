@@ -49,12 +49,26 @@ async function main() {
             fs.unlinkSync(archiveName);
         }
 
-        // Create ZIP archive without npm dependencies
+        // Create ZIP archive with guaranteed POSIX path separators (/)
         console.log("\n📁 [Archive] Creating ZIP package...");
         if (process.platform === "win32") {
-            execSync(
-                `powershell -Command "Compress-Archive -Path '${DIST_DIR}\\*' -DestinationPath '${archiveName}' -Force"`,
-            );
+            const distPath = DIST_DIR.replace(/\\/g, "/");
+            const zipPath = archiveName.replace(/\\/g, "/");
+
+            // (/)
+            const psCommand = `
+                Add-Type -Assembly 'System.IO.Compression.FileSystem';
+                $zip = [System.IO.Compression.ZipFile]::Open('${zipPath}', 'Create');
+                Get-ChildItem -Path '${distPath}' -Recurse | ForEach-Object {
+                    if (-not $_.PSIsContainer) {
+                        $relPath = $_.FullName.Substring('${distPath}'.Length + 1).Replace('\\', '/');
+                        [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, $relPath);
+                    }
+                };
+                $zip.Dispose();
+            `.replace(/\s+/g, " ");
+
+            execSync(`powershell -Command "${psCommand}"`);
         } else {
             execSync(`zip -r "${archiveName}" .`, { cwd: DIST_DIR });
         }

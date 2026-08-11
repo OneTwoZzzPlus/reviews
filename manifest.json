@@ -5,7 +5,10 @@
     "description": "Показывает отзывы о преподавателях на сайте университета",
     "browser_specific_settings": {
         "gecko": {
-            "id": "addon@reviews.work.gd"
+            "id": "addon@reviews.work.gd",
+            "data_collection_permissions": {
+                "required": ["none"]
+            }
         }
     },
     "permissions": ["storage"],

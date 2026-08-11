@@ -1,8 +1,13 @@
 {
     "manifest_version": 3,
     "name": "Reviews",
-    "version": "0.3.2",
+    "version": "0.4.0",
     "description": "Показывает отзывы о преподавателях на сайте университета",
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "addon@reviews.work.gd"
+        }
+    },
     "permissions": ["storage"],
     "host_permissions": ["https://reviews.work.gd/*"],
     "icons": {

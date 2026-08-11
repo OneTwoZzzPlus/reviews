@@ -25,6 +25,17 @@
 
 </details>
 
+<details>
+<summary><b>Временная установка в Mozilla Firefox</b></summary>
+
+1. Скачайте ниже `dist-X.X.X.zip`
+2. Откройте страницу разработки [`about:debugging#/runtime/this-firefox`](about:debugging#/runtime/this-firefox)
+3. Нажмите `Загрузить временное дополнение` и выберите скачанное расширение
+
+> Для Mozilla Firefox
+
+</details>
+
 ---
 
 <!-- ### Что нового? -->

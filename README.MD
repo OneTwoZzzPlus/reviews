@@ -7,7 +7,7 @@
 
 ## Расширение для браузера
 
-🧩 Доступно для установки в [Chrome Web Store](https://chromewebstore.google.com/detail/reviews/dgcgdbgpjhcppmdphanlbhlobimoclbc)
+🧩 Доступно для установки в [Chrome Web Store](https://chromewebstore.google.com/detail/reviews/dgcgdbgpjhcppmdphanlbhlobimoclbc) и [Mozilla Add-ons](https://addons.mozilla.org/ru/firefox/addon/reviews/)
 
 - Цветовая подсветка ФИО согласно отзывам (полезно на выборности).
 - Встраивание на страницу преподавателя на сайте.
